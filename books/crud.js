@@ -60,7 +60,6 @@ module.exports = function(model, images, oauth2) {
   });
 
 
-  // [START mine]
   router.get('/mine', oauth2.required, function list(req, res) {
     var books = model.listBy(req.session.profile.id, 10, req.query.pageToken,
       function(err, entities, cursor) {
@@ -72,7 +71,6 @@ module.exports = function(model, images, oauth2) {
       }
     );
   });
-  // [END mine]
 
 
   router.get('/add', function addForm(req, res) {
@@ -83,7 +81,6 @@ module.exports = function(model, images, oauth2) {
   });
 
 
-  // [START add]
   router.post('/add', function insert(req, res) {
     var data = req.body;
 
@@ -106,7 +103,6 @@ module.exports = function(model, images, oauth2) {
       res.redirect(req.baseUrl + '/' + savedData.id);
     });
   });
-  // [END add]
 
 
   router.get('/:book/edit', function editForm(req, res) {

@@ -23,6 +23,10 @@ module.exports = {
   /* Secret is used by sessions to encrypt the cookie */
   secret: 'your-secret-here',
 
+  // [START log]
+  logPath: process.env.LOG_PATH || './',
+  // [END log]
+
   /*
     dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
     configure the appropriate settings for each storage engine below.

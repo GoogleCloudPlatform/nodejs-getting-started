@@ -19,6 +19,7 @@ var express = require('express');
 var session = require('cookie-session');
 var gcloud = require('gcloud');
 var config = require('./config');
+var logging = require('./lib/logging')(config.logPath);
 
 
 var app = express();
@@ -30,17 +31,24 @@ app.set('trust proxy', true);
 
 
 /*
+  Add the request logger before anything else so that it can
+  accurately log requests.
+*/
+// [START requests]
+app.use(logging.requestLogger);
+// [END requests]
+
+/*
   Configure the session and session storage.
   MemoryStore isn't viable in a multi-server configuration, so we
   use encrypted cookies. Redis or Memcache is a great option for
   more secure sessions, if desired.
 */
-// [START session]
 app.use(session({
   secret: config.secret,
   signed: true
 }));
-// [END session]
+
 
 /* Include the app engine handlers to respond to start, stop, and health checks. */
 app.use(require('./lib/appengine-handlers'));
@@ -66,12 +74,14 @@ app.get('/', function(req, res) {
 });
 
 
-/* Basic error handler */
-app.use(function(err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
+/*
+  Add the error logger after all middleware and routes so that
+  it can log errors from the whole application. Any custom error
+  handlers should go after this.
+*/
+// [START errors]
+app.use(logging.errorLogger);
+// [END errors]
 
 /* Start the server */
 var server = app.listen(config.port, '0.0.0.0', function() {
