@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# [START yaml]
 runtime: custom
 vm: true
 api_version: 1
@@ -37,3 +38,4 @@ env_variables:
   SCRIPT: worker.js
   LOG_PATH: /var/log/app_engine/custom_logs
   NODE_ENV: production
+# [END yaml]
