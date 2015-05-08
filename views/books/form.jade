@@ -13,6 +13,7 @@
 
 extends ../base.jade
 
+// [START form]
 block content
   h3 #{action} book
   form(method="POST", enctype="multipart/form-data")
@@ -35,3 +36,4 @@ block content
       label(for="imageUrl") Cover Image URL
       input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
     button.btn.btn-success(type="submit") Save
+// [END form]
