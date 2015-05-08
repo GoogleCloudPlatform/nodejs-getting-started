@@ -43,7 +43,6 @@ var bookCount = 0;
   to respond to health checks. We can re-use the health checks
   from the main application and create a simple server.
 */
-// [START server]
 var app = express();
 
 app.use(logging.requestLogger);
@@ -59,7 +58,6 @@ var server = app.listen(config.port, '0.0.0.0', function() {
   console.log('Worker server listening at http://%s:%s', server.address().address, server.address().port);
   console.log("Press Ctrl+C to quit.");
 });
-// [END server]
 
 
 /*
@@ -67,7 +65,6 @@ var server = app.listen(config.port, '0.0.0.0', function() {
   The subscription will continue to listen for messages until the server
   is killed.
 */
-// [START subscribe]
 background.subscribe(function(message) {
   if (message.action == 'processBook') {
     logging.info('Received request to process book ' + message.bookId);
@@ -76,14 +73,12 @@ background.subscribe(function(message) {
     logging.warn('Unknown request', message);
   }
 });
-// [END subscribe]
 
 
 /*
   Processes a book by reading its existing data, attempting to find
   more information, and updating the database with the new information.
 */
-// [START process]
 function processBook(bookId) {
   waterfall([
     /* Load the current data */
@@ -102,7 +97,6 @@ function processBook(bookId) {
     else logging.info("Updated book " + bookId);
   });
 }
-// [END process]
 
 
 /*
@@ -110,7 +104,6 @@ function processBook(bookId) {
   the book's data. Also uploads a cover image to Cloud Storage
   if available.
 */
-// [START find]
 function findBookInfo(book, cb) {
   queryBooksApi(book.title, function(err, r) {
     if (err) return cb(err);
@@ -138,14 +131,12 @@ function findBookInfo(book, cb) {
     });
   });
 }
-// [END find]
 
 
 /*
   Calls out to the Google Books API to get additional
   information about a given book.
 */
-// [START query]
 function queryBooksApi(query, cb) {
   request(
     'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(query),
@@ -155,7 +146,6 @@ function queryBooksApi(query, cb) {
     }
   );
 }
-// [END query]
 
 
 

@@ -128,7 +128,6 @@ module.exports = function(config, background) {
     data is automatically translated into Datastore format. The book will be
     queued for background processing.
   */
-  // [START update]
   function update(id, data, cb) {
     var key;
     if (id) {
@@ -150,7 +149,6 @@ module.exports = function(config, background) {
       }
     );
   }
-  // [END update]
 
 
   function read(id, cb) {
