@@ -14,25 +14,42 @@
 */
 "use strict";
 
+var path = require('path');
 var express = require('express');
+var config = require('./config');
 
 var app = express();
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+app.set('trust proxy', true);
+
 
 /* Include the app engine handlers to respond to start, stop, and health checks. */
 app.use(require('./lib/appengine-handlers'));
 
 
-// [START hello_world]
-/* Say hello! */
-app.get('/', function(req, res) {
-  res.status(200).send("Hello, world!");
-});
-// [END hello_world]
+/* Books */
+var model = require('./books/model-' + config.dataBackend)(config);
+app.use('/books', require('./books/crud')(model));
+app.use('/api/books', require('./books/api')(model));
 
-// [START server]
+
+/* Redirect root to /books */
+app.get('/', function(req, res) {
+  res.redirect('/books');
+});
+
+
+/* Basic error handler */
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+
 /* Start the server */
-var server = app.listen(process.env.PORT || '8080', '0.0.0.0', function() {
+var server = app.listen(config.port, '0.0.0.0', function() {
   console.log('App listening at http://%s:%s', server.address().address, server.address().port);
   console.log("Press Ctrl+C to quit.");
 });
-// [END server]

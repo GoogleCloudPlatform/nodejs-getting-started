@@ -7,11 +7,19 @@
   "scripts": {
     "start": "node app.js",
     "monitor": "nodemon app.js",
-    "deploy": "gcloud preview app deploy app.yaml"
+    "deploy": "gcloud preview app deploy app.yaml",
+    "init-cloudsql": "node books/model-cloudsql.js"
   },
   "author": "Jon Wayne Parrott <jonwayne@google.com>, Jonathan Simon <jbsimon@google.com>",
   "license": "Apache Version 2.0",
   "dependencies": {
-    "express": "^4.12.0"
+    "body-parser": "^1.12.0",
+    "express": "^4.12.0",
+    "gcloud": "git://github.com/GoogleCloudPlatform/gcloud-node",
+    "jade": "^1.9.2",
+    "lodash": "^3.3.1",
+    "mongodb": "^2.0.23",
+    "mysql": "^2.5.5",
+    "prompt": "^0.2.14"
   }
 }
