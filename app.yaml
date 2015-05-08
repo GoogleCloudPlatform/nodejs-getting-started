@@ -34,4 +34,5 @@ beta_settings:
     https://www.googleapis.com/auth/cloud-platform
 
 env_variables:
+  OAUTH2_CALLBACK: http://your-project-id.appspot.com/oauth2callback
   NODE_ENV: production

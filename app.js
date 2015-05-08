@@ -16,6 +16,7 @@
 
 var path = require('path');
 var express = require('express');
+var session = require('cookie-session');
 var gcloud = require('gcloud');
 var config = require('./config');
 
@@ -28,15 +29,34 @@ app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
 
+/*
+  Configure the session and session storage.
+  MemoryStore isn't viable in a multi-server configuration, so we
+  use encrypted cookies. Redis or Memcache is a great option for
+  more secure sessions, if desired.
+*/
+// [START session]
+app.use(session({
+  secret: config.secret,
+  signed: true
+}));
+// [END session]
+
 /* Include the app engine handlers to respond to start, stop, and health checks. */
 app.use(require('./lib/appengine-handlers'));
+
+
+/* OAuth2 */
+var oauth2 = require('./lib/oauth2')(config.oauth2);
+
+app.use(oauth2.router);
 
 
 /* Books */
 var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
 var model = require('./books/model-' + config.dataBackend)(config);
 
-app.use('/books', require('./books/crud')(model, images));
+app.use('/books', require('./books/crud')(model, images, oauth2));
 app.use('/api/books', require('./books/api')(model));
 
 

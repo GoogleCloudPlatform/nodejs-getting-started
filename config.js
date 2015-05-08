@@ -20,6 +20,9 @@ var path = require('path');
 module.exports = {
   port: '8080',
 
+  /* Secret is used by sessions to encrypt the cookie */
+  secret: 'your-secret-here',
+
   /*
     dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
     configure the appropriate settings for each storage engine below.
@@ -38,6 +41,17 @@ module.exports = {
   */
   gcloud: {
     projectId: 'your-project-id-here'
+  },
+
+  /*
+    The client ID and secret can be obtained by generating a new Client ID for
+    a web application on Google Developers Console.
+  */
+  oauth2: {
+    clientId: 'your-client-id-here',
+    clientSecret: 'your-client-secret-here',
+    redirectUrl: process.env.OAUTH2_CALLBACK || 'http://localhost:8080/oauth2callback',
+    scopes: ['email', 'profile']
   },
 
   mysql: {

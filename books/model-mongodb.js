@@ -18,7 +18,7 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 
 
-module.exports = function(config) {
+module.exports = function(config, background) {
 
   var url = config.mongodb.url;
   var collectionName = config.mongodb.collection;
@@ -60,12 +60,29 @@ module.exports = function(config) {
   }
 
 
+  // [START listby]
+  function listBy(userid, limit, token, cb) {
+    token = token ? parseInt(token, 10) : 0;
+    getCollection(function(err, collection) {
+      collection.find({createdById: userid})
+        .skip(token)
+        .limit(limit)
+        .toArray(function(err, results) {
+          if (err) return cb(err);
+          cb(null, results.map(fromMongo), results.length === limit ? token + results.length : false);
+        });
+    });
+  }
+  // [END listby]
+
+
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) return cb(err);
       collection.insert(data, {w: 1}, function(err, result) {
         if (err) return cb(err);
         var item = fromMongo(result.ops);
+        background.queueBook(item.id);
         cb(null, item);
       });
     });
@@ -121,7 +138,8 @@ module.exports = function(config) {
     read: read,
     update: update,
     delete: _delete,
-    list: list
+    list: list,
+    listBy: listBy
   };
 
 };
