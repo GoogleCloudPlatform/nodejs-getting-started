@@ -33,9 +33,7 @@ beta_settings:
     https://www.googleapis.com/auth/userinfo.email,
     https://www.googleapis.com/auth/cloud-platform
 
-# [START env]
 env_variables:
   OAUTH2_CALLBACK: http://your-project-id.appspot.com/oauth2callback
   LOG_PATH: /var/log/app_engine/custom_logs
   NODE_ENV: production
-# [END env]

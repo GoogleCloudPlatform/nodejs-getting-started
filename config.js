@@ -18,14 +18,12 @@ var path = require('path');
 
 
 module.exports = {
-  port: '8080',
+  port: process.env.PORT || '8080',
 
   /* Secret is used by sessions to encrypt the cookie */
   secret: 'your-secret-here',
 
-  // [START log]
   logPath: process.env.LOG_PATH || './',
-  // [END log]
 
   /*
     dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
