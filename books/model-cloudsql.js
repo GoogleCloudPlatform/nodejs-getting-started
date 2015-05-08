@@ -27,7 +27,6 @@ module.exports = function(config) {
   }
 
 
-  // [START list]
   function list(limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     var connection = getConnection();
@@ -37,10 +36,8 @@ module.exports = function(config) {
     });
     connection.end();
   }
-  // [END list]
 
 
-  // [START create]
   function create(data, cb) {
     var connection = getConnection();
     connection.query('INSERT INTO `books` SET ?', data, function(err, res) {
@@ -49,7 +46,6 @@ module.exports = function(config) {
     });
     connection.end();
   }
-  // [END create]
 
 
   function read(id, cb) {
@@ -66,7 +62,6 @@ module.exports = function(config) {
   }
 
 
-  // [START update]
   function update(id, data, cb) {
     var connection = getConnection();
     connection.query('UPDATE `books` SET ? WHERE `id` = ?', [data, id], function(err) {
@@ -75,7 +70,6 @@ module.exports = function(config) {
     });
     connection.end();
   }
-  // [END update]
 
 
   function _delete(id, cb) {

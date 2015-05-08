@@ -15,7 +15,7 @@ extends ../base.jade
 
 block content
   h3 #{action} book
-  form(method="POST")
+  form(method="POST", enctype="multipart/form-data")
     .form-group
       label(for="title") Title
       input.form-control(type="text", name="title", id="title", value=book.title)
@@ -29,4 +29,9 @@ block content
       label(for="description") Description
       input.form-control(type="text", name="description", id="description", value=book.description)
     .form-group
+      label(for="image") Cover Image
+      input.form-control(type="file", name="image", id="image")
+    .form-group.hidden
+      label(for="imageUrl") Cover Image URL
+      input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
     button.btn.btn-success(type="submit") Save

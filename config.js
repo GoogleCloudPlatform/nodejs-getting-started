@@ -28,6 +28,12 @@ module.exports = {
   dataBackend: 'your-backend-here',
 
   /*
+    This can also be your project id as each project has a default
+    bucket with the same name as the project id.
+  */
+  cloudStorageBucket: 'your-cloud-storage-bucket-here',
+
+  /*
     This is the id of your project in the Google Developers Console.
   */
   gcloud: {

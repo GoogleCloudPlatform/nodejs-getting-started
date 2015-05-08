@@ -26,6 +26,8 @@ block content
       span  Delete book
 
   .media
+    .media-left
+      img(src=book.imageUrl || "http://placekitten.com/g/128/192")
     .media-body
       h4= book.title
         | &nbsp;

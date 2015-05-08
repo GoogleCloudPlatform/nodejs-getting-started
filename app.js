@@ -16,10 +16,13 @@
 
 var path = require('path');
 var express = require('express');
+var gcloud = require('gcloud');
 var config = require('./config');
+
 
 var app = express();
 
+app.disable('etag');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
@@ -30,8 +33,10 @@ app.use(require('./lib/appengine-handlers'));
 
 
 /* Books */
+var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
 var model = require('./books/model-' + config.dataBackend)(config);
-app.use('/books', require('./books/crud')(model));
+
+app.use('/books', require('./books/crud')(model, images));
 app.use('/api/books', require('./books/api')(model));
 
 

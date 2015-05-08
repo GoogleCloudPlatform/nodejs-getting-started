@@ -15,14 +15,17 @@
 "use strict";
 
 var express = require('express');
-var bodyParser = require('body-parser');
 
 
-module.exports = function(model) {
+module.exports = function(model, images) {
 
   var router = express.Router();
 
-  router.use(bodyParser.urlencoded({extended: false}));
+  /*
+    Use the images middleware to automatically upload images to Cloud Storage
+  */
+  router.use(images.multer);
+  router.use(images.processUploads);
 
 
   function handleRpcError(err, res) {
@@ -34,6 +37,7 @@ module.exports = function(model) {
     res.set('Content-Type', 'text/html');
     next();
   });
+
 
   router.get('/', function list(req, res) {
     var books = model.list(10, req.query.pageToken,
@@ -47,19 +51,23 @@ module.exports = function(model) {
     );
   });
 
-// [START add_get]
+
   router.get('/add', function addForm(req, res) {
     res.render('books/form.jade', {
       book: {},
       action: 'Add'
     });
   });
-// [END add_get]
 
 
-// [START add_post]
+  // [START add]
   router.post('/add', function insert(req, res) {
     var data = req.body;
+
+    // Was an image uploaded? If so, we'll use its public URL in cloud storage.
+    if (req.files.image && req.files.image.cloudStoragePublicUrl) {
+      data.imageUrl = req.files.image.cloudStoragePublicUrl;
+    }
 
     // Save the data to the database.
     model.create(data, function(err, savedData) {
@@ -67,7 +75,8 @@ module.exports = function(model) {
       res.redirect(req.baseUrl + '/' + savedData.id);
     });
   });
-// [END add_post]
+  // [END add]
+
 
   router.get('/:book/edit', function editForm(req, res) {
     model.read(req.params.book, function(err, entity) {
@@ -79,8 +88,12 @@ module.exports = function(model) {
     });
   });
 
+
   router.post('/:book/edit', function update(req, res) {
-    var data = req.body;
+    // Was an image uploaded? If so, we'll use its public URL in cloud storage.
+    if (req.files.image && req.files.image.cloudStoragePublicUrl) {
+      req.body.imageUrl = req.files.image.cloudStoragePublicUrl;
+    }
 
     model.update(req.params.book, req.body, function(err, savedData) {
       if (err) return handleRpcError(err, res);
