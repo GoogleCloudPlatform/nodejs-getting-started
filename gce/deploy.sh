@@ -21,11 +21,11 @@ GROUP=frontend-group
 TEMPLATE=$GROUP-tmpl
 MACHINE_TYPE=f1-micro
 STARTUP_SCRIPT=startup-script.sh
-SCOPES="logging-write \
-storage-rw \
-https://www.googleapis.com/auth/projecthosting \
-https://www.googleapis.com/auth/cloud-platform \
-https://www.googleapis.com/auth/userinfo.email"
+SCOPES="userinfo-email,\
+logging-write,\
+storage-full,\
+datastore,\
+https://www.googleapis.com/auth/projecthosting"
 TAGS=http-server
 
 MIN_INSTANCES=1
