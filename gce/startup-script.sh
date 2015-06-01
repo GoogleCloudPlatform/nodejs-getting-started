@@ -68,9 +68,7 @@ npm install
 useradd -m -d /home/nodeapp nodeapp
 chown -R nodeapp:nodeapp /opt/app
 
-# Configure supervisor
-/etc/supervisor/conf.d/node-app.conf
-
+# Configure supervisor to run the node app.
 cat >/etc/supervisor/conf.d/node-app.conf << EOF
 [program:nodeapp]
 directory=/opt/app
