@@ -19,7 +19,7 @@
     "express": "^4.12.0",
     "express-session": "^1.10.3",
     "express-winston": "^0.2.12",
-    "gcloud": "git://github.com/GoogleCloudPlatform/gcloud-node",
+    "gcloud": "^0.16.0",
     "googleapis": "^1.1.5",
     "jade": "^1.9.2",
     "lodash": "^3.3.1",
