@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 # [START runtime]
-runtime: custom
+runtime: nodejs
 vm: true
 api_version: 1
 module: default
