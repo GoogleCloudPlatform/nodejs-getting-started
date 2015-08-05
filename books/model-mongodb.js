@@ -22,6 +22,7 @@ module.exports = function(config, background) {
 
   var url = config.mongodb.url;
   var collectionName = config.mongodb.collection;
+  var collection;
 
 
   function fromMongo(item) {
@@ -39,12 +40,17 @@ module.exports = function(config, background) {
 
 
   function getCollection(cb) {
+    if (collection) {
+      setImmediate(function() { cb(null, collection); });
+      return;
+    }
     MongoClient.connect(url, function(err, db) {
       if (err) {
         console.log(err);
         return cb(err);
       }
-      cb(null, db.collection(collectionName));
+      collection = db.collection(collectionName);
+      cb(null, collection);
     });
   }
 
