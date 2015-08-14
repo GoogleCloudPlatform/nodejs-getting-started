@@ -1,16 +1,16 @@
-#	Copyright 2015, Google, Inc. 
-# Licensed under the Apache License, Version 2.0 (the "License"); 
-# you may not use this file except in compliance with the License. 
-# You may obtain a copy of the License at 
-#  
-#    http://www.apache.org/licenses/LICENSE-2.0 
-#  
-# Unless required by applicable law or agreed to in writing, software 
-# distributed under the License is distributed on an "AS IS" BASIS, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-# See the License for the specific language governing permissions and 
-# limitations under the License.
+# Copyright 2015 Google Inc.
 #
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #! /bin/bash
 
 set -ex
@@ -25,6 +25,7 @@ SCOPES="userinfo-email,\
 logging-write,\
 storage-full,\
 datastore,\
+https://www.googleapis.com/auth/pubsub,\
 https://www.googleapis.com/auth/projecthosting"
 TAGS=http-server
 
@@ -33,7 +34,6 @@ MAX_INSTANCES=10
 TARGET_UTILIZATION=0.6
 
 SERVICE=frontend-web-service
-AUTOSCALER=frontend-web-autoscaler
 
 #
 # Instance group setup
@@ -51,12 +51,17 @@ gcloud compute instance-templates create $TEMPLATE \
 
 # Create the managed instance group.
 
-gcloud preview managed-instance-groups \
-  --zone $ZONE \
+gcloud compute instance-groups managed \
   create $GROUP \
   --base-instance-name $GROUP \
   --size $MIN_INSTANCES \
-  --template $TEMPLATE
+  --template $TEMPLATE \
+  --zone $ZONE 
+
+gcloud compute instance-groups managed set-named-ports \
+    $GROUP \
+    --named-port http:8080 \
+    --zone $ZONE
 
 #
 # Load Balancer Setup
@@ -73,14 +78,6 @@ gcloud preview managed-instance-groups \
 #
 # We'll create these resources in reverse order:
 # service, health check, backend service, url map, proxy.
-
-# Define a service for our instance group.
-# The load balancer uses services to direct traffic to specific ports on our instances.
-gcloud preview instance-groups \
-  --zone $ZONE \
-  add-service $GROUP \
-  --port 8080 \
-  --service http
 
 # Create a health check
 # The load balancer will use this check to keep track of which instances to send traffic to.
@@ -114,10 +111,14 @@ gcloud compute forwarding-rules create $SERVICE-http-rule \
 #
 # Autoscaler configuration
 #
-
-gcloud preview autoscaler \
-  --zone $ZONE \
-  create $AUTOSCALER \
+gcloud compute instance-groups managed set-autoscaling \
+  $GROUP \
   --max-num-replicas $MAX_INSTANCES \
-  --target-load-balancer-utilization $TARGET_UTILIZATION \
-  --target $GROUP
+  --target-load-balancing-utilization $TARGET_UTILIZATION \
+  --zone $ZONE 
+
+gcloud compute firewall-rules create default-allow-http-8080 \
+    --allow tcp:8080 \
+    --source-ranges 0.0.0.0/0 \
+    --target-tags http-server \
+    --description "Allow port 8080 access to http-server"
