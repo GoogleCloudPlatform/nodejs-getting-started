@@ -39,3 +39,16 @@ env_variables:
   LOG_PATH: /var/log/app_engine/custom_logs
   NODE_ENV: production
 # [END env]
+
+# Temporary workaround for a Cloud SDK bug.
+# Ensures that node_modules directory and any .log files are not uploaded (the
+# other entries are the default values for skip_files). This will skip any Unix
+# hidden files (such as the .git directory)
+skip_files:
+ - ^(.*/)?#.*#$
+ - ^(.*/)?.*~$
+ - ^(.*/)?.*\.py[co]$
+ - ^(.*/)?.*/RCS/.*$
+ - ^(.*/)?\..*$
+ - ^(.*/)?.*/node_modules/.*$
+ - ^(.*/)?.*\.log$
