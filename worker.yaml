@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 # [START yaml]
-runtime: custom
+runtime: nodejs
 vm: true
 api_version: 1
 module: worker
@@ -37,5 +37,4 @@ beta_settings:
 env_variables:
   SCRIPT: worker.js
   LOG_PATH: /var/log/app_engine/custom_logs
-  NODE_ENV: production
 # [END yaml]
