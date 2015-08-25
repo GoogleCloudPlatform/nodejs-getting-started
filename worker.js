@@ -1,15 +1,15 @@
 /*
-	Copyright 2015, Google, Inc. 
- Licensed under the Apache License, Version 2.0 (the "License"); 
- you may not use this file except in compliance with the License. 
- You may obtain a copy of the License at 
-  
-    http://www.apache.org/licenses/LICENSE-2.0 
-  
- Unless required by applicable law or agreed to in writing, software 
- distributed under the License is distributed on an "AS IS" BASIS, 
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- See the License for the specific language governing permissions and 
+	Copyright 2015, Google, Inc.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
  limitations under the License.
 */
 "use strict";
@@ -39,14 +39,17 @@ var bookCount = 0;
 
 
 /*
-  When running on Google App Engine Managed VMs, the worker needs
-  to respond to health checks. We can re-use the health checks
-  from the main application and create a simple server.
+  Our application must respond to HTTP requests when running in Google App
+  Engine, and must specifically respond to health checks when an Autoscaled,
+  Load-balanced Managed Instance Group.
 */
 var app = express();
 
 app.use(logging.requestLogger);
-app.use(require('./lib/appengine-handlers'));
+
+app.get('/_ah/health', function(req, res) {
+  res.status(200).send('ok');
+});
 
 app.get('/', function(req, res) {
   res.send('This worker has processed ' + bookCount + ' books.');
