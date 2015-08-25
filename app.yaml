@@ -14,7 +14,6 @@
 runtime: nodejs
 vm: true
 api_version: 1
-module: default
 
 resources:
   cpu: .5
@@ -32,9 +31,6 @@ beta_settings:
   service_account_scopes: >
     https://www.googleapis.com/auth/userinfo.email,
     https://www.googleapis.com/auth/cloud-platform
-
-env_variables:
-  NODE_ENV: production
 
 # Temporary workaround for a Cloud SDK bug.
 # Ensures that node_modules directory and any .log files are not uploaded (the
