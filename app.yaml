@@ -14,7 +14,6 @@
 runtime: nodejs
 vm: true
 api_version: 1
-module: default
 
 resources:
   cpu: .5
@@ -37,7 +36,6 @@ beta_settings:
 env_variables:
   OAUTH2_CALLBACK: http://your-project-id.appspot.com/oauth2callback
   LOG_PATH: /var/log/app_engine/custom_logs
-  NODE_ENV: production
 # [END env]
 
 # Temporary workaround for a Cloud SDK bug.
