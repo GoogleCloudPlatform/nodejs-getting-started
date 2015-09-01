@@ -104,7 +104,7 @@ gcloud compute backend-services create $SERVICE \
 
 # [START add_backend_service]
 gcloud compute backend-services add-backend $SERVICE \
-  --group $GROUP \
+  --instance-group $GROUP \
   --zone $ZONE
 # [END add_backend_service]
 
