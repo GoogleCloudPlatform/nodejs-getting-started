@@ -34,7 +34,7 @@ beta_settings:
 
 # [START env]
 env_variables:
-  OAUTH2_CALLBACK: http://your-project-id.appspot.com/oauth2callback
+  OAUTH2_CALLBACK: https://your-project-id.appspot.com/oauth2callback
   LOG_PATH: /var/log/app_engine/custom_logs
 # [END env]
 
