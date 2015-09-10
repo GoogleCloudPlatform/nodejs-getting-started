@@ -28,6 +28,9 @@ module.exports = {
     projectId: 'your-project-id'
   },
 
+  // Typically, you will create a bucket with the same name as your project ID.
+  cloudStorageBucket: 'your-cloud-storage-bucket',
+
   mysql: {
     user: 'your-mysql-user',
     password: 'your-mysql-password',

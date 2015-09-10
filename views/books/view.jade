@@ -11,6 +11,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
+// [START view]
 extends ../base.jade
 
 block content
@@ -26,9 +27,12 @@ block content
       span  Delete book
 
   .media
+    .media-left
+      img(src=book.imageUrl || "http://placekitten.com/g/128/192")
     .media-body
       h4= book.title
         | &nbsp;
         small= book.publishedDate
       h5 By #{book.author||'unknown'}
       p= book.description
+// [END view]

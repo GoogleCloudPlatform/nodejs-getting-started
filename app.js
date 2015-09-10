@@ -25,9 +25,12 @@ app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
 
-// Books
+// Setup modules and dependencies
+var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
 var model = require('./books/model-' + config.dataBackend)(config);
-app.use('/books', require('./books/crud')(model));
+
+// Books
+app.use('/books', require('./books/crud')(model, images));
 app.use('/api/books', require('./books/api')(model));
 
 

@@ -18,10 +18,8 @@ var gcloud = require('gcloud');
 
 module.exports = function(config) {
 
-  // [START config]
   var ds = gcloud.datastore.dataset(config.gcloud);
   var kind = 'Book';
-  // [END config]
 
 
   // Translates from Datastore's entity format to
@@ -88,7 +86,6 @@ module.exports = function(config) {
   // The ``limit`` argument determines the maximum amount of results to
   // return per page. The ``token`` argument allows requesting additional
   // pages. The callback is invoked with ``(err, books, nextPageToken)``.
-  // [START list]
   function list(limit, token, cb) {
     var q = ds.createQuery([kind])
       .limit(limit)
@@ -101,13 +98,11 @@ module.exports = function(config) {
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }
-  // [END list]
 
 
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
   // queued for background processing.
-  // [START update]
   function update(id, data, cb) {
     var key;
     if (id) {
@@ -128,7 +123,6 @@ module.exports = function(config) {
       }
     );
   }
-  // [END update]
 
 
   function read(id, cb) {
@@ -152,7 +146,6 @@ module.exports = function(config) {
   }
 
 
-  // [START exports]
   return {
     create: function(data, cb) {
       update(null, data, cb);
@@ -162,6 +155,5 @@ module.exports = function(config) {
     delete: _delete,
     list: list
   };
-  // [END exports]
 
 };
