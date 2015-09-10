@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-getting-started",
+  "version": "1.0.0",
+  "description": "End to end sample for running Node.JS applications on Google Cloud Platform",
+  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "monitor": "nodemon app.js",
+    "deploy": "gcloud preview app deploy app.yaml"
+  },
+  "author": "Jon Wayne Parrott <jonwayne@google.com>, Jonathan Simon <jbsimon@google.com>",
+  "license": "Apache Version 2.0",
+  "dependencies": {
+    "express": "^4.12.0"
+  }
+}
