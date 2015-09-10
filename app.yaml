@@ -11,10 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# [START runtime]
 runtime: nodejs
 vm: true
-# [END runtime]
 
 # Temporary setting to keep gcloud from uploading node_modules
 skip_files:

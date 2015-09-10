@@ -13,25 +13,42 @@
 
 'use strict';
 
+var path = require('path');
 var express = require('express');
+var config = require('./config');
 
 var app = express();
 
+app.disable('etag');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+app.set('trust proxy', true);
 
-// [START hello_world]
-// Say hello!
+
+// Books
+var model = require('./books/model-' + config.dataBackend)(config);
+app.use('/books', require('./books/crud')(model));
+app.use('/api/books', require('./books/api')(model));
+
+
+// Redirect root to /books
 app.get('/', function(req, res) {
-  res.status(200).send('Hello, world!');
+  res.redirect('/books');
 });
-// [END hello_world]
 
 
-// [START server]
+// Basic error handler
+app.use(function(err, req, res, next) {
+  /* jshint unused:false */
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+
 // Start the server
-var server = app.listen(process.env.PORT || 8080, function () {
+var server = app.listen(config.port, function () {
   var host = server.address().address;
   var port = server.address().port;
 
   console.log('App listening at http://%s:%s', host, port);
 });
-// [END server]
