@@ -71,6 +71,24 @@ module.exports = function(config) {
   }
 
 
+  // [START listby]
+  function listBy(userid, limit, token, cb) {
+    token = token ? parseInt(token, 10) : 0;
+    getCollection(function(err, collection) {
+      collection.find({createdById: userid})
+        .skip(token)
+        .limit(limit)
+        .toArray(function(err, results) {
+          if (err) { return cb(err); }
+          var hasMore =
+            results.length === limit ? token + results.length : false;
+          cb(null, results.map(fromMongo), hasMore);
+        });
+    });
+  }
+  // [END listby]
+
+
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -134,7 +152,8 @@ module.exports = function(config) {
     read: read,
     update: update,
     delete: _delete,
-    list: list
+    list: list,
+    listBy: listBy
   };
 
 };
