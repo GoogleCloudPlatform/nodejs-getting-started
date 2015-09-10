@@ -16,9 +16,15 @@
 var express = require('express');
 
 
-module.exports = function(model, images) {
+module.exports = function(model, images, oauth2) {
 
   var router = express.Router();
+
+
+  // Use the oauth middleware to automatically get the user's profile
+  // information and expose login/logout URLs to templates.
+  router.use(oauth2.aware);
+  router.use(oauth2.template);
 
 
   function handleRpcError(err, res) {
@@ -45,6 +51,23 @@ module.exports = function(model, images) {
   });
 
 
+  // [START mine]
+  // Use the oauth2.required middleware to ensure that only logged-in users
+  // can access this handler.
+  router.get('/mine', oauth2.required, function list(req, res) {
+    var books = model.listBy(req.session.profile.id, 10, req.query.pageToken,
+      function(err, entities, cursor) {
+        if (err) return handleRpcError(err, res);
+        res.render('books/list.jade', {
+          books: entities,
+          nextPageToken: cursor
+        });
+      }
+    );
+  });
+  // [END mine]
+
+
   router.get('/add', function addForm(req, res) {
     res.render('books/form.jade', {
       book: {},
@@ -57,6 +80,14 @@ module.exports = function(model, images) {
   router.post('/add', images.multer.single('image'), images.sendUploadToGCS,
     function insert(req, res) {
       var data = req.body;
+
+      // If the user is logged in, set them as the creator of the book.
+      if (req.session.profile) {
+        data.createdBy = req.session.profile.displayName;
+        data.createdById = req.session.profile.id;
+      } else {
+        data.createdBy = 'Anonymous';
+      }
 
       // Was an image uploaded? If so, we'll use its public URL in cloud storage.
       if (req.file && req.file.cloudStoragePublicUrl) {

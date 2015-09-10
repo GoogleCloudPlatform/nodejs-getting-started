@@ -21,6 +21,9 @@ beta_settings:
     https://www.googleapis.com/auth/userinfo.email,
     https://www.googleapis.com/auth/cloud-platform
 
+env_variables:
+  OAUTH2_CALLBACK: https://your-project-id.appspot.com/oauth2callback
+
 # Temporary workaround for a Cloud SDK bug.
 # Ensures that node_modules directory and any .log files are not uploaded (the
 # other entries are the default values for skip_files). This will skip any Unix

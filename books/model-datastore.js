@@ -98,6 +98,22 @@ module.exports = function(config) {
     });
   }
 
+  // Similar to ``list``, but only lists the books created by the specified
+  // user.
+  // [START listby]
+  function listBy(userId, limit, token, cb) {
+    var q = ds.createQuery([kind])
+      .filter('createdById =', userId)
+      .limit(limit)
+      .start(token);
+
+    ds.runQuery(q, function(err, entities, cursor) {
+      if (err) return cb(err);
+      cb(null, entities.map(fromDatastore), entities.length === limit ? cursor : false);
+    });
+  }
+  // [END listby]
+
 
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
@@ -150,7 +166,8 @@ module.exports = function(config) {
     read: read,
     update: update,
     delete: _delete,
-    list: list
+    list: list,
+    listBy: listBy
   };
 
 };

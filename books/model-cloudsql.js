@@ -40,6 +40,19 @@ module.exports = function(config) {
   }
 
 
+  // [START listby]
+  function listBy(userId, limit, token, cb) {
+    token = token ? parseInt(token, 10) : 0;
+    var connection = getConnection();
+    connection.query("SELECT * FROM `books` WHERE `createdById` = ? LIMIT ? OFFSET ?", [userId, limit, token], function(err, results) {
+      if (err) return cb(err);
+      cb(null, results, results.length === limit ? token + results.length : false);
+    });
+    connection.end();
+  }
+  // [END listby]
+
+
   function create(data, cb) {
     var connection = getConnection();
     connection.query('INSERT INTO `books` SET ?', data, function(err, res) {
@@ -84,6 +97,7 @@ module.exports = function(config) {
   return {
     createSchema: createSchema,
     list: list,
+    listBy: listBy,
     create: create,
     read: read,
     update: update,
