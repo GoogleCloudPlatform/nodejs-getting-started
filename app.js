@@ -29,9 +29,7 @@ app.set('trust proxy', true);
 
 // Add the request logger before anything else so that it can
 // accurately log requests.
-// [START requests]
 app.use(logging.requestLogger);
-// [END requests]
 
 
 // Configure the session and session storage.
@@ -49,8 +47,9 @@ app.use(oauth2.router);
 
 
 // Setup modules and dependencies
-var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
-var model = require('./books/model-' + config.dataBackend)(config);
+var background = require('./lib/background')(config.gcloud, logging);
+var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket, logging);
+var model = require('./books/model-' + config.dataBackend)(config, background);
 
 
 // Books
@@ -64,18 +63,15 @@ app.get('/', function(req, res) {
 });
 
 
-
 // Add the error logger after all middleware and routes so that
 // it can log errors from the whole application. Any custom error
 // handlers should go after this.
-// [START errors]
 app.use(logging.errorLogger);
 
 // Basic error handler.
 app.use(function(err, req, res, next) {
   res.status(500).send('Something broke!');
 });
-// [END errors]
 
 
 // Start the server

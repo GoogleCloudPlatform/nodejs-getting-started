@@ -17,7 +17,7 @@ var extend = require('lodash').assign;
 var mysql = require('mysql');
 
 
-module.exports = function(config) {
+module.exports = function(config, background) {
 
   function getConnection() {
     return mysql.createConnection(extend({
@@ -51,14 +51,17 @@ module.exports = function(config) {
   }
 
 
+  // [START create]
   function create(data, cb) {
     var connection = getConnection();
     connection.query('INSERT INTO `books` SET ?', data, function(err, res) {
       if (err) return cb(err);
+      background.queueBook(res.insertId);
       read(res.insertId, cb);
     });
     connection.end();
   }
+  // [END create]
 
 
   function read(id, cb) {
@@ -75,14 +78,17 @@ module.exports = function(config) {
   }
 
 
+  // [START update]
   function update(id, data, cb) {
     var connection = getConnection();
     connection.query('UPDATE `books` SET ? WHERE `id` = ?', [data, id], function(err) {
       if (err) return cb(err);
+      background.queueBook(id);
       read(id, cb);
     });
     connection.end();
   }
+  // [END update]
 
 
   function _delete(id, cb) {
