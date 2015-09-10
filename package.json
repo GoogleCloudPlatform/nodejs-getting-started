@@ -17,6 +17,7 @@
     "body-parser": "^1.14.1",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.13.3",
+    "express-winston": "^0.4.1",
     "gcloud": "^0.24.0",
     "googleapis": "^2.1.5",
     "jade": "^1.11.0",
@@ -24,7 +25,8 @@
     "mongodb": "^2.0.46",
     "multer": "^1.1.0",
     "mysql": "^2.9.0",
-    "prompt": "^0.2.14"
+    "prompt": "^0.2.14",
+    "winston": "^1.1.1"
   },
   "engines": {
     "node": ">=0.12.7"

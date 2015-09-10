@@ -98,9 +98,9 @@ module.exports = function(config) {
     });
   }
 
+
   // Similar to ``list``, but only lists the books created by the specified
   // user.
-  // [START listby]
   function listBy(userId, limit, token, cb) {
     var q = ds.createQuery([kind])
       .filter('createdById =', userId)
@@ -112,7 +112,6 @@ module.exports = function(config) {
       cb(null, entities.map(fromDatastore), entities.length === limit ? cursor : false);
     });
   }
-  // [END listby]
 
 
   // Creates a new book or updates an existing book with new data. The provided
