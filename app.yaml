@@ -11,11 +11,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# [START runtime]
 runtime: nodejs
 vm: true
 api_version: 1
-# [END runtime]
+
+# Temporary workaround to allow access to Google Cloud Datastore
+beta_settings:
+  service_account_scopes: >
+    https://www.googleapis.com/auth/userinfo.email,
+    https://www.googleapis.com/auth/cloud-platform
 
 # Temporary workaround for a Cloud SDK bug.
 # Ensures that node_modules directory and any .log files are not uploaded (the
