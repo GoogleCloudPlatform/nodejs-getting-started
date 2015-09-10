@@ -34,7 +34,6 @@ var model = require('./books/model-' + config.dataBackend)(config, backgroundStu
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
-// [START server]
 var app = express();
 
 app.use(logging.requestLogger);
@@ -62,13 +61,11 @@ var server = app.listen(config.port || 8080, function () {
 
   console.log('App listening at http://%s:%s', host, port);
 });
-// [END server]
 
 
 // Subscribe to Cloud Pub/Sub and recieve messages to process books.
 // The subscription will continue to listen for messages until the process
 // is killed.
-// [START subscribe]
 background.subscribe(function(message) {
   if (message.action == 'processBook') {
     logging.info('Received request to process book ' + message.bookId);
@@ -77,12 +74,10 @@ background.subscribe(function(message) {
     logging.warn('Unknown request', message);
   }
 });
-// [END subscribe]
 
 
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
-// [START process]
 function processBook(bookId) {
   waterfall([
     // Load the current data
@@ -101,13 +96,11 @@ function processBook(bookId) {
     else logging.info('Updated book ' + bookId);
   });
 }
-// [END process]
 
 
 // Tries to find additional information about a book and updates
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
-// [START find]
 function findBookInfo(book, cb) {
   queryBooksApi(book.title, function(err, r) {
     if (err) return cb(err);
@@ -133,12 +126,10 @@ function findBookInfo(book, cb) {
     });
   });
 }
-// [END find]
 
 
 // Calls out to the Google Books API to get additional
 // information about a given book.
-// [START query]
 function queryBooksApi(query, cb) {
   request(
     'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(query),
@@ -150,7 +141,6 @@ function queryBooksApi(query, cb) {
     }
   );
 }
-// [END query]
 
 
 
