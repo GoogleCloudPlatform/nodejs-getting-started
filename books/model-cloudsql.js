@@ -41,7 +41,6 @@ module.exports = function(config) {
   }
 
 
-  // [START listby]
   function listBy(userId, limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     var connection = getConnection();
@@ -55,7 +54,6 @@ module.exports = function(config) {
       });
     connection.end();
   }
-  // [END listby]
 
 
   function create(data, cb) {

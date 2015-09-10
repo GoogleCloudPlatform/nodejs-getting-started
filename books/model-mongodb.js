@@ -71,7 +71,6 @@ module.exports = function(config) {
   }
 
 
-  // [START listby]
   function listBy(userid, limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     getCollection(function(err, collection) {
@@ -86,7 +85,6 @@ module.exports = function(config) {
         });
     });
   }
-  // [END listby]
 
 
   function create(data, cb) {

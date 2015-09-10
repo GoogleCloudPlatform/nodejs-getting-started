@@ -17,6 +17,7 @@ var path = require('path');
 var express = require('express');
 var session = require('cookie-session');
 var config = require('./config');
+var logging = require('./lib/logging')();
 
 var app = express();
 
@@ -26,17 +27,21 @@ app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
 
+// Add the request logger before anything else so that it can
+// accurately log requests.
+// [START requests]
+app.use(logging.requestLogger);
+// [END requests]
+
+
 // Configure the session and session storage.
 // MemoryStore isn't viable in a multi-server configuration, so we
 // use encrypted cookies. Redis or Memcache is a great option for
 // more secure sessions, if desired.
-// [START session]
 app.use(session({
   secret: config.secret,
   signed: true
 }));
-// [END session]
-
 
 // OAuth2
 var oauth2 = require('./lib/oauth2')(config.oauth2);
@@ -58,13 +63,19 @@ app.get('/', function(req, res) {
   res.redirect('/books');
 });
 
+// Add the error logger after all middleware and routes so that
+// it can log errors from the whole application. Any custom error
+// handlers should go after this.
+// [START errors]
+app.use(logging.errorLogger);
+
 
 // Basic error handler
 app.use(function(err, req, res, next) {
   /* jshint unused:false */
-  console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+// [END errors]
 
 
 // Start the server
