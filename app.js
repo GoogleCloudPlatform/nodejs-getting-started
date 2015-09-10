@@ -63,6 +63,14 @@ app.get('/', function(req, res) {
   res.redirect('/books');
 });
 
+
+// Our application will need to respond to health checks when running on
+// Compute Engine with Managed Instance Groups.
+app.get('/_ah/health', function(req, res) {
+  res.status(200).send('ok');
+});
+
+
 // Add the error logger after all middleware and routes so that
 // it can log errors from the whole application. Any custom error
 // handlers should go after this.

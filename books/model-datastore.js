@@ -119,7 +119,6 @@ module.exports = function(config, background) {
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
   // queued for background processing.
-  // [START update]
   function update(id, data, cb) {
     var key;
     if (id) {
@@ -143,7 +142,6 @@ module.exports = function(config, background) {
       }
     );
   }
-  // [END update]
 
 
   function read(id, cb) {

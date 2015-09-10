@@ -56,7 +56,6 @@ module.exports = function(config, background) {
   }
 
 
-  // [START create]
   function create(data, cb) {
     var connection = getConnection();
     connection.query('INSERT INTO `books` SET ?', data, function(err, res) {
@@ -66,7 +65,6 @@ module.exports = function(config, background) {
     });
     connection.end();
   }
-  // [END create]
 
 
   function read(id, cb) {
@@ -86,7 +84,6 @@ module.exports = function(config, background) {
   }
 
 
-  // [START update]
   function update(id, data, cb) {
     var connection = getConnection();
     connection.query(
@@ -97,7 +94,6 @@ module.exports = function(config, background) {
       });
     connection.end();
   }
-  // [END update]
 
 
   function _delete(id, cb) {

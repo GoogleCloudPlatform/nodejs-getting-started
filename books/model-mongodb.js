@@ -87,7 +87,6 @@ module.exports = function(config, background) {
   }
 
 
-  // [START create]
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -99,7 +98,6 @@ module.exports = function(config, background) {
       });
     });
   }
-  // [END create]
 
 
   function read(id, cb) {
@@ -121,7 +119,6 @@ module.exports = function(config, background) {
   }
 
 
-  // [START update]
   function update(id, data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -139,7 +136,6 @@ module.exports = function(config, background) {
       );
     });
   }
-  // [END update]
 
 
   function _delete(id, cb) {
