@@ -24,7 +24,6 @@ module.exports = function(config) {
   var collection;
 
 
-  // [START translate]
   function fromMongo(item) {
     if (item.length) item = item.pop();
     item.id = item._id;
@@ -37,7 +36,6 @@ module.exports = function(config) {
     delete item.id;
     return item;
   }
-  // [END translate]
 
 
   function getCollection(cb) {
@@ -56,7 +54,6 @@ module.exports = function(config) {
   }
 
 
-  // [START list]
   function list(limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     getCollection(function(err, collection) {
@@ -70,10 +67,8 @@ module.exports = function(config) {
         });
     });
   }
-  // [END list]
 
 
-  // [START create]
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) return cb(err);
@@ -84,7 +79,6 @@ module.exports = function(config) {
       });
     });
   }
-  // [END create]
 
 
   function read(id, cb) {
@@ -104,7 +98,6 @@ module.exports = function(config) {
   }
 
 
-  // [START update]
   function update(id, data, cb) {
     getCollection(function(err, collection) {
       if (err) return cb(err);
@@ -121,7 +114,6 @@ module.exports = function(config) {
       );
     });
   }
-  // [END update]
 
 
   function _delete(id, cb) {

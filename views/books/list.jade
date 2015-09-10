@@ -23,6 +23,8 @@ block content
   each book in books
     .media
       a(href="/books/#{book.id}")
+        .media-left
+            img(src=book.imageUrl || "http://placekitten.com/g/128/192")
         .media-body
           h4= book.title
           p= book.author

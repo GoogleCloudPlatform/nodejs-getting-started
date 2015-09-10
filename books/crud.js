@@ -14,14 +14,11 @@
 'use strict';
 
 var express = require('express');
-var bodyParser = require('body-parser');
 
 
-module.exports = function(model) {
+module.exports = function(model, images) {
 
   var router = express.Router();
-
-  router.use(bodyParser.urlencoded({extended: false}));
 
 
   function handleRpcError(err, res) {
@@ -29,7 +26,7 @@ module.exports = function(model) {
   }
 
 
-  router.use(function(req, res, next){
+  router.use(function(req, res, next) {
     res.set('Content-Type', 'text/html');
     next();
   });
@@ -48,27 +45,32 @@ module.exports = function(model) {
   });
 
 
-// [START add_get]
   router.get('/add', function addForm(req, res) {
     res.render('books/form.jade', {
       book: {},
       action: 'Add'
     });
   });
-// [END add_get]
 
 
-// [START add_post]
-  router.post('/add', function insert(req, res) {
-    var data = req.body;
+  // [START add]
+  router.post('/add', images.multer.single('image'), images.sendUploadToGCS,
+    function insert(req, res) {
+      var data = req.body;
 
-    // Save the data to the database.
-    model.create(data, function(err, savedData) {
-      if (err) return handleRpcError(err, res);
-      res.redirect(req.baseUrl + '/' + savedData.id);
+      // Was an image uploaded? If so, we'll use its public URL in cloud storage.
+      if (req.file && req.file.cloudStoragePublicUrl) {
+        data.imageUrl = req.file.cloudStoragePublicUrl;
+      }
+
+      // Save the data to the database.
+      model.create(data, function(err, savedData) {
+        if (err) return handleRpcError(err, res);
+        res.redirect(req.baseUrl + '/' + savedData.id);
+      });
     });
-  });
-// [END add_post]
+  // [END add]
+
 
 
   router.get('/:book/edit', function editForm(req, res) {
@@ -82,14 +84,20 @@ module.exports = function(model) {
   });
 
 
-  router.post('/:book/edit', function update(req, res) {
-    var data = req.body;
+  router.post('/:book/edit', images.multer.single('image'),
+    images.sendUploadToGCS, function update(req, res) {
+      var data = req.body;
 
-    model.update(req.params.book, data, function(err, savedData) {
-      if (err) return handleRpcError(err, res);
-      res.redirect(req.baseUrl + '/' + savedData.id);
+      // Was an image uploaded? If so, we'll use its public URL in cloud storage.
+      if (req.file && req.file.cloudStoragePublicUrl) {
+        req.body.imageUrl = req.file.cloudStoragePublicUrl;
+      }
+
+      model.update(req.params.book, data, function(err, savedData) {
+        if (err) return handleRpcError(err, res);
+        res.redirect(req.baseUrl + '/' + savedData.id);
+      });
     });
-  });
 
 
   router.get('/:book', function get(req, res) {
