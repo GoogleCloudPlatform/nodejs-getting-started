@@ -17,7 +17,7 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 
 
-module.exports = function(config) {
+module.exports = function(config, background) {
 
   var url = config.mongodb.url;
   var collectionName = config.mongodb.collection;
@@ -87,16 +87,19 @@ module.exports = function(config) {
   }
 
 
+  // [START create]
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
       collection.insert(data, {w: 1}, function(err, result) {
         if (err) { return cb(err); }
         var item = fromMongo(result.ops);
+        background.queueBook(item.id);
         cb(null, item);
       });
     });
   }
+  // [END create]
 
 
   function read(id, cb) {
@@ -118,6 +121,7 @@ module.exports = function(config) {
   }
 
 
+  // [START update]
   function update(id, data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -129,11 +133,13 @@ module.exports = function(config) {
         {w: 1},
         function(err) {
           if (err) { return cb(err); }
+          background.queueBook(id);
           return read(id, cb);
         }
       );
     });
   }
+  // [END update]
 
 
   function _delete(id, cb) {

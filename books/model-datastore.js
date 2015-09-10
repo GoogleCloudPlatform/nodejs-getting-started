@@ -16,7 +16,7 @@
 var gcloud = require('gcloud');
 
 
-module.exports = function(config) {
+module.exports = function(config, background) {
 
   var ds = gcloud.datastore.dataset(config.gcloud);
   var kind = 'Book';
@@ -119,6 +119,7 @@ module.exports = function(config) {
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
   // queued for background processing.
+  // [START update]
   function update(id, data, cb) {
     var key;
     if (id) {
@@ -135,10 +136,14 @@ module.exports = function(config) {
     ds.save(
       entity,
       function(err) {
-        cb(err, err ? null : fromDatastore(entity));
+        if(err) { return cb(err); }
+        var book = fromDatastore(entity);
+        background.queueBook(book.id);
+        cb(null, book);
       }
     );
   }
+  // [END update]
 
 
   function read(id, cb) {

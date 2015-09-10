@@ -32,7 +32,7 @@ module.exports = {
   },
 
   // Typically, you will create a bucket with the same name as your project ID.
-  cloudStorageBucket: 'your-cloud-storage-bucket',
+  cloudStorageBucket: 'your-dataset-id',
 
   mysql: {
     user: 'your-mysql-user',
