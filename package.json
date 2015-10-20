@@ -13,5 +13,8 @@
   "license": "Apache Version 2.0",
   "dependencies": {
     "express": "^4.12.0"
+  },
+  "engines": {
+    "node": ">=0.10"
   }
 }
