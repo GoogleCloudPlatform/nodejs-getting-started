@@ -76,7 +76,7 @@ app.get('/_ah/health', function(req, res) {
 app.use(logging.errorLogger);
 
 // Basic error handler.
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   res.status(500).send('Something broke!');
 });
 

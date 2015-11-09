@@ -1,5 +1,7 @@
 # Getting started with Node.js on Google Cloud Platform
 
+[![Build Status](https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started.svg)](https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started)
+
 This repository is the complete sample code for the [Node.js Getting Started on Google Cloud Platform](http://cloud.google.com/nodejs/getting-started) tutorials. Please refer to the tutorials for instructions on configuring, running, and deploying these samples.
 
 The code for the samples is contained in individual branches on this repository.

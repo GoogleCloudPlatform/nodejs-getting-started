@@ -8,9 +8,21 @@
     "start": "node ${SCRIPT:-app.js}",
     "monitor": "nodemon ${SCRIPT:-app.js}",
     "deploy": "gcloud preview app deploy app.yaml worker.yaml",
-    "init-cloudsql": "node books/model-cloudsql.js"
+    "init-cloudsql": "node books/model-cloudsql.js",
+    "lint": "jshint --exclude-path=.gitignore .",
+    "test": "npm run lint"
   },
-  "author": "Jon Wayne Parrott <jonwayne@google.com>, Jonathan Simon <jbsimon@google.com>",
+  "author": "Google Inc.",
+  "contributors": [
+    {
+      "name": "Jon Wayne Parrott",
+      "email": "jonwayne@google.com"
+    },
+    {
+      "name": "Jonathan Simon",
+      "email": "jbsimon@google.com"
+    }
+  ],
   "license": "Apache Version 2.0",
   "dependencies": {
     "async": "^1.5.0",
@@ -28,6 +40,9 @@
     "prompt": "^0.2.14",
     "request": "^2.65.0",
     "winston": "^1.1.1"
+  },
+  "devDependencies": {
+    "jshint": "^2.8.0"
   },
   "engines": {
     "node": ">=0.12.7"

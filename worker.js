@@ -26,7 +26,7 @@ var background = require('./lib/background')(config.gcloud, logging);
 // We'll pass this to the model so that we don't get an infinite loop of book
 // processing requests.
 var backgroundStub = {
-  queueBook: function(bookId, cb){ if(cb) cb(); }
+  queueBook: function(bookId) {}
 };
 
 var model = require('./books/model-' + config.dataBackend)(config, backgroundStub);
@@ -89,11 +89,13 @@ function processBook(bookId) {
     // Save the updated data
     function(updated, cb) {
       model.update(updated.id, updated, cb, true);
-      bookCount += 1;
     }
   ], function(err) {
     if (err) logging.error('Error occurred', err);
-    else logging.info('Updated book ' + bookId);
+    else {
+      bookCount += 1;
+      logging.info('Updated book ' + bookId);
+    }
   });
 }
 
