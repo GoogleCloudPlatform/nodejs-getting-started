@@ -8,8 +8,9 @@
     "start": "node app.js",
     "monitor": "nodemon app.js",
     "deploy": "gcloud preview app deploy app.yaml",
-    "lint": "jshint --exclude-path=.gitignore .",
-    "test": "npm run lint",
+    "lint": "jshint --exclude-path=../.gitignore .",
+    "mocha": "mocha test/*.test.js",
+    "test": "npm run lint && npm run mocha",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
   "author": "Google Inc.",
@@ -46,7 +47,9 @@
     "winston": "^1.1.1"
   },
   "devDependencies": {
-    "jshint": "^2.8.0"
+    "jshint": "^2.8.0",
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0"
   },
   "engines": {
     "node": ">=0.12.7"

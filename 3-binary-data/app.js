@@ -48,10 +48,14 @@ app.use(function(err, req, res, next) {
 });
 
 
-// Start the server
-var server = app.listen(config.port, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+if (module === require.main) {
+  // Start the server
+  var server = app.listen(config.port, function () {
+    var host = server.address().address;
+    var port = server.address().port;
 
-  console.log('App listening at http://%s:%s', host, port);
-});
+    console.log('App listening at http://%s:%s', host, port);
+  });
+}
+
+module.exports = app;

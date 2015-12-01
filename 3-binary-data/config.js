@@ -25,7 +25,7 @@ module.exports = {
 
   // This is the id of your project in the Google Developers Console.
   gcloud: {
-    projectId: 'your-project-id'
+    projectId: process.env.TEST_PROJECT_ID || 'your-project-id'
   },
 
   // Typically, you will create a bucket with the same name as your project ID.

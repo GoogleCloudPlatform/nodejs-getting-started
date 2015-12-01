@@ -5,13 +5,11 @@
   "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
   "private": true,
   "scripts": {
-    "start": "node ${SCRIPT:-app.js}",
-    "monitor": "nodemon ${SCRIPT:-app.js}",
-    "deploy": "gcloud preview app deploy app.yaml worker.yaml",
-    "lint": "jshint --exclude-path=../.gitignore .",
-    "mocha": "mocha test/*.test.js",
-    "test": "npm run lint && npm run mocha",
-    "init-cloudsql": "node books/model-cloudsql.js"
+    "lint": "jshint --exclude-path=.gitignore .",
+    "mocha": "mocha 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/*",
+    "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/*",
+    "test": "npm run lint && npm run cover",
+    "coveralls": "cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -48,6 +46,8 @@
     "winston": "^1.1.1"
   },
   "devDependencies": {
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.1",
     "jshint": "^2.8.0",
     "mocha": "^2.3.4",
     "proxyquire": "^1.7.3",
