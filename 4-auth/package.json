@@ -29,22 +29,22 @@
   ],
   "license": "Apache Version 2.0",
   "dependencies": {
-    "async": "^1.5.0",
-    "body-parser": "^1.14.1",
+    "async": "^1.5.2",
+    "body-parser": "^1.14.2",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.13.3",
-    "gcloud": "^0.24.0",
-    "googleapis": "^2.1.5",
+    "gcloud": "^0.27.0",
+    "googleapis": "^2.1.7",
     "jade": "^1.11.0",
-    "kerberos": "^0.0.17",
-    "lodash": "^3.10.1",
-    "mongodb": "^2.0.46",
+    "kerberos": "^0.0.18",
+    "lodash": "^4.0.0",
+    "mongodb": "^2.1.4",
     "multer": "^1.1.0",
-    "mysql": "^2.9.0",
+    "mysql": "^2.10.2",
     "prompt": "^0.2.14"
   },
   "devDependencies": {
-    "jshint": "^2.8.0"
+    "jshint": "^2.9.1"
   },
   "engines": {
     "node": ">=0.12.7"

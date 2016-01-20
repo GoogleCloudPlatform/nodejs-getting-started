@@ -39,7 +39,7 @@ module.exports = function(config, background) {
   //     property: value
   //   }
   function fromDatastore(obj) {
-    obj.data.id = obj.key.path[obj.key.path.length - 1];
+    obj.data.id = obj.key.id;
     return obj.data;
   }
 
@@ -92,9 +92,9 @@ module.exports = function(config, background) {
       .order('title')
       .start(token);
 
-    ds.runQuery(q, function(err, entities, cursor) {
+    ds.runQuery(q, function(err, entities, nextQuery) {
       if (err) { return cb(err); }
-      var hasMore = entities.length === limit ? cursor : false;
+      var hasMore = entities.length === limit ? nextQuery.startVal : false;
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }
@@ -108,9 +108,9 @@ module.exports = function(config, background) {
       .limit(limit)
       .start(token);
 
-    ds.runQuery(q, function(err, entities, cursor) {
+    ds.runQuery(q, function(err, entities, nextQuery) {
       if (err) { return cb(err); }
-      var hasMore = entities.length === limit ? cursor : false;
+      var hasMore = entities.length === limit ? nextQuery.startVal : false;
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }

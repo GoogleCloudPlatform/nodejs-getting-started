@@ -29,18 +29,18 @@
   ],
   "license": "Apache Version 2.0",
   "dependencies": {
-    "body-parser": "^1.14.1",
+    "body-parser": "^1.14.2",
     "express": "^4.13.3",
-    "gcloud": "^0.24.0",
+    "gcloud": "^0.27.0",
     "jade": "^1.11.0",
-    "kerberos": "^0.0.17",
-    "lodash": "^3.10.1",
-    "mongodb": "^2.0.46",
-    "mysql": "^2.9.0",
+    "kerberos": "^0.0.18",
+    "lodash": "^4.0.0",
+    "mongodb": "^2.1.4",
+    "mysql": "^2.10.2",
     "prompt": "^0.2.14"
   },
   "devDependencies": {
-    "jshint": "^2.8.0"
+    "jshint": "^2.9.1"
   },
   "engines": {
     "node": ">=0.12.7"
