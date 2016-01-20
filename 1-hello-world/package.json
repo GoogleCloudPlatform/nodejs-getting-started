@@ -31,7 +31,7 @@
     "express": "^4.13.3"
   },
   "devDependencies": {
-    "jshint": "^2.8.0"
+    "jshint": "^2.9.1"
   },
   "engines": {
     "node": ">=0.12.7"
