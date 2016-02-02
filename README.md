@@ -13,12 +13,12 @@ Tutorial | Folder
 [Cloud Storage](https://cloud.google.com/nodejs/getting-started/using-cloud-storage) | [3-binary-data](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/3-binary-data)
 [Authenticating users](https://cloud.google.com/nodejs/getting-started/authenticate-users) | [4-auth](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/4-auth)
 [Logging app events](https://cloud.google.com/nodejs/getting-started/logging-application-events) | [5-logging](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/5-logging)
-[Using Cloud Pub/Sub](https://cloud.google.com/nodejs/getting-started/using-pub-sub) | [6-pubsub](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/6-pubsub)
+[Using Cloud Pub/Sub](https://cloud.google.com/nodejs/getting-started/using-pub-sub) | [6-pubsub](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/6-pubsub)
 [Deploying to Google Compute Engine](https://cloud.google.com/nodejs/getting-started/run-on-compute-engine) | [7-gce](https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/7-gce)
 
 ## Contributing changes
 
-* See [CONTRIB.md](CONTRIB.md)
+* See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 ## Licensing
