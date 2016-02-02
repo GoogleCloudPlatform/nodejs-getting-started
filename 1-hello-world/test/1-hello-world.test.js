@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -44,14 +44,6 @@ describe(config.test, function () {
   });
 
   it('should run', function (done) {
-    this.timeout(15 * 1000); // Allow 15 seconds to test app
     utils.testLocalApp(config, done);
   });
-
-  if (process.env.TRAVIS && process.env.TRAVIS_NODE_VERSION === 'stable') {
-    it('should deploy', function (done) {
-      this.timeout(10 * 60 * 1000); // Allow 10 minutes to deploy app :(
-      utils.testDeployment(config, done);
-    });
-  }
 });

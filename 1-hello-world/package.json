@@ -9,7 +9,7 @@
     "monitor": "nodemon app.js",
     "deploy": "gcloud preview app deploy app.yaml",
     "lint": "jshint --exclude-path=../.gitignore .",
-    "mocha": "mocha test/*.test.js",
+    "mocha": "mocha test/*.test.js -t 30000",
     "test": "npm run lint && npm run mocha"
   },
   "author": "Google Inc.",
@@ -29,11 +29,11 @@
   ],
   "license": "Apache Version 2.0",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.4"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
-    "mocha": "^2.3.4",
+    "mocha": "^2.4.5",
     "supertest": "^1.1.0"
   },
   "engines": {

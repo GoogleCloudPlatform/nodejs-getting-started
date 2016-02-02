@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,22 +38,47 @@ describe(config.test, function () {
       .get('/')
       .expect(302)
       .expect(function (response) {
-        assert.equal(response.text, 'Found. Redirecting to /books');
+        assert.ok(response.text.indexOf('Redirecting to /books') !== -1);
       })
       .end(done);
   });
 
-  if (process.env.TEST_PROJECT_ID) {
-    it('should list books', function (done) {
-      request(require('../app'))
-        .get('/books')
-        .expect(200)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(config.msg) !== -1);
-        })
-        .end(done);
-    });
-  }
+  var id;
+
+  it('should create a book', function (done) {
+    request(require('../app'))
+      .post('/api/books')
+      .send({ foo: 'bar', title: 'beep' })
+      .expect(200)
+      .expect(function (response) {
+        id = response.body.id;
+        assert.ok(response.body.id);
+        assert.equal(response.body.foo, 'bar');
+        assert.equal(response.body.title, 'beep');
+      })
+      .end(done);
+  });
+
+  it('should list books', function (done) {
+    request(require('../app'))
+      .get('/api/books')
+      .expect(200)
+      .expect(function (response) {
+        assert.ok(Array.isArray(response.body.items));
+        assert.ok(response.body.items.length >= 1);
+      })
+      .end(done);
+  });
+
+  it('should delete a book', function (done) {
+    request(require('../app'))
+      .delete('/api/books/' + id)
+      .expect(200)
+      .expect(function (response) {
+        assert.equal(response.text, 'OK');
+      })
+      .end(done);
+  });
 
   it('should show add book form', function (done) {
     request(require('../app'))

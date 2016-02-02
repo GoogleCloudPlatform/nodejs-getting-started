@@ -1,4 +1,4 @@
-# Copyright 2015, Google, Inc.
+# Copyright 2015-2016, Google, Inc.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sudo: required
+sudo: false
 language: node_js
 node_js:
 - "stable"
@@ -28,13 +28,9 @@ cache:
   - 5-logging/node_modules/
   - 6-pubsub/node_modules/
   - 7-gce/node_modules/
-  - $TRAVIS_BUILD_DIR/node_modules/
-
-services:
-  - docker
 
 env:
-  - PATH=$PATH:$HOME/gcloud/google-cloud-sdk/bin GOOGLE_APPLICATION_CREDENTIALS=$TRAVIS_BUILD_DIR/test/encrypted/nodejs-docs-samples.json TEST_BUCKET_NAME=nodejs-docs-samples TEST_PROJECT_ID=nodejs-docs-samples #Other environment variables on same line
+  - PATH=$PATH:$HOME/gcloud/google-cloud-sdk/bin GOOGLE_APPLICATION_CREDENTIALS=$TRAVIS_BUILD_DIR/test/encrypted/nodejs-docs-samples.json TEST_BUCKET_NAME=nodejs-docs-samples GCLOUD_PROJECT=nodejs-docs-samples #Other environment variables on same line
 
 before_install:
   - if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
@@ -43,11 +39,9 @@ before_install:
       cd $HOME/gcloud &&
       tar xzf google-cloud-sdk.tar.gz &&
       printf '\ny\n\ny\ny\n' | ./google-cloud-sdk/install.sh &&
-      source /home/travis/.bash_profile &&
+      source $HOME/.bashrc &&
       cd $TRAVIS_BUILD_DIR;
     fi
-  - gcloud components update -q
-  - gcloud components update app -q
   - openssl aes-256-cbc -K $encrypted_06352980ac5c_key -iv $encrypted_06352980ac5c_iv -in test/encrypted/nodejs-docs-samples.json.enc -out test/encrypted/nodejs-docs-samples.json -d
   - if [ -a test/encrypted/nodejs-docs-samples.json ]; then
       gcloud auth activate-service-account --key-file test/encrypted/nodejs-docs-samples.json;
@@ -55,6 +49,3 @@ before_install:
 
 after_success:
 - npm run coveralls
-
-after_script:
-  - gsutil -m cp *.log gs://nodejs-docs-samples-travis-deployments

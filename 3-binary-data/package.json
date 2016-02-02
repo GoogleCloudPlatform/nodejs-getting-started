@@ -9,7 +9,7 @@
     "monitor": "nodemon app.js",
     "deploy": "gcloud preview app deploy app.yaml",
     "lint": "jshint --exclude-path=../.gitignore .",
-    "mocha": "mocha test/*.test.js",
+    "mocha": "mocha test/*.test.js -t 30000",
     "test": "npm run lint && npm run mocha",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
@@ -31,11 +31,11 @@
   "license": "Apache Version 2.0",
   "dependencies": {
     "body-parser": "^1.14.2",
-    "express": "^4.13.3",
+    "express": "^4.13.4",
     "gcloud": "^0.27.0",
     "jade": "^1.11.0",
     "kerberos": "^0.0.18",
-    "lodash": "^4.0.0",
+    "lodash": "^4.2.1",
     "mongodb": "^2.1.4",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "jshint": "^2.9.1",
-    "mocha": "^2.3.4",
+    "mocha": "^2.4.5",
     "supertest": "^1.1.0"
   },
   "engines": {
