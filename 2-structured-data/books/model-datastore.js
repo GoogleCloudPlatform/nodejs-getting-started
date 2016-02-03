@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -124,7 +124,8 @@ module.exports = function(config) {
     ds.save(
       entity,
       function(err) {
-        cb(err, err ? null : fromDatastore(entity));
+        data.id = entity.key.id;
+        cb(err, err ? null : data);
       }
     );
   }

@@ -1,0 +1,60 @@
+{
+  "name": "nodejs-getting-started",
+  "version": "1.0.0",
+  "description": "End to end sample for running Node.JS applications on Google Cloud Platform",
+  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
+  "private": true,
+  "scripts": {
+    "lint": "jshint --exclude-path=.gitignore .",
+    "mocha": "mocha 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/* -t 30000",
+    "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/* -t 30000",
+    "test": "npm run lint && npm run cover",
+    "coveralls": "cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
+  },
+  "author": "Google Inc.",
+  "contributors": [
+    {
+      "name": "Jon Wayne Parrott",
+      "email": "jonwayne@google.com"
+    },
+    {
+      "name": "Jonathan Simon",
+      "email": "jbsimon@google.com"
+    },
+    {
+      "name": "Jason Dobry",
+      "email": "jdobry@google.com"
+    }
+  ],
+  "license": "Apache Version 2.0",
+  "dependencies": {
+    "async": "^1.5.2",
+    "body-parser": "^1.14.2",
+    "cookie-session": "^2.0.0-alpha.1",
+    "express": "^4.13.4",
+    "express-winston": "^1.2.0",
+    "gcloud": "^0.27.0",
+    "googleapis": "^2.1.7",
+    "jade": "^1.11.0",
+    "kerberos": "^0.0.18",
+    "lodash": "^4.2.1",
+    "mongodb": "^2.1.4",
+    "multer": "^1.1.0",
+    "mysql": "^2.10.2",
+    "prompt": "^0.2.14",
+    "request": "^2.69.0",
+    "winston": "^2.1.1"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.6",
+    "istanbul": "^0.4.2",
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.4",
+    "sinon": "^1.17.3",
+    "supertest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=0.12.7"
+  }
+}

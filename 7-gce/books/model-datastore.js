@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -136,9 +136,9 @@ module.exports = function(config, background) {
       entity,
       function(err) {
         if(err) { return cb(err); }
-        var book = fromDatastore(entity);
-        background.queueBook(book.id);
-        cb(null, book);
+        data.id = entity.key.id;
+        background.queueBook(data.id);
+        cb(null, data);
       }
     );
   }

@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -44,11 +44,14 @@ app.use(function(err, req, res, next) {
   res.status(500).send('Something broke!');
 });
 
+if (module === require.main) {
+  // Start the server
+  var server = app.listen(config.port, function () {
+    var host = server.address().address;
+    var port = server.address().port;
 
-// Start the server
-var server = app.listen(config.port, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+    console.log('App listening at http://%s:%s', host, port);
+  });
+}
 
-  console.log('App listening at http://%s:%s', host, port);
-});
+module.exports = app;

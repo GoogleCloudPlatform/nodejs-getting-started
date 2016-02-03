@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,7 +25,7 @@ module.exports = {
 
   // This is the id of your project in the Google Developers Console.
   gcloud: {
-    projectId: 'your-project-id'
+    projectId: process.env.GCLOUD_PROJECT || 'your-project-id'
   },
 
   // Typically, you will create a bucket with the same name as your project ID.

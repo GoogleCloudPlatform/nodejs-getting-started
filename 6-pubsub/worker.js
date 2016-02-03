@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+// Copyright 2015-2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -122,7 +122,7 @@ function findBookInfo(book, cb) {
     var top = r.items[0];
 
     book.title = top.volumeInfo.title;
-    book.author = top.volumeInfo.authors.join(', ');
+    book.author = (top.volumeInfo.authors || []).join(', ');
     book.publishedDate = top.volumeInfo.publishedDate;
     book.description = book.description || top.volumeInfo.description;
 
