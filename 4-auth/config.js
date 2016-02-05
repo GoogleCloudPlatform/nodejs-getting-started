@@ -18,7 +18,7 @@ module.exports = {
   port: process.env.PORT || 8080,
 
   // Secret is used by sessions to encrypt the cookie.
-  secret: 'your-secret-here',
+  secret: process.env.SESSION_SECRET || 'your-secret-here',
 
   // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
   // configure the appropriate settings for each storage engine below.
@@ -32,26 +32,26 @@ module.exports = {
   },
 
   // Typically, you will create a bucket with the same name as your project ID.
-  cloudStorageBucket: 'your-bucket-name',
+  cloudStorageBucket: process.env.CLOUD_BUCKET || 'your-bucket-name',
 
   mysql: {
-    user: 'your-mysql-user',
-    password: 'your-mysql-password',
-    host: 'your-mysql-host'
+    user: process.env.MYSQL_USER || 'your-mysql-user',
+    password: process.env.MYSQL_PASSWORD || 'your-mysql-password',
+    host: process.env.MYSQL_HOST || 'your-mysql-host'
   },
 
   mongodb: {
-    url: 'your-mongo-url',
-    collection: 'your-mongo-collection'
+    url: process.env.MONGO_URL || 'mongodb://localhost:27017',
+    collection: process.env.MONGO_COLLECTION || 'books'
   },
 
   // The client ID and secret can be obtained by generating a new web
   // application client ID on Google Developers Console.
   oauth2: {
-    clientId: 'your-client-id',
-    clientSecret: 'your-client-secret',
+    clientId: process.env.OAUTH_CLIENT_ID || 'your-client-id',
+    clientSecret: process.env.OAUTH_CLIENT_SECRET || 'your-client-secret',
     redirectUrl: process.env.OAUTH2_CALLBACK ||
       'http://localhost:8080/oauth2callback',
     scopes: ['email', 'profile']
-  },
+  }
 };
