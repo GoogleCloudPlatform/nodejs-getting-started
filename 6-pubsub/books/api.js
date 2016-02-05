@@ -16,66 +16,88 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-
-module.exports = function(model) {
+module.exports = function (model) {
 
   var router = express.Router();
 
+  // Automatically parse request body as JSON
   router.use(bodyParser.json());
 
-
-  function handleRpcError(err, res) {
-    if (err.code === 404) { return res.status(404); }
-    res.status(500).json({
-      message: err.message,
-      internalCode: err.code
-    });
-  }
-
-
-  router.get('/', function list(req, res) {
-    model.list(10, req.query.pageToken,
-      function(err, entities, cursor) {
-        if (err) { return handleRpcError(err, res); }
-        res.json({
-          items: entities,
-          nextPageToken: cursor
-        });
+  /**
+   * GET /api/books
+   *
+   * Retrieve a page of books (up to ten at a time).
+   */
+  router.get('/', function list(req, res, next) {
+    model.list(10, req.query.pageToken, function (err, entities, cursor) {
+      if (err) { return next(err); }
+      res.json({
+        items: entities,
+        nextPageToken: cursor
       });
+    });
   });
 
-
-  router.post('/', function insert(req, res) {
-    model.create(req.body, function(err, entity) {
-      if (err) { return handleRpcError(err, res); }
+  /**
+   * POST /api/books
+   *
+   * Create a new book.
+   */
+  router.post('/', function insert(req, res, next) {
+    model.create(req.body, function (err, entity) {
+      if (err) { return next(err); }
       res.json(entity);
     });
   });
 
-
-  router.get('/:book(\\d+)', function get(req, res) {
-    model.read(req.params.book, function(err, entity) {
-      if (err) { return handleRpcError(err, res); }
+  /**
+   * GET /api/books/:id
+   *
+   * Retrieve a book.
+   */
+  router.get('/:book(\\d+)', function get(req, res, next) {
+    model.read(req.params.book, function (err, entity) {
+      if (err) { return next(err); }
       res.json(entity);
     });
   });
 
-
-  router.put('/:book(\\d+)', function update(req, res) {
-    model.update(req.params.book, req.body, function(err, entity) {
-      if (err) { return handleRpcError(err, res); }
+  /**
+   * PUT /api/books/:id
+   *
+   * Update a book.
+   */
+  router.put('/:book(\\d+)', function update(req, res, next) {
+    model.update(req.params.book, req.body, function (err, entity) {
+      if (err) { return next(err); }
       res.json(entity);
     });
   });
 
-
-  router.delete('/:book(\\d+)', function _delete(req, res) {
-    model.delete(req.params.book, function(err) {
-      if (err) { return handleRpcError(err, res); }
+  /**
+   * DELETE /api/books/:id
+   *
+   * Delete a book.
+   */
+  router.delete('/:book(\\d+)', function _delete(req, res, next) {
+    model.delete(req.params.book, function (err) {
+      if (err) { return next(err); }
       res.status(200).send('OK');
     });
   });
 
-  return router;
+  /**
+   * Errors on "/api/books/*" routes.
+   */
+  router.use(function handleRpcError(err, req, res, next) {
+    // Format error and forward to generic error handler for logging and
+    // responding to the request
+    err.response = {
+      message: err.message,
+      internalCode: err.code
+    };
+    next(err);
+  });
 
+  return router;
 };
