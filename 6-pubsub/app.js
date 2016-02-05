@@ -26,11 +26,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
-
 // Add the request logger before anything else so that it can
 // accurately log requests.
 app.use(logging.requestLogger);
-
 
 // Configure the session and session storage.
 // MemoryStore isn't viable in a multi-server configuration, so we
@@ -45,21 +43,21 @@ app.use(session({
 var oauth2 = require('./lib/oauth2')(config.oauth2);
 app.use(oauth2.router);
 
-
 // Setup modules and dependencies
 var background = require('./lib/background')(config.gcloud, logging);
 var images = require('./lib/images')(
-  config.gcloud, config.cloudStorageBucket, logging);
+  config.gcloud,
+  config.cloudStorageBucket,
+  logging
+);
 var model = require('./books/model-' + config.dataBackend)(config, background);
-
 
 // Books
 app.use('/books', require('./books/crud')(model, images, oauth2));
 app.use('/api/books', require('./books/api')(model));
 
-
 // Redirect root to /books
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.redirect('/books');
 });
 
@@ -68,13 +66,18 @@ app.get('/', function(req, res) {
 // handlers should go after this.
 app.use(logging.errorLogger);
 
-
-// Basic error handler
-app.use(function(err, req, res, next) {
-  /* jshint unused:false */
-  res.status(500).send('Something broke!');
+// Basic 404 handler
+app.use(function (req, res) {
+  res.status(404).send('Not Found');
 });
 
+// Basic error handler
+app.use(function (err, req, res, next) {
+  /* jshint unused:false */
+  // If our routes specified a specific response, then send that. Otherwise,
+  // send a generic message so as not to leak anything.
+  res.status(500).send(err.response || 'Something broke!');
+});
 
 if (module === require.main) {
   // Start the server

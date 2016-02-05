@@ -24,24 +24,28 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
-
 // Books
 var model = require('./books/model-' + config.dataBackend)(config);
 app.use('/books', require('./books/crud')(model));
 app.use('/api/books', require('./books/api')(model));
 
-
 // Redirect root to /books
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.redirect('/books');
 });
 
+// Basic 404 handler
+app.use(function (req, res) {
+  res.status(404).send('Not Found');
+});
 
 // Basic error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   /* jshint unused:false */
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+  console.error(err);
+  // If our routes specified a specific response, then send that. Otherwise,
+  // send a generic message so as not to leak anything.
+  res.status(500).send(err.response || 'Something broke!');
 });
 
 if (module === require.main) {
