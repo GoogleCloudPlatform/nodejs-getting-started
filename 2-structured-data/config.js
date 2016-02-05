@@ -13,7 +13,7 @@
 
 'use strict';
 
-module.exports = {
+var config = module.exports = {
   port: process.env.PORT || 8080,
 
   // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
@@ -38,3 +38,10 @@ module.exports = {
     collection: process.env.MONGO_COLLECTION || 'books'
   }
 };
+
+var projectId = config.gcloud.projectId;
+
+if (!projectId || projectId === 'your-project-id') {
+  throw new Error('You must set the GCLOUD_PROJECT env var or add your ' +
+    'project id to config.js!');
+}

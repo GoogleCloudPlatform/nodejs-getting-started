@@ -27,6 +27,8 @@ Tutorial | Folder
 
 * Make sure you're authenticated with the gcloud sdk and your gcloud project
 has enabled all the APIs used by these tutorials.
+* Make sure you've got the required environment variables set. (Take a look at
+the various config.js files.)
 * `git clone git@github.com:GoogleCloudPlatform/nodejs-getting-started.git`
 * `cd nodejs-getting-started`
 * `npm install`
