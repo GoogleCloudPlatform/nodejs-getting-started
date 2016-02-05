@@ -29,16 +29,16 @@ module.exports = {
   },
 
   // Typically, you will create a bucket with the same name as your project ID.
-  cloudStorageBucket: 'your-bucket-name',
+  cloudStorageBucket: process.env.CLOUD_BUCKET || 'your-bucket-name',
 
   mysql: {
-    user: 'your-mysql-user',
-    password: 'your-mysql-password',
-    host: 'your-mysql-host'
+    user: process.env.MYSQL_USER || 'your-mysql-user',
+    password: process.env.MYSQL_PASSWORD || 'your-mysql-password',
+    host: process.env.MYSQL_HOST || 'your-mysql-host'
   },
 
   mongodb: {
-    url: 'your-mongo-url',
-    collection: 'your-mongo-collection'
+    url: process.env.MONGO_URL || 'mongodb://localhost:27017',
+    collection: process.env.MONGO_COLLECTION || 'books'
   }
 };
