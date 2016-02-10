@@ -16,7 +16,7 @@
 var request = require('request');
 var waterfall = require('async').waterfall;
 var express = require('express');
-var config = require('./config');
+var config = require('./config')();
 
 var logging = require('./lib/logging')(config.logPath);
 var images = require('./lib/images')(

@@ -14,53 +14,28 @@
 'use strict';
 
 var assert = require('assert');
-var path = require('path');
 var request = require('supertest');
-var utils = require('../../test/utils');
+var proxyquire = require('proxyquire').noPreserveCache();
+var stubs = {};
 
-var config = {
-  test: '6-pubsub',
-  path: path.resolve(path.join(__dirname,  '../')),
-  cmd: 'node',
-  args: ['app.js'],
-  msg: 'No books found.'
-};
-
-describe(config.test, function () {
-
-  it('should install dependencies', function (done) {
-    this.timeout(60 * 1000); // Allow 1 minute to test installation
-    utils.testInstallation(config, done);
-  });
-
-  it('should redirect / to /books', function (done) {
-    request(require('../app'))
-      .get('/')
-      .expect(302)
-      .expect(function (response) {
-        assert.ok(response.text.indexOf('Redirecting to /books') !== -1);
-      })
-      .end(done);
-  });
-
+describe('api.js', function () {
   var id;
 
   it('should create a book', function (done) {
-    request(require('../app'))
+    request(proxyquire('../app', stubs))
       .post('/api/books')
-      .send({ foo: 'bar', title: 'beep' })
+      .send({ title: 'beep' })
       .expect(200)
       .expect(function (response) {
         id = response.body.id;
         assert.ok(response.body.id);
-        assert.equal(response.body.foo, 'bar');
         assert.equal(response.body.title, 'beep');
       })
       .end(done);
   });
 
   it('should list books', function (done) {
-    request(require('../app'))
+    request(proxyquire('../app', stubs))
       .get('/api/books')
       .expect(200)
       .expect(function (response) {
@@ -71,26 +46,12 @@ describe(config.test, function () {
   });
 
   it('should delete a book', function (done) {
-    request(require('../app'))
+    request(proxyquire('../app', stubs))
       .delete('/api/books/' + id)
       .expect(200)
       .expect(function (response) {
         assert.equal(response.text, 'OK');
       })
       .end(done);
-  });
-
-  it('should show add book form', function (done) {
-    request(require('../app'))
-      .get('/books/add')
-      .expect(200)
-      .expect(function (response) {
-        assert.ok(response.text.indexOf('Add book') !== -1);
-      })
-      .end(done);
-  });
-
-  it('should run', function (done) {
-    utils.testLocalApp(config, done);
   });
 });

@@ -15,7 +15,7 @@
 
 var path = require('path');
 var express = require('express');
-var config = require('./config');
+var config = require('./config')();
 
 var app = express();
 
@@ -25,7 +25,7 @@ app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
 // Books
-var model = require('./books/model-' + config.dataBackend)(config);
+var model = require('./books/model')(config);
 app.use('/books', require('./books/crud')(model));
 app.use('/api/books', require('./books/api')(model));
 

@@ -14,7 +14,7 @@
 'use strict';
 
 var gcloud = require('gcloud');
-var config = require('../config');
+var config = require('../config')();
 
 var topicName = 'book-process-queue';
 var subscriptionName = 'shared-worker-subscription';

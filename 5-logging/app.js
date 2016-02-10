@@ -16,7 +16,7 @@
 var path = require('path');
 var express = require('express');
 var session = require('cookie-session');
-var config = require('./config');
+var config = require('./config')();
 var logging = require('./lib/logging')();
 
 var app = express();
@@ -47,7 +47,7 @@ app.use(oauth2.router);
 
 // Setup modules and dependencies
 var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
-var model = require('./books/model-' + config.dataBackend)(config);
+var model = require('./books/model')(config);
 
 // Books
 app.use('/books', require('./books/crud')(model, images, oauth2));

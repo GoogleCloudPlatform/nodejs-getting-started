@@ -13,37 +13,12 @@
 
 'use strict';
 
-var assert = require('assert');
 var path = require('path');
-var request = require('supertest');
-var utils = require('../../test/utils');
 
-var config = {
-  test: '1-hello-world',
+module.exports = {
+  test: '6-pubsub',
   path: path.resolve(path.join(__dirname,  '../')),
   cmd: 'node',
   args: ['app.js'],
-  msg: 'Hello, world!'
+  msg: 'No books found.'
 };
-
-describe(config.test, function () {
-
-  it('should install dependencies', function (done) {
-    this.timeout(60 * 1000); // Allow 1 minute to test installation
-    utils.testInstallation(config, done);
-  });
-
-  it('should create an express app', function (done) {
-    request(require('../app'))
-      .get('/')
-      .expect(200)
-      .expect(function (response) {
-        assert.equal(response.text, config.msg);
-      })
-      .end(done);
-  });
-
-  it('should run', function (done) {
-    utils.testLocalApp(config, done);
-  });
-});

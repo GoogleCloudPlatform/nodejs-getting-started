@@ -23,13 +23,11 @@ describe('background.js', function () {
 
   beforeEach(function () {
     // Mock dependencies used by background.js
-    mocks.gcloudConfig = sinon.stub();
-    mocks.config = {
-      gcloud: sinon.stub()
+    mocks.config = function () {
+      return {
+        gcloud: sinon.stub()
+      };
     };
-    Object.defineProperty(mocks.config, 'gcloud', {
-      get: mocks.gcloudConfig
-    });
     mocks.subscription = {
       on: sinon.stub()
     };
@@ -54,10 +52,6 @@ describe('background.js', function () {
       '../config': mocks.config
     })(null, mocks.logging);
 
-    assert.ok(
-      mocks.gcloudConfig.calledOnce,
-      'config.gcloud should have been accessed'
-    );
     assert.ok(
       mocks.gcloud.pubsub.calledOnce,
       'gcloud.pubsub() should have been called once'

@@ -16,7 +16,6 @@
 var extend = require('lodash').assign;
 var mysql = require('mysql');
 
-
 module.exports = function(config) {
 
   function getConnection() {
@@ -24,7 +23,6 @@ module.exports = function(config) {
       database: 'library'
     }, config.mysql));
   }
-
 
   // [START list]
   function list(limit, token, cb) {
@@ -42,7 +40,6 @@ module.exports = function(config) {
   }
   // [END list]
 
-
   // [START create]
   function create(data, cb) {
     var connection = getConnection();
@@ -53,7 +50,6 @@ module.exports = function(config) {
     connection.end();
   }
   // [END create]
-
 
   function read(id, cb) {
     var connection = getConnection();
@@ -71,7 +67,6 @@ module.exports = function(config) {
     connection.end();
   }
 
-
   // [START update]
   function update(id, data, cb) {
     var connection = getConnection();
@@ -84,13 +79,11 @@ module.exports = function(config) {
   }
   // [END update]
 
-
   function _delete(id, cb) {
     var connection = getConnection();
     connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
     connection.end();
   }
-
 
   return {
     createSchema: createSchema,
@@ -100,7 +93,6 @@ module.exports = function(config) {
     update: update,
     delete: _delete
   };
-
 };
 
 
@@ -117,7 +109,6 @@ if (!module.parent) {
     createSchema(result);
   });
 }
-
 
 function createSchema(config) {
   var connection = mysql.createConnection(extend({
