@@ -16,13 +16,11 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 
-
-module.exports = function(config, background) {
+module.exports = function (config, background) {
 
   var url = config.mongodb.url;
   var collectionName = config.mongodb.collection;
   var collection;
-
 
   function fromMongo(item) {
     if (item.length) { item = item.pop(); }
@@ -31,12 +29,10 @@ module.exports = function(config, background) {
     return item;
   }
 
-
   function toMongo(item) {
     delete item.id;
     return item;
   }
-
 
   function getCollection(cb) {
     if (collection) {
@@ -52,7 +48,6 @@ module.exports = function(config, background) {
       cb(null, collection);
     });
   }
-
 
   function list(limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
@@ -70,7 +65,6 @@ module.exports = function(config, background) {
     });
   }
 
-
   function listBy(userid, limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     getCollection(function(err, collection) {
@@ -86,7 +80,6 @@ module.exports = function(config, background) {
     });
   }
 
-
   function create(data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -98,7 +91,6 @@ module.exports = function(config, background) {
       });
     });
   }
-
 
   function read(id, cb) {
     getCollection(function(err, collection) {
@@ -118,7 +110,6 @@ module.exports = function(config, background) {
     });
   }
 
-
   function update(id, data, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -137,7 +128,6 @@ module.exports = function(config, background) {
     });
   }
 
-
   function _delete(id, cb) {
     getCollection(function(err, collection) {
       if (err) { return cb(err); }
@@ -155,5 +145,4 @@ module.exports = function(config, background) {
     list: list,
     listBy: listBy
   };
-
 };

@@ -9,7 +9,7 @@
     "monitor": "nodemon ${SCRIPT:-app.js}",
     "deploy": "gcloud preview app deploy app.yaml worker.yaml",
     "lint": "jshint --exclude-path=../.gitignore .",
-    "mocha": "mocha test/*.test.js -t 30000",
+    "mocha": "mocha test/index.js -t 30000",
     "test": "npm run lint && npm run mocha",
     "init-cloudsql": "node books/model-cloudsql.js"
   },

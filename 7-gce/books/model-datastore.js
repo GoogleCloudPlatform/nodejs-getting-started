@@ -15,12 +15,10 @@
 
 var gcloud = require('gcloud');
 
-
-module.exports = function(config, background) {
+module.exports = function (config, background) {
 
   var ds = gcloud.datastore.dataset(config.gcloud);
   var kind = 'Book';
-
 
   // Translates from Datastore's entity format to
   // the format expected by the application.
@@ -42,7 +40,6 @@ module.exports = function(config, background) {
     obj.data.id = obj.key.id;
     return obj.data;
   }
-
 
   // Translates from the application's format to the datastore's
   // extended entity property format. It also handles marking any
@@ -81,7 +78,6 @@ module.exports = function(config, background) {
     return results;
   }
 
-
   // Lists all books in the Datastore sorted alphabetically by title.
   // The ``limit`` argument determines the maximum amount of results to
   // return per page. The ``token`` argument allows requesting additional
@@ -99,7 +95,6 @@ module.exports = function(config, background) {
     });
   }
 
-
   // Similar to ``list``, but only lists the books created by the specified
   // user.
   function listBy(userId, limit, token, cb) {
@@ -114,7 +109,6 @@ module.exports = function(config, background) {
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }
-
 
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
@@ -143,7 +137,6 @@ module.exports = function(config, background) {
     );
   }
 
-
   function read(id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
     ds.get(key, function(err, entity) {
@@ -158,12 +151,10 @@ module.exports = function(config, background) {
     });
   }
 
-
   function _delete(id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
     ds.delete(key, cb);
   }
-
 
   return {
     create: function(data, cb) {
@@ -175,5 +166,4 @@ module.exports = function(config, background) {
     list: list,
     listBy: listBy
   };
-
 };

@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "lint": "jshint --exclude-path=.gitignore .",
-    "mocha": "mocha 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/* -t 30000",
-    "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- 1-hello-world/test/* 2-structured-data/test/* 3-binary-data/test/* 4-auth/test/* 5-logging/test/* 6-pubsub/test/* 7-gce/test/* -t 30000",
+    "mocha": "mocha test/index.js -t 30000",
+    "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- test/index.js -t 30000",
     "test": "npm run lint && npm run cover",
     "coveralls": "cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
   },
@@ -29,16 +29,16 @@
   "license": "Apache Version 2.0",
   "dependencies": {
     "async": "^1.5.2",
-    "body-parser": "^1.14.2",
+    "body-parser": "^1.15.0",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.13.4",
     "express-winston": "^1.2.0",
-    "gcloud": "^0.27.0",
+    "gcloud": "^0.28.0",
     "googleapis": "^2.1.7",
     "jade": "^1.11.0",
     "kerberos": "^0.0.18",
-    "lodash": "^4.2.1",
-    "mongodb": "^2.1.4",
+    "lodash": "^4.5.0",
+    "mongodb": "^2.1.7",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
     "prompt": "^0.2.14",
@@ -51,8 +51,9 @@
     "jshint": "^2.9.1",
     "mocha": "^2.4.5",
     "proxyquire": "^1.7.4",
+    "request": "^2.69.0",
     "sinon": "^1.17.3",
-    "supertest": "^1.1.0"
+    "supertest": "^1.2.0"
   },
   "engines": {
     "node": ">=0.12.7"

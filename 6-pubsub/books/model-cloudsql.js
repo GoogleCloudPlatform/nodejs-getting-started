@@ -16,15 +16,13 @@
 var extend = require('lodash').assign;
 var mysql = require('mysql');
 
-
-module.exports = function(config, background) {
+module.exports = function (config, background) {
 
   function getConnection() {
     return mysql.createConnection(extend({
       database: 'library'
     }, config.mysql));
   }
-
 
   function list(limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
@@ -40,7 +38,6 @@ module.exports = function(config, background) {
     connection.end();
   }
 
-
   function listBy(userId, limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     var connection = getConnection();
@@ -55,7 +52,6 @@ module.exports = function(config, background) {
     connection.end();
   }
 
-
   // [START create]
   function create(data, cb) {
     var connection = getConnection();
@@ -67,7 +63,6 @@ module.exports = function(config, background) {
     connection.end();
   }
   // [END create]
-
 
   function read(id, cb) {
     var connection = getConnection();
@@ -85,7 +80,6 @@ module.exports = function(config, background) {
     connection.end();
   }
 
-
   // [START update]
   function update(id, data, cb) {
     var connection = getConnection();
@@ -99,13 +93,11 @@ module.exports = function(config, background) {
   }
   // [END update]
 
-
   function _delete(id, cb) {
     var connection = getConnection();
     connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
     connection.end();
   }
-
 
   return {
     createSchema: createSchema,
@@ -116,9 +108,7 @@ module.exports = function(config, background) {
     update: update,
     delete: _delete
   };
-
 };
-
 
 if (!module.parent) {
   var prompt = require('prompt');
@@ -133,7 +123,6 @@ if (!module.parent) {
     createSchema(result);
   });
 }
-
 
 function createSchema(config) {
   var connection = mysql.createConnection(extend({

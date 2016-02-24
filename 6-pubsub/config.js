@@ -13,49 +13,51 @@
 
 'use strict';
 
+var getConfig = module.exports = function () {
+  return {
+    port: process.env.PORT || 8080,
 
-var config = module.exports = {
-  port: process.env.PORT || 8080,
+    // Secret is used by sessions to encrypt the cookie.
+    secret: process.env.SESSION_SECRET || 'your-secret-here',
 
-  // Secret is used by sessions to encrypt the cookie.
-  secret: process.env.SESSION_SECRET || 'your-secret-here',
+    // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
+    // configure the appropriate settings for each storage engine below.
+    // If you are unsure, use datastore as it requires no additional
+    // configuration.
+    dataBackend: process.env.BACKEND || 'datastore',
 
-  // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
-  // configure the appropriate settings for each storage engine below.
-  // If you are unsure, use datastore as it requires no additional
-  // configuration.
-  dataBackend: 'datastore',
+    // This is the id of your project in the Google Developers Console.
+    gcloud: {
+      projectId: process.env.GCLOUD_PROJECT || 'your-project-id'
+    },
 
-  // This is the id of your project in the Google Developers Console.
-  gcloud: {
-    projectId: process.env.GCLOUD_PROJECT || 'your-project-id'
-  },
+    // Typically you will create a bucket with the same name as your project ID.
+    cloudStorageBucket: process.env.CLOUD_BUCKET || 'your-bucket-name',
 
-  // Typically, you will create a bucket with the same name as your project ID.
-  cloudStorageBucket: process.env.CLOUD_BUCKET || 'your-bucket-name',
+    mysql: {
+      user: process.env.MYSQL_USER || 'your-mysql-user',
+      password: process.env.MYSQL_PASSWORD || 'your-mysql-password',
+      host: process.env.MYSQL_HOST || 'your-mysql-host'
+    },
 
-  mysql: {
-    user: process.env.MYSQL_USER || 'your-mysql-user',
-    password: process.env.MYSQL_PASSWORD || 'your-mysql-password',
-    host: process.env.MYSQL_HOST || 'your-mysql-host'
-  },
+    mongodb: {
+      url: process.env.MONGO_URL || 'mongodb://localhost:27017',
+      collection: process.env.MONGO_COLLECTION || 'books'
+    },
 
-  mongodb: {
-    url: process.env.MONGO_URL || 'mongodb://localhost:27017',
-    collection: process.env.MONGO_COLLECTION || 'books'
-  },
-
-  // The client ID and secret can be obtained by generating a new web
-  // application client ID on Google Developers Console.
-  oauth2: {
-    clientId: process.env.OAUTH_CLIENT_ID || 'your-client-id',
-    clientSecret: process.env.OAUTH_CLIENT_SECRET || 'your-client-secret',
-    redirectUrl: process.env.OAUTH2_CALLBACK ||
-      'http://localhost:8080/oauth2callback',
-    scopes: ['email', 'profile']
-  }
+    // The client ID and secret can be obtained by generating a new web
+    // application client ID on Google Developers Console.
+    oauth2: {
+      clientId: process.env.OAUTH_CLIENT_ID || 'your-client-id',
+      clientSecret: process.env.OAUTH_CLIENT_SECRET || 'your-client-secret',
+      redirectUrl: process.env.OAUTH2_CALLBACK ||
+        'http://localhost:8080/oauth2callback',
+      scopes: ['email', 'profile']
+    }
+  };
 };
 
+var config = getConfig();
 var projectId = config.gcloud.projectId;
 var cloudStorageBucket = config.cloudStorageBucket;
 var clientId = config.oauth2.clientId;
