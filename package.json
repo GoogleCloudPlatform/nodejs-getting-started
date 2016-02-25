@@ -37,11 +37,11 @@
     "googleapis": "^2.1.7",
     "jade": "^1.11.0",
     "kerberos": "^0.0.18",
-    "lodash": "^4.5.0",
+    "lodash": "^4.5.1",
     "mongodb": "^2.1.7",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
-    "prompt": "^0.2.14",
+    "prompt": "^1.0.0",
     "request": "^2.69.0",
     "winston": "^2.1.1"
   },

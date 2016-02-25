@@ -30,20 +30,20 @@
   ],
   "license": "Apache Version 2.0",
   "dependencies": {
-    "body-parser": "^1.14.2",
+    "body-parser": "^1.15.0",
     "express": "^4.13.4",
-    "gcloud": "^0.27.0",
+    "gcloud": "^0.28.0",
     "jade": "^1.11.0",
     "kerberos": "^0.0.18",
-    "lodash": "^4.2.1",
-    "mongodb": "^2.1.4",
+    "lodash": "^4.5.1",
+    "mongodb": "^2.1.7",
     "mysql": "^2.10.2",
-    "prompt": "^0.2.14"
+    "prompt": "^1.0.0"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
     "mocha": "^2.4.5",
-    "supertest": "^1.1.0"
+    "supertest": "^1.2.0"
   },
   "engines": {
     "node": ">=0.12.7"
