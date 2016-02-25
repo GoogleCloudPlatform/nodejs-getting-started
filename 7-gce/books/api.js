@@ -55,7 +55,7 @@ module.exports = function (model) {
    *
    * Retrieve a book.
    */
-  router.get('/:book(\\d+)', function get(req, res, next) {
+  router.get('/:book', function get(req, res, next) {
     model.read(req.params.book, function (err, entity) {
       if (err) { return next(err); }
       res.json(entity);
@@ -67,7 +67,7 @@ module.exports = function (model) {
    *
    * Update a book.
    */
-  router.put('/:book(\\d+)', function update(req, res, next) {
+  router.put('/:book', function update(req, res, next) {
     model.update(req.params.book, req.body, function (err, entity) {
       if (err) { return next(err); }
       res.json(entity);
@@ -79,7 +79,7 @@ module.exports = function (model) {
    *
    * Delete a book.
    */
-  router.delete('/:book(\\d+)', function _delete(req, res, next) {
+  router.delete('/:book', function _delete(req, res, next) {
     model.delete(req.params.book, function (err) {
       if (err) { return next(err); }
       res.status(200).send('OK');

@@ -48,20 +48,10 @@ describe('crud.js', function () {
     });
 
     it('should handle error', function (done) {
-      var expected = 'Bad Request';
-      if (process.version.indexOf('v0.10') !== -1) {
-        expected = 'Error during request.';
-      }
-      if (require('../config')().dataBackend === 'cloudsql') {
-        expected = 'ER_SP_UNDECLARED_VAR: Undeclared variable: NaN';
-      }
       request(proxyquire('../app', stubs))
         .get('/books')
         .query({ pageToken: 'badrequest' })
         .expect(500)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
         .end(done);
     });
 
@@ -88,7 +78,12 @@ describe('crud.js', function () {
         .expect(302)
         .expect(function (response) {
           var location = response.headers.location;
-          id = parseInt(location.replace('/books/', ''), 10);
+          var idPart = location.replace('/books/', '');
+          if (require('../config')().dataBackend !== 'mongodb') {
+            id = parseInt(idPart, 10);
+          } else {
+            id = idPart;
+          }
           assert.ok(response.text.indexOf('Redirecting to /books/') !== -1);
         })
         .end(done);

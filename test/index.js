@@ -13,8 +13,10 @@
 
 'use strict';
 
-  var proxyquire = require('proxyquire').noPreserveCache();
-  var stubs = {};
+var proxyquire = require('proxyquire').noPreserveCache();
+var stubs = {};
+
+var MongoClient = require('mongodb').MongoClient;
 
 // Test Datastore
 describe('using Datastore backend', function () {
@@ -45,4 +47,28 @@ describe('using Cloud SQL backend', function () {
   proxyquire('../5-logging/test', stubs);
   proxyquire('../6-pubsub/test', stubs);
   proxyquire('../7-gce/test', stubs);
+});
+
+// Test MongoDB
+describe('using MongoDB backend', function () {
+  before(function () {
+    process.env.BACKEND = 'mongodb';
+  });
+  proxyquire('../2-structured-data/test', stubs);
+  proxyquire('../3-binary-data/test', stubs);
+  proxyquire('../4-auth/test', stubs);
+  proxyquire('../5-logging/test', stubs);
+  proxyquire('../6-pubsub/test', stubs);
+  proxyquire('../7-gce/test', stubs);
+  after(function (done) {
+    var config = proxyquire('../7-gce/config', stubs)();
+    MongoClient.connect(config.mongodb.url, function (err, db) {
+      if (err) {
+        return done(err);
+      }
+      db.collection(config.mongodb.collection).remove(function (err) {
+        done(err);
+      });
+    });
+  });
 });
