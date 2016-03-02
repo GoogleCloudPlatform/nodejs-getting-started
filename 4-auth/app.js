@@ -61,7 +61,7 @@ app.use(function (req, res) {
 // Basic error handler
 app.use(function (err, req, res, next) {
   /* jshint unused:false */
-  console.error(err);
+  console.error(err.stack || err);
   // If our routes specified a specific response, then send that. Otherwise,
   // send a generic message so as not to leak anything.
   res.status(500).send(err.response || 'Something broke!');
