@@ -29,7 +29,7 @@ module.exports = function (config, background) {
     var connection = getConnection();
     connection.query(
       'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
-      function(err, results) {
+      function (err, results) {
         if (err) { return cb(err); }
         var hasMore = results.length === limit ? token + results.length : false;
         cb(null, results, hasMore);
@@ -44,7 +44,7 @@ module.exports = function (config, background) {
     connection.query(
       'SELECT * FROM `books` WHERE `createdById` = ? LIMIT ? OFFSET ?',
       [userId, limit, token],
-      function(err, results) {
+      function (err, results) {
         if (err) { return cb(err); }
         var hasMore = results.length === limit ? token + results.length : false;
         cb(null, results, hasMore);
@@ -54,7 +54,7 @@ module.exports = function (config, background) {
 
   function create(data, cb) {
     var connection = getConnection();
-    connection.query('INSERT INTO `books` SET ?', data, function(err, res) {
+    connection.query('INSERT INTO `books` SET ?', data, function (err, res) {
       if (err) { return cb(err); }
       background.queueBook(res.insertId);
       read(res.insertId, cb);
@@ -65,7 +65,7 @@ module.exports = function (config, background) {
   function read(id, cb) {
     var connection = getConnection();
     connection.query(
-      'SELECT * FROM `books` WHERE `id` = ?', id, function(err, results) {
+      'SELECT * FROM `books` WHERE `id` = ?', id, function (err, results) {
         if (err) { return cb(err); }
         if (!results.length) {
           return cb({
@@ -81,7 +81,7 @@ module.exports = function (config, background) {
   function update(id, data, cb) {
     var connection = getConnection();
     connection.query(
-      'UPDATE `books` SET ? WHERE `id` = ?', [data, id], function(err) {
+      'UPDATE `books` SET ? WHERE `id` = ?', [data, id], function (err) {
         if (err) { return cb(err); }
         background.queueBook(id);
         read(id, cb);
@@ -114,7 +114,7 @@ if (!module.parent) {
     'Running this script directly will allow you to initialize your mysql ' +
     'database.\n This script will not modify any existing tables.\n');
 
-  prompt.get(['host', 'user', 'password'], function(err, result) {
+  prompt.get(['host', 'user', 'password'], function (err, result) {
     if (err) { return; }
     createSchema(result);
   });
@@ -139,7 +139,7 @@ function createSchema(config) {
     '`createdBy` VARCHAR(255) NULL, ' +
     '`createdById` VARCHAR(255) NULL, ' +
     'PRIMARY KEY (`id`));',
-    function(err) {
+    function (err) {
       if (err) { throw err; }
       console.log('Successfully created schema');
       connection.end();

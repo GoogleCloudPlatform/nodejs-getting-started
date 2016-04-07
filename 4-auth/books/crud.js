@@ -15,7 +15,7 @@
 
 var express = require('express');
 
-module.exports = function(model, images, oauth2) {
+module.exports = function (model, images, oauth2) {
 
   var router = express.Router();
 

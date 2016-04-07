@@ -15,14 +15,12 @@
 
 var gcloud = require('gcloud');
 
-
-module.exports = function(config) {
+module.exports = function (config) {
 
   // [START config]
-  var ds = gcloud.datastore.dataset(config.gcloud);
+  var ds = gcloud.datastore(config.gcloud);
   var kind = 'Book';
   // [END config]
-
 
   // Translates from Datastore's entity format to
   // the format expected by the application.
@@ -44,7 +42,6 @@ module.exports = function(config) {
     obj.data.id = obj.key.id;
     return obj.data;
   }
-
 
   // Translates from the application's format to the datastore's
   // extended entity property format. It also handles marking any
@@ -72,7 +69,7 @@ module.exports = function(config) {
   function toDatastore(obj, nonIndexed) {
     nonIndexed = nonIndexed || [];
     var results = [];
-    Object.keys(obj).forEach(function(k) {
+    Object.keys(obj).forEach(function (k) {
       if (obj[k] === undefined) { return; }
       results.push({
         name: k,
@@ -82,7 +79,6 @@ module.exports = function(config) {
     });
     return results;
   }
-
 
   // Lists all books in the Datastore sorted alphabetically by title.
   // The ``limit`` argument determines the maximum amount of results to
@@ -95,14 +91,13 @@ module.exports = function(config) {
       .order('title')
       .start(token);
 
-    ds.runQuery(q, function(err, entities, nextQuery) {
+    ds.runQuery(q, function (err, entities, nextQuery) {
       if (err) { return cb(err); }
       var hasMore = entities.length === limit ? nextQuery.startVal : false;
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }
   // [END list]
-
 
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
@@ -123,7 +118,7 @@ module.exports = function(config) {
 
     ds.save(
       entity,
-      function(err) {
+      function (err) {
         data.id = entity.key.id;
         cb(err, err ? null : data);
       }
@@ -131,10 +126,9 @@ module.exports = function(config) {
   }
   // [END update]
 
-
   function read(id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
-    ds.get(key, function(err, entity) {
+    ds.get(key, function (err, entity) {
       if (err) { return cb(err); }
       if (!entity) {
         return cb({
@@ -146,16 +140,14 @@ module.exports = function(config) {
     });
   }
 
-
   function _delete(id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
     ds.delete(key, cb);
   }
 
-
   // [START exports]
   return {
-    create: function(data, cb) {
+    create: function (data, cb) {
       update(null, data, cb);
     },
     read: read,
@@ -164,5 +156,4 @@ module.exports = function(config) {
     list: list
   };
   // [END exports]
-
 };

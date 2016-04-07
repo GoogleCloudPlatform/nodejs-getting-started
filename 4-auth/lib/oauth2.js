@@ -37,12 +37,12 @@
 //
 //     app.use(oauth2.router);
 //
-//     app.get('/users_only', oauth2.required, function(req, res){
+//     app.get('/users_only', oauth2.required, function (req, res){
 //       // only logged-in users can access.
 //       // other users are redirected to the login page.
 //     });
 //
-//     app.get('/aware', oauth2.aware, function(req, res){
+//     app.get('/aware', oauth2.aware, function (req, res){
 //       if(req.oauth2client) // user is logged in.
 //     });
 
@@ -52,7 +52,7 @@ var googleapis = require('googleapis');
 var express = require('express');
 
 
-module.exports = function(config) {
+module.exports = function (config) {
 
   var router = express.Router();
 
@@ -117,7 +117,7 @@ module.exports = function(config) {
   // the application and then return them to the original URL they
   // requested.
   function authRequired(req, res, next) {
-    authAware(req, res, function() {
+    authAware(req, res, function () {
       if (!req.oauth2client) {
         req.session.oauth2return = req.originalUrl;
         return res.redirect('/oauth2/authorize');
@@ -148,7 +148,7 @@ module.exports = function(config) {
   // when sending a user to this URL then they will be redirected to that
   // URL when the flow is finished.
   // [START authorize]
-  router.get('/oauth2/authorize', function(req, res) {
+  router.get('/oauth2/authorize', function (req, res) {
     /* jshint camelcase: false */
     var stateToken = generateStateToken();
     var authorizeUrl = getClient().generateAuthUrl({
@@ -170,18 +170,18 @@ module.exports = function(config) {
   // and then redirect the user to the `return` URL specified to
   // `/oauth2/authorize`.
   // [START callback]
-  router.get('/oauth2callback', function(req, res) {
+  router.get('/oauth2callback', function (req, res) {
     if (!req.query.code || req.query.state !== req.session.oauth2statetoken) {
       return res.status(400).send('Invalid auth code or state token.');
     }
-    getClient().getToken(req.query.code, function(err, tokens) {
+    getClient().getToken(req.query.code, function (err, tokens) {
       if (err) { return res.status(400).send(err.message); }
       req.session.oauth2tokens = tokens;
 
       /* Get the user's info and store it in the session */
       var client = getClient();
       client.setCredentials(tokens);
-      getUserProfile(client, function(err, profile) {
+      getUserProfile(client, function (err, profile) {
         if (err) { return res.status('500').send(err.message); }
         req.session.profile = {
           id: profile.id,
@@ -198,7 +198,7 @@ module.exports = function(config) {
 
   // Deletes the user's credentials and profile from the session.
   // This does not revoke any active tokens.
-  router.get('/oauth2/logout', function(req, res) {
+  router.get('/oauth2/logout', function (req, res) {
     delete req.session.oauth2tokens;
     delete req.session.profile;
     res.redirect(req.query.return || req.session.oauth2return || '/');

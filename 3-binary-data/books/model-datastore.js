@@ -16,9 +16,9 @@
 var gcloud = require('gcloud');
 
 
-module.exports = function(config) {
+module.exports = function (config) {
 
-  var ds = gcloud.datastore.dataset(config.gcloud);
+  var ds = gcloud.datastore(config.gcloud);
   var kind = 'Book';
 
 
@@ -70,7 +70,7 @@ module.exports = function(config) {
   function toDatastore(obj, nonIndexed) {
     nonIndexed = nonIndexed || [];
     var results = [];
-    Object.keys(obj).forEach(function(k) {
+    Object.keys(obj).forEach(function (k) {
       if (obj[k] === undefined) { return; }
       results.push({
         name: k,
@@ -92,7 +92,7 @@ module.exports = function(config) {
       .order('title')
       .start(token);
 
-    ds.runQuery(q, function(err, entities, nextQuery) {
+    ds.runQuery(q, function (err, entities, nextQuery) {
       if (err) { return cb(err); }
       var hasMore = entities.length === limit ? nextQuery.startVal : false;
       cb(null, entities.map(fromDatastore), hasMore);
@@ -118,7 +118,7 @@ module.exports = function(config) {
 
     ds.save(
       entity,
-      function(err) {
+      function (err) {
         data.id = entity.key.id;
         cb(err, err ? null : data);
       }
@@ -128,7 +128,7 @@ module.exports = function(config) {
 
   function read(id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
-    ds.get(key, function(err, entity) {
+    ds.get(key, function (err, entity) {
       if (err) { return cb(err); }
       if (!entity) {
         return cb({
@@ -148,7 +148,7 @@ module.exports = function(config) {
 
 
   return {
-    create: function(data, cb) {
+    create: function (data, cb) {
       update(null, data, cb);
     },
     read: read,
