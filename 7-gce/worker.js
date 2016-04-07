@@ -27,7 +27,7 @@ var background = require('./lib/background')(config.gcloud, logging);
 // We'll pass this to the model so that we don't get an infinite loop of book
 // processing requests.
 var backgroundStub = {
-  queueBook: function(){}
+  queueBook: function (){}
 };
 
 var model = require('./books/model-' + config.dataBackend)(
@@ -41,7 +41,7 @@ var app = express();
 app.use(logging.requestLogger);
 
 
-app.get('/_ah/health', function(req, res) {
+app.get('/_ah/health', function (req, res) {
   res.status(200).send('ok');
 });
 
@@ -49,7 +49,7 @@ app.get('/_ah/health', function(req, res) {
 // Keep count of how many books this worker has processed
 var bookCount = 0;
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.send('This worker has processed ' + bookCount + ' books.');
 });
 
@@ -68,7 +68,7 @@ var server = app.listen(config.port || 8080, function () {
 // Subscribe to Cloud Pub/Sub and receive messages to process books.
 // The subscription will continue to listen for messages until the process
 // is killed.
-background.subscribe(function(err, message) {
+background.subscribe(function (err, message) {
   // Any errors received are considered fatal.
   if(err) { throw err; }
   if (message.action === 'processBook') {
@@ -85,16 +85,16 @@ background.subscribe(function(err, message) {
 function processBook(bookId) {
   waterfall([
     // Load the current data
-    function(cb) {
+    function (cb) {
       model.read(bookId, cb);
     },
     // Find the information from Google
     findBookInfo,
     // Save the updated data
-    function(updated, cb) {
+    function (updated, cb) {
       model.update(updated.id, updated, cb, true);
     }
-  ], function(err) {
+  ], function (err) {
     if (err) {
       logging.error('Error occurred', err);
     } else {
@@ -109,7 +109,7 @@ function processBook(bookId) {
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
 function findBookInfo(book, cb) {
-  queryBooksApi(book.title, function(err, r) {
+  queryBooksApi(book.title, function (err, r) {
     if (err) { return cb(err); }
     if (!r.items) { return cb('Not found'); }
     var top = r.items[0];
@@ -130,7 +130,7 @@ function findBookInfo(book, cb) {
     var imageName = book.id + '.jpg';
 
     images.downloadAndUploadImage(
-      imageUrl, imageName, function(err, publicUrl) {
+      imageUrl, imageName, function (err, publicUrl) {
         if (!err) { book.imageUrl = publicUrl; }
         cb(null, book);
       });
@@ -144,7 +144,7 @@ function queryBooksApi(query, cb) {
   request(
     'https://www.googleapis.com/books/v1/volumes?q=' +
       encodeURIComponent(query),
-    function(err, resp, body) {
+    function (err, resp, body) {
       if (err || resp.statusCode !== 200) {
         return cb(err || 'Response returned ' + resp.statusCode);
       }

@@ -16,7 +16,7 @@
 var gcloud = require('gcloud');
 
 
-module.exports = function(gcloudConfig, cloudStorageBucket) {
+module.exports = function (gcloudConfig, cloudStorageBucket) {
 
   var storage = gcloud.storage(gcloudConfig);
   var bucket = storage.bucket(cloudStorageBucket);
@@ -42,12 +42,12 @@ module.exports = function(gcloudConfig, cloudStorageBucket) {
     var file = bucket.file(gcsname);
     var stream = file.createWriteStream();
 
-    stream.on('error', function(err) {
+    stream.on('error', function (err) {
       req.file.cloudStorageError = err;
       next(err);
     });
 
-    stream.on('finish', function() {
+    stream.on('finish', function () {
       req.file.cloudStorageObject = gcsname;
       req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
       next();
@@ -64,7 +64,7 @@ module.exports = function(gcloudConfig, cloudStorageBucket) {
   var multer = require('multer')({
     inMemory: true,
     fileSize: 5 * 1024 * 1024, // no larger than 5mb
-    rename: function(fieldname, filename) {
+    rename: function (fieldname, filename) {
       // generate a unique filename
       return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
     }

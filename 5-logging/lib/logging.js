@@ -17,7 +17,7 @@ var winston = require('winston');
 var expressWinston = require('express-winston');
 
 
-module.exports = function() {
+module.exports = function () {
   var colorize = process.env.NODE_ENV === 'production' ? false : true;
 
   // Logger to capture all requests and output them to the console.

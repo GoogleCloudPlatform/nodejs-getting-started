@@ -31,18 +31,18 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
 
     request
       .get(sourceUrl)
-      .on('error', function(err) {
+      .on('error', function (err) {
         logging.warn('Could not fetch image ' + sourceUrl, err);
         cb(err);
       })
       .pipe(file.createWriteStream())
-      .on('finish', function() {
+      .on('finish', function () {
         logging.info('Uploaded image ' + destFileName);
-        file.makePublic(function(){
+        file.makePublic(function (){
           cb(null, getPublicUrl(destFileName));
         });
       })
-      .on('error', function(err) {
+      .on('error', function (err) {
         logging.error('Could not upload image', err);
         cb(err);
       });
@@ -70,12 +70,12 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
     var file = bucket.file(gcsname);
     var stream = file.createWriteStream();
 
-    stream.on('error', function(err) {
+    stream.on('error', function (err) {
       req.file.cloudStorageError = err;
       next(err);
     });
 
-    stream.on('finish', function() {
+    stream.on('finish', function () {
       req.file.cloudStorageObject = gcsname;
       req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
       next();
@@ -92,7 +92,7 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
   var multer = require('multer')({
     inMemory: true,
     fileSize: 5 * 1024 * 1024, // no larger than 5mb
-    rename: function(fieldname, filename) {
+    rename: function (fieldname, filename) {
       // generate a unique filename
       return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
     }

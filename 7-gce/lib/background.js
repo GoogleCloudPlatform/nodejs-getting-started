@@ -20,7 +20,7 @@ var topicName = 'book-process-queue';
 var subscriptionName = 'shared-worker-subscription';
 
 
-module.exports = function(gcloudConfig, logging) {
+module.exports = function (gcloudConfig, logging) {
 
   var pubsub = gcloud.pubsub(config.gcloud);
 
@@ -31,7 +31,7 @@ module.exports = function(gcloudConfig, logging) {
   // publishing anything to it as topics without subscribers
   // will essentially drop any messages.
   function getTopic(cb) {
-    pubsub.createTopic(topicName, function(err, topic) {
+    pubsub.createTopic(topicName, function (err, topic) {
       // topic already exists.
       if (err && err.code === 409) {
         return cb(null, pubsub.topic(topicName));
@@ -46,16 +46,16 @@ module.exports = function(gcloudConfig, logging) {
   // subscription, which means that pub/sub will evenly distribute messages
   // to each worker.
   function subscribe(cb) {
-    getTopic(function(err, topic) {
+    getTopic(function (err, topic) {
       if (err) { return cb(err); }
 
       topic.subscribe(subscriptionName, {
         autoAck: true,
         reuseExisting: true
-      }, function(err, subscription) {
+      }, function (err, subscription) {
         if (err) { return cb(err); }
 
-        subscription.on('message', function(message) {
+        subscription.on('message', function (message) {
           cb(null, message.data);
         });
 
@@ -69,7 +69,7 @@ module.exports = function(gcloudConfig, logging) {
 
   // Adds a book to the queue to be processed by the worker.
   function queueBook(bookId) {
-    getTopic(function(err, topic) {
+    getTopic(function (err, topic) {
       if (err) {
         logging.error('Error occurred while getting pubsub topic', err);
         return;
@@ -80,7 +80,7 @@ module.exports = function(gcloudConfig, logging) {
           action: 'processBook',
           bookId: bookId
         }
-      }, function(err) {
+      }, function (err) {
         if (err) {
           logging.error('Error occurred while queuing background task', err);
         } else {

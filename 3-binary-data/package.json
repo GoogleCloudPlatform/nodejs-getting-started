@@ -32,11 +32,11 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
-    "gcloud": "^0.28.0",
+    "gcloud": "^0.30.2",
     "jade": "^1.11.0",
-    "kerberos": "^0.0.18",
-    "lodash": "^4.5.1",
-    "mongodb": "^2.1.7",
+    "kerberos": "^0.0.19",
+    "lodash": "^4.8.2",
+    "mongodb": "^2.1.15",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
     "prompt": "^1.0.0"
