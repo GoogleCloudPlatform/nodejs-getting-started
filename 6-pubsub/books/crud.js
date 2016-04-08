@@ -16,7 +16,6 @@
 var express = require('express');
 
 module.exports = function (model, images, oauth2) {
-
   var router = express.Router();
 
   // Use the oauth middleware to automatically get the user's profile
@@ -35,9 +34,11 @@ module.exports = function (model, images, oauth2) {
    *
    * Display a page of books (up to ten at a time).
    */
-  router.get('/', function list(req, res, next) {
+  router.get('/', function list (req, res, next) {
     model.list(10, req.query.pageToken, function (err, entities, cursor) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/list.jade', {
         books: entities,
         nextPageToken: cursor
@@ -47,14 +48,15 @@ module.exports = function (model, images, oauth2) {
 
   // Use the oauth2.required middleware to ensure that only logged-in users
   // can access this handler.
-  router.get('/mine', oauth2.required, function list(req, res, next) {
-     model.listBy(
+  router.get('/mine', oauth2.required, function list (req, res, next) {
+    model.listBy(
       req.session.profile.id,
       10,
       req.query.pageToken,
       function (err, entities, cursor, apiResponse) {
-        console.log(err, apiResponse);
-        if (err) { return next(err); }
+        if (err) {
+          return next(err);
+        }
         res.render('books/list.jade', {
           books: entities,
           nextPageToken: cursor
@@ -68,7 +70,7 @@ module.exports = function (model, images, oauth2) {
    *
    * Display a form for creating a book.
    */
-  router.get('/add', function addForm(req, res) {
+  router.get('/add', function addForm (req, res) {
     res.render('books/form.jade', {
       book: {},
       action: 'Add'
@@ -85,7 +87,7 @@ module.exports = function (model, images, oauth2) {
     '/add',
     images.multer.single('image'),
     images.sendUploadToGCS,
-    function insert(req, res, next) {
+    function insert (req, res, next) {
       var data = req.body;
 
       // If the user is logged in, set them as the creator of the book.
@@ -104,7 +106,9 @@ module.exports = function (model, images, oauth2) {
 
       // Save the data to the database.
       model.create(data, function (err, savedData) {
-        if (err) { return next(err); }
+        if (err) {
+          return next(err);
+        }
         res.redirect(req.baseUrl + '/' + savedData.id);
       });
     }
@@ -116,9 +120,11 @@ module.exports = function (model, images, oauth2) {
    *
    * Display a book for editing.
    */
-  router.get('/:book/edit', function editForm(req, res, next) {
+  router.get('/:book/edit', function editForm (req, res, next) {
     model.read(req.params.book, function (err, entity) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/form.jade', {
         book: entity,
         action: 'Edit'
@@ -135,7 +141,7 @@ module.exports = function (model, images, oauth2) {
     '/:book/edit',
     images.multer.single('image'),
     images.sendUploadToGCS,
-    function update(req, res, next) {
+    function update (req, res, next) {
       var data = req.body;
 
       // Was an image uploaded? If so, we'll use its public URL
@@ -145,7 +151,9 @@ module.exports = function (model, images, oauth2) {
       }
 
       model.update(req.params.book, data, function (err, savedData) {
-        if (err) { return next(err); }
+        if (err) {
+          return next(err);
+        }
         res.redirect(req.baseUrl + '/' + savedData.id);
       });
     }
@@ -156,9 +164,11 @@ module.exports = function (model, images, oauth2) {
    *
    * Display a book.
    */
-  router.get('/:book', function get(req, res, next) {
+  router.get('/:book', function get (req, res, next) {
     model.read(req.params.book, function (err, entity) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/view.jade', {
         book: entity
       });
@@ -170,9 +180,11 @@ module.exports = function (model, images, oauth2) {
    *
    * Delete a book.
    */
-  router.get('/:book/delete', function _delete(req, res, next) {
+  router.get('/:book/delete', function _delete (req, res, next) {
     model.delete(req.params.book, function (err) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.redirect(req.baseUrl);
     });
   });
@@ -180,7 +192,7 @@ module.exports = function (model, images, oauth2) {
   /**
    * Errors on "/books/*" routes.
    */
-  router.use(function handleRpcError(err, req, res, next) {
+  router.use(function handleRpcError (err, req, res, next) {
     // Format error and forward to generic error handler for logging and
     // responding to the request
     err.response = err.message;

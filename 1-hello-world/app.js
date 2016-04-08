@@ -17,7 +17,6 @@ var express = require('express');
 
 var app = express();
 
-
 // [START hello_world]
 // Say hello!
 app.get('/', function (req, res) {

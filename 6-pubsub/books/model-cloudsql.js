@@ -17,20 +17,21 @@ var extend = require('lodash').assign;
 var mysql = require('mysql');
 
 module.exports = function (config, background) {
-
-  function getConnection() {
+  function getConnection () {
     return mysql.createConnection(extend({
       database: 'library'
     }, config.mysql));
   }
 
-  function list(limit, token, cb) {
+  function list (limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     var connection = getConnection();
     connection.query(
       'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
       function (err, results) {
-        if (err) { return cb(err); }
+        if (err) {
+          return cb(err);
+        }
         var hasMore = results.length === limit ? token + results.length : false;
         cb(null, results, hasMore);
       }
@@ -38,14 +39,16 @@ module.exports = function (config, background) {
     connection.end();
   }
 
-  function listBy(userId, limit, token, cb) {
+  function listBy (userId, limit, token, cb) {
     token = token ? parseInt(token, 10) : 0;
     var connection = getConnection();
     connection.query(
       'SELECT * FROM `books` WHERE `createdById` = ? LIMIT ? OFFSET ?',
       [userId, limit, token],
       function (err, results) {
-        if (err) { return cb(err); }
+        if (err) {
+          return cb(err);
+        }
         var hasMore = results.length === limit ? token + results.length : false;
         cb(null, results, hasMore);
       });
@@ -53,10 +56,12 @@ module.exports = function (config, background) {
   }
 
   // [START create]
-  function create(data, cb) {
+  function create (data, cb) {
     var connection = getConnection();
     connection.query('INSERT INTO `books` SET ?', data, function (err, res) {
-      if (err) { return cb(err); }
+      if (err) {
+        return cb(err);
+      }
       background.queueBook(res.insertId);
       read(res.insertId, cb);
     });
@@ -64,11 +69,13 @@ module.exports = function (config, background) {
   }
   // [END create]
 
-  function read(id, cb) {
+  function read (id, cb) {
     var connection = getConnection();
     connection.query(
       'SELECT * FROM `books` WHERE `id` = ?', id, function (err, results) {
-        if (err) { return cb(err); }
+        if (err) {
+          return cb(err);
+        }
         if (!results.length) {
           return cb({
             code: 404,
@@ -81,11 +88,13 @@ module.exports = function (config, background) {
   }
 
   // [START update]
-  function update(id, data, cb) {
+  function update (id, data, cb) {
     var connection = getConnection();
     connection.query(
       'UPDATE `books` SET ? WHERE `id` = ?', [data, id], function (err) {
-        if (err) { return cb(err); }
+        if (err) {
+          return cb(err);
+        }
         background.queueBook(id);
         read(id, cb);
       });
@@ -93,7 +102,7 @@ module.exports = function (config, background) {
   }
   // [END update]
 
-  function _delete(id, cb) {
+  function _delete (id, cb) {
     var connection = getConnection();
     connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
     connection.end();
@@ -110,7 +119,7 @@ module.exports = function (config, background) {
   };
 };
 
-if (!module.parent) {
+if (module === require.main) {
   var prompt = require('prompt');
   prompt.start();
 
@@ -119,12 +128,14 @@ if (!module.parent) {
     'database.\n This script will not modify any existing tables.\n');
 
   prompt.get(['host', 'user', 'password'], function (err, result) {
-    if (err) { return; }
+    if (err) {
+      return;
+    }
     createSchema(result);
   });
 }
 
-function createSchema(config) {
+function createSchema (config) {
   var connection = mysql.createConnection(extend({
     multipleStatements: true
   }, config));
@@ -144,7 +155,9 @@ function createSchema(config) {
     '`createdById` VARCHAR(255) NULL, ' +
     'PRIMARY KEY (`id`));',
     function (err) {
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       console.log('Successfully created schema');
       connection.end();
     }

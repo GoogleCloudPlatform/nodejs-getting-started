@@ -17,7 +17,7 @@ var path = require('path');
 
 module.exports = {
   test: '4-auth',
-  path: path.resolve(path.join(__dirname,  '../')),
+  path: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
   args: ['app.js'],
   msg: 'No books found.'

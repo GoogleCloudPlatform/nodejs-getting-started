@@ -15,12 +15,9 @@
 
 var gcloud = require('gcloud');
 
-
 module.exports = function (config) {
-
   var ds = gcloud.datastore(config.gcloud);
   var kind = 'Book';
-
 
   // Translates from Datastore's entity format to
   // the format expected by the application.
@@ -38,11 +35,10 @@ module.exports = function (config) {
   //     id: id,
   //     property: value
   //   }
-  function fromDatastore(obj) {
+  function fromDatastore (obj) {
     obj.data.id = obj.key.id;
     return obj.data;
   }
-
 
   // Translates from the application's format to the datastore's
   // extended entity property format. It also handles marking any
@@ -67,11 +63,13 @@ module.exports = function (config) {
   //       excludeFromIndexes: true
   //     }
   //   ]
-  function toDatastore(obj, nonIndexed) {
+  function toDatastore (obj, nonIndexed) {
     nonIndexed = nonIndexed || [];
     var results = [];
     Object.keys(obj).forEach(function (k) {
-      if (obj[k] === undefined) { return; }
+      if (obj[k] === undefined) {
+        return;
+      }
       results.push({
         name: k,
         value: obj[k],
@@ -81,29 +79,29 @@ module.exports = function (config) {
     return results;
   }
 
-
   // Lists all books in the Datastore sorted alphabetically by title.
   // The ``limit`` argument determines the maximum amount of results to
   // return per page. The ``token`` argument allows requesting additional
   // pages. The callback is invoked with ``(err, books, nextPageToken)``.
-  function list(limit, token, cb) {
+  function list (limit, token, cb) {
     var q = ds.createQuery([kind])
       .limit(limit)
       .order('title')
       .start(token);
 
     ds.runQuery(q, function (err, entities, nextQuery) {
-      if (err) { return cb(err); }
+      if (err) {
+        return cb(err);
+      }
       var hasMore = entities.length === limit ? nextQuery.startVal : false;
       cb(null, entities.map(fromDatastore), hasMore);
     });
   }
 
-
   // Creates a new book or updates an existing book with new data. The provided
   // data is automatically translated into Datastore format. The book will be
   // queued for background processing.
-  function update(id, data, cb) {
+  function update (id, data, cb) {
     var key;
     if (id) {
       key = ds.key([kind, parseInt(id, 10)]);
@@ -125,11 +123,12 @@ module.exports = function (config) {
     );
   }
 
-
-  function read(id, cb) {
+  function read (id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
     ds.get(key, function (err, entity) {
-      if (err) { return cb(err); }
+      if (err) {
+        return cb(err);
+      }
       if (!entity) {
         return cb({
           code: 404,
@@ -140,12 +139,10 @@ module.exports = function (config) {
     });
   }
 
-
-  function _delete(id, cb) {
+  function _delete (id, cb) {
     var key = ds.key([kind, parseInt(id, 10)]);
     ds.delete(key, cb);
   }
-
 
   return {
     create: function (data, cb) {
@@ -156,5 +153,4 @@ module.exports = function (config) {
     delete: _delete,
     list: list
   };
-
 };

@@ -17,7 +17,7 @@ var path = require('path');
 
 module.exports = {
   test: '1-hello-world',
-  path: path.resolve(path.join(__dirname,  '../')),
+  path: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
   args: ['app.js'],
   msg: 'Hello, world!'

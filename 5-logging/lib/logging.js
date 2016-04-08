@@ -16,9 +16,8 @@
 var winston = require('winston');
 var expressWinston = require('express-winston');
 
-
 module.exports = function () {
-  var colorize = process.env.NODE_ENV === 'production' ? false : true;
+  var colorize = process.env.NODE_ENV !== 'production';
 
   // Logger to capture all requests and output them to the console.
   // [START requests]
@@ -34,7 +33,6 @@ module.exports = function () {
   });
   // [END requests]
 
-
   // Logger to capture any top-level errors and output json diagnostic info.
   // [START errors]
   var errorLogger = expressWinston.errorLogger({
@@ -42,11 +40,10 @@ module.exports = function () {
       new winston.transports.Console({
         json: true,
         colorize: colorize
-      }),
+      })
     ]
   });
   // [END errors]
-
 
   return {
     requestLogger: requestLogger,
@@ -59,5 +56,4 @@ module.exports = function () {
     debug: winston.debug,
     silly: winston.silly
   };
-
 };
