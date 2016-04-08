@@ -33,7 +33,7 @@ describe('using Datastore backend', function () {
 });
 
 if (!process.env.TRAVIS) {
-  return;
+  process.exit();
 }
 
 // Test Cloud SQL

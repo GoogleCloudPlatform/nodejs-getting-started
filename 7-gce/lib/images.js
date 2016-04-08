@@ -16,16 +16,13 @@
 var request = require('request');
 var gcloud = require('gcloud');
 
-
 module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
-
   var storage = gcloud.storage(gcloudConfig);
   var bucket = storage.bucket(cloudStorageBucket);
 
   // Downloads a given image (by URL) and then uploads it to
   // Google Cloud Storage. Provides the publicly accessable URL to the callback.
-  function downloadAndUploadImage(sourceUrl, destFileName, cb) {
-
+  function downloadAndUploadImage (sourceUrl, destFileName, cb) {
     var file = bucket.file(destFileName);
 
     request
@@ -37,7 +34,7 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
       .pipe(file.createWriteStream())
       .on('finish', function () {
         logging.info('Uploaded image ' + destFileName);
-        file.makePublic(function (){
+        file.makePublic(function () {
           cb(null, getPublicUrl(destFileName));
         });
       })
@@ -47,13 +44,11 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
       });
   }
 
-
   // Returns the public, anonymously accessable URL to a given Cloud Storage
   // object.
   // The object's ACL has to be set to public read.
-  function getPublicUrl(filename) {
-    return 'https://storage.googleapis.com/' +
-      cloudStorageBucket +
+  function getPublicUrl (filename) {
+    return 'https://storage.googleapis.com/' + cloudStorageBucket +
       '/' + filename;
   }
 
@@ -61,8 +56,10 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
   // req.file is processed and will have two new properties:
   // * ``cloudStorageObject`` the object name in cloud storage.
   // * ``cloudStoragePublicUrl`` the public url to the object.
-  function sendUploadToGCS(req, res, next) {
-    if(!req.file) { return next(); }
+  function sendUploadToGCS (req, res, next) {
+    if (!req.file) {
+      return next();
+    }
 
     var gcsname = Date.now() + req.file.originalname;
     var file = bucket.file(gcsname);
@@ -82,7 +79,6 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
     stream.end(req.file.buffer);
   }
 
-
   // Multer handles parsing multipart/form-data requests.
   // This instance is configured to store images in memory and re-name to avoid
   // conflicting with existing objects. This makes it straightforward to upload
@@ -96,12 +92,10 @@ module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
     }
   });
 
-
   return {
     downloadAndUploadImage: downloadAndUploadImage,
     getPublicUrl: getPublicUrl,
     sendUploadToGCS: sendUploadToGCS,
     multer: multer
   };
-
 };

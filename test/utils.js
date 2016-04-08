@@ -18,7 +18,7 @@ var request = require('request');
 
 // Send a request to the given url and test that the response body has the
 // expected value
-function testRequest(url, config, cb) {
+function testRequest (url, config, cb) {
   request(url, function (err, res, body) {
     if (err) {
       // Request error
@@ -37,12 +37,11 @@ function testRequest(url, config, cb) {
         // Response body did not match expected
         return cb(new Error(message));
       }
-    } 
+    }
   });
 }
 
-exports.testInstallation = function testInstallation(config, done) {
-
+exports.testInstallation = function testInstallation (config, done) {
   // Keep track off whether "done" has been called yet
   var calledDone = false;
 
@@ -65,7 +64,7 @@ exports.testInstallation = function testInstallation(config, done) {
   });
 
   // Exit helper so we don't call "cb" more than once
-  function finish(err) {
+  function finish (err) {
     if (!calledDone) {
       calledDone = true;
       done(err);
@@ -73,7 +72,7 @@ exports.testInstallation = function testInstallation(config, done) {
   }
 };
 
-exports.testLocalApp = function testLocalApp(config, done) {
+exports.testLocalApp = function testLocalApp (config, done) {
   var calledDone = false;
 
   var proc = spawn(config.cmd, config.args, {
@@ -108,7 +107,7 @@ exports.testLocalApp = function testLocalApp(config, done) {
   }, 3000);
 
   // Exit helper so we don't call "cb" more than once
-  function finish(err) {
+  function finish (err) {
     if (!calledDone) {
       calledDone = true;
       done(err);

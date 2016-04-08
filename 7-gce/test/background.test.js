@@ -20,7 +20,6 @@ var background;
 var mocks = {};
 
 describe('background.js', function () {
-
   beforeEach(function () {
     // Mock dependencies used by background.js
     mocks.config = function () {

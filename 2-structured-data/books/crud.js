@@ -17,14 +17,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 module.exports = function (model) {
-
   var router = express.Router();
 
   // Automatically parse request body as form data
   router.use(bodyParser.urlencoded({ extended: false }));
 
   // Set Content-Type for all responses for these routes
-  router.use(function (req, res, next){
+  router.use(function (req, res, next) {
     res.set('Content-Type', 'text/html');
     next();
   });
@@ -34,9 +33,11 @@ module.exports = function (model) {
    *
    * Display a page of books (up to ten at a time).
    */
-  router.get('/', function list(req, res, next) {
+  router.get('/', function list (req, res, next) {
     model.list(10, req.query.pageToken, function (err, entities, cursor) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/list.jade', {
         books: entities,
         nextPageToken: cursor
@@ -50,7 +51,7 @@ module.exports = function (model) {
    * Display a form for creating a book.
    */
   // [START add_get]
-  router.get('/add', function addForm(req, res) {
+  router.get('/add', function addForm (req, res) {
     res.render('books/form.jade', {
       book: {},
       action: 'Add'
@@ -64,12 +65,14 @@ module.exports = function (model) {
    * Create a book.
    */
   // [START add_post]
-  router.post('/add', function insert(req, res, next) {
+  router.post('/add', function insert (req, res, next) {
     var data = req.body;
 
     // Save the data to the database.
     model.create(data, function (err, savedData) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.redirect(req.baseUrl + '/' + savedData.id);
     });
   });
@@ -80,9 +83,11 @@ module.exports = function (model) {
    *
    * Display a book for editing.
    */
-  router.get('/:book/edit', function editForm(req, res, next) {
+  router.get('/:book/edit', function editForm (req, res, next) {
     model.read(req.params.book, function (err, entity) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/form.jade', {
         book: entity,
         action: 'Edit'
@@ -95,11 +100,13 @@ module.exports = function (model) {
    *
    * Update a book.
    */
-  router.post('/:book/edit', function update(req, res, next) {
+  router.post('/:book/edit', function update (req, res, next) {
     var data = req.body;
 
     model.update(req.params.book, data, function (err, savedData) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.redirect(req.baseUrl + '/' + savedData.id);
     });
   });
@@ -109,9 +116,11 @@ module.exports = function (model) {
    *
    * Display a book.
    */
-  router.get('/:book', function get(req, res, next) {
+  router.get('/:book', function get (req, res, next) {
     model.read(req.params.book, function (err, entity) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.render('books/view.jade', {
         book: entity
       });
@@ -123,9 +132,11 @@ module.exports = function (model) {
    *
    * Delete a book.
    */
-  router.get('/:book/delete', function _delete(req, res, next) {
+  router.get('/:book/delete', function _delete (req, res, next) {
     model.delete(req.params.book, function (err) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       res.redirect(req.baseUrl);
     });
   });
@@ -133,7 +144,7 @@ module.exports = function (model) {
   /**
    * Errors on "/books/*" routes.
    */
-  router.use(function handleRpcError(err, req, res, next) {
+  router.use(function handleRpcError (err, req, res, next) {
     // Format error and forward to generic error handler for logging and
     // responding to the request
     err.response = err.message;

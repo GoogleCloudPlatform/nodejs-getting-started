@@ -23,16 +23,14 @@ var images = require('./lib/images')(
   config.gcloud, config.cloudStorageBucket, logging);
 var background = require('./lib/background')(config.gcloud, logging);
 
-
 // We'll pass this to the model so that we don't get an infinite loop of book
 // processing requests.
 var backgroundStub = {
-  queueBook: function (){}
+  queueBook: function () {}
 };
 
 var model = require('./books/model-' + config.dataBackend)(
   config, backgroundStub);
-
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
@@ -40,11 +38,9 @@ var app = express();
 
 app.use(logging.requestLogger);
 
-
 app.get('/_ah/health', function (req, res) {
   res.status(200).send('ok');
 });
-
 
 // Keep count of how many books this worker has processed
 var bookCount = 0;
@@ -53,9 +49,7 @@ app.get('/', function (req, res) {
   res.send('This worker has processed ' + bookCount + ' books.');
 });
 
-
 app.use(logging.errorLogger);
-
 
 var server = app.listen(config.port || 8080, function () {
   var host = server.address().address;
@@ -64,13 +58,14 @@ var server = app.listen(config.port || 8080, function () {
   console.log('App listening at http://%s:%s', host, port);
 });
 
-
 // Subscribe to Cloud Pub/Sub and receive messages to process books.
 // The subscription will continue to listen for messages until the process
 // is killed.
 background.subscribe(function (err, message) {
   // Any errors received are considered fatal.
-  if(err) { throw err; }
+  if (err) {
+    throw err;
+  }
   if (message.action === 'processBook') {
     logging.info('Received request to process book ' + message.bookId);
     processBook(message.bookId);
@@ -79,10 +74,9 @@ background.subscribe(function (err, message) {
   }
 });
 
-
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
-function processBook(bookId) {
+function processBook (bookId) {
   waterfall([
     // Load the current data
     function (cb) {
@@ -104,14 +98,17 @@ function processBook(bookId) {
   });
 }
 
-
 // Tries to find additional information about a book and updates
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
-function findBookInfo(book, cb) {
+function findBookInfo (book, cb) {
   queryBooksApi(book.title, function (err, r) {
-    if (err) { return cb(err); }
-    if (!r.items) { return cb('Not found'); }
+    if (err) {
+      return cb(err);
+    }
+    if (!r.items) {
+      return cb('Not found');
+    }
     var top = r.items[0];
 
     book.title = top.volumeInfo.title;
@@ -121,7 +118,9 @@ function findBookInfo(book, cb) {
 
     // If there is already an image for the book or if there's no
     // thumbnails, go ahead and return.
-    if (book.imageUrl || !top.volumeInfo.imageLinks) { return cb(null, book); }
+    if (book.imageUrl || !top.volumeInfo.imageLinks) {
+      return cb(null, book);
+    }
 
     // Otherwise, try to fetch them and upload to cloud storage.
     var imageUrl =
@@ -131,16 +130,17 @@ function findBookInfo(book, cb) {
 
     images.downloadAndUploadImage(
       imageUrl, imageName, function (err, publicUrl) {
-        if (!err) { book.imageUrl = publicUrl; }
+        if (!err) {
+          book.imageUrl = publicUrl;
+        }
         cb(null, book);
       });
   });
 }
 
-
 // Calls out to the Google Books API to get additional
 // information about a given book.
-function queryBooksApi(query, cb) {
+function queryBooksApi (query, cb) {
   request(
     'https://www.googleapis.com/books/v1/volumes?q=' +
       encodeURIComponent(query),
@@ -152,6 +152,3 @@ function queryBooksApi(query, cb) {
     }
   );
 }
-
-
-

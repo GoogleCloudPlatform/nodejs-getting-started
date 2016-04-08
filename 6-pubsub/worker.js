@@ -26,7 +26,7 @@ var background = require('./lib/background')(config.gcloud, logging);
 // We'll pass this to the model so that we don't get an infinite loop of book
 // processing requests.
 var backgroundStub = {
-  queueBook: function (){}
+  queueBook: function () {}
 };
 
 var model = require('./books/model-' + config.dataBackend)(
@@ -42,7 +42,6 @@ app.use(logging.requestLogger);
 app.get('/_ah/health', function (req, res) {
   res.status(200).send('ok');
 });
-
 
 // Keep count of how many books this worker has processed
 var bookCount = 0;
@@ -70,7 +69,9 @@ if (module === require.main) {
   // [START subscribe]
   background.subscribe(function (err, message) {
     // Any errors received are considered fatal.
-    if(err) { throw err; }
+    if (err) {
+      throw err;
+    }
     if (message.action === 'processBook') {
       logging.info('Received request to process book ' + message.bookId);
       processBook(message.bookId);
@@ -84,7 +85,7 @@ if (module === require.main) {
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
 // [START process]
-function processBook(bookId) {
+function processBook (bookId) {
   waterfall([
     // Load the current data
     function (cb) {
@@ -107,15 +108,18 @@ function processBook(bookId) {
 }
 // [END process]
 
-
 // Tries to find additional information about a book and updates
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
 // [START find]
-function findBookInfo(book, cb) {
+function findBookInfo (book, cb) {
   queryBooksApi(book.title, function (err, r) {
-    if (err) { return cb(err); }
-    if (!r.items) { return cb('Not found'); }
+    if (err) {
+      return cb(err);
+    }
+    if (!r.items) {
+      return cb('Not found');
+    }
     var top = r.items[0];
 
     book.title = top.volumeInfo.title;
@@ -125,7 +129,9 @@ function findBookInfo(book, cb) {
 
     // If there is already an image for the book or if there's no
     // thumbnails, go ahead and return.
-    if (book.imageUrl || !top.volumeInfo.imageLinks) { return cb(null, book); }
+    if (book.imageUrl || !top.volumeInfo.imageLinks) {
+      return cb(null, book);
+    }
 
     // Otherwise, try to fetch them and upload to cloud storage.
     var imageUrl =
@@ -135,18 +141,19 @@ function findBookInfo(book, cb) {
 
     images.downloadAndUploadImage(
       imageUrl, imageName, function (err, publicUrl) {
-        if (!err) { book.imageUrl = publicUrl; }
+        if (!err) {
+          book.imageUrl = publicUrl;
+        }
         cb(null, book);
       });
   });
 }
 // [END find]
 
-
 // Calls out to the Google Books API to get additional
 // information about a given book.
 // [START query]
-function queryBooksApi(query, cb) {
+function queryBooksApi (query, cb) {
   request(
     'https://www.googleapis.com/books/v1/volumes?q=' +
       encodeURIComponent(query),
