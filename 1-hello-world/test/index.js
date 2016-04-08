@@ -13,7 +13,7 @@
 
 'use strict';
 
-var config = require('./config');
+var config = require('../config');
 var utils = require('../../test/utils');
 
 describe(config.test + '/', function () {

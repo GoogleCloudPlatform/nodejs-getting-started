@@ -15,7 +15,7 @@
 
 var path = require('path');
 var express = require('express');
-var config = require('./config')();
+var config = require('./config');
 
 var app = express();
 
@@ -24,13 +24,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
-// Setup modules and dependencies
-var images = require('./lib/images')(config.gcloud, config.cloudStorageBucket);
-var model = require('./books/model')(config);
-
 // Books
-app.use('/books', require('./books/crud')(model, images));
-app.use('/api/books', require('./books/api')(model));
+app.use('/books', require('./books/crud'));
+app.use('/api/books', require('./books/api'));
 
 // Redirect root to /books
 app.get('/', function (req, res) {
@@ -53,7 +49,7 @@ app.use(function (err, req, res, next) {
 
 if (module === require.main) {
   // Start the server
-  var server = app.listen(config.port, function () {
+  var server = app.listen(config.get('PORT'), function () {
     var host = server.address().address;
     var port = server.address().port;
 

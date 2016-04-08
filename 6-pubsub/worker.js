@@ -16,21 +16,13 @@
 var request = require('request');
 var waterfall = require('async').waterfall;
 var express = require('express');
-var config = require('./config')();
+var config = require('./config');
 
-var logging = require('./lib/logging')(config.logPath);
-var images = require('./lib/images')(
-  config.gcloud, config.cloudStorageBucket, logging);
-var background = require('./lib/background')(config.gcloud, logging);
+var logging = require('./lib/logging');
+var images = require('./lib/images');
+var background = require('./lib/background');
 
-// We'll pass this to the model so that we don't get an infinite loop of book
-// processing requests.
-var backgroundStub = {
-  queueBook: function () {}
-};
-
-var model = require('./books/model-' + config.dataBackend)(
-  config, backgroundStub);
+var model = require('./books/model-' + config.get('DATA_BACKEND'));
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
@@ -53,7 +45,7 @@ app.get('/', function (req, res) {
 app.use(logging.errorLogger);
 
 if (module === require.main) {
-  var server = app.listen(config.port || 8080, function () {
+  var server = app.listen(config.get('PORT'), function () {
     var host = server.address().address;
     var port = server.address().port;
 
@@ -95,7 +87,7 @@ function processBook (bookId) {
     findBookInfo,
     // Save the updated data
     function (updated, cb) {
-      model.update(updated.id, updated, cb, true);
+      model.update(updated.id, updated, false, cb);
     }
   ], function (err) {
     if (err) {

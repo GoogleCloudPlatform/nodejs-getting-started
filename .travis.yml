@@ -36,6 +36,10 @@ env:
     - GCLOUD_PROJECT=nodejs-docs-samples
     - OAUTH_CLIENT_ID=test-id
     - OAUTH_CLIENT_SECRET=test-secret
+  matrix:
+    - DATA_BACKEND=datastore
+    - DATA_BACKEND=mongodb
+    - DATA_BACKEND=cloudsql
 
 before_install:
   - if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then

@@ -22,10 +22,11 @@ var mocks = {};
 describe('background.js', function () {
   beforeEach(function () {
     // Mock dependencies used by background.js
-    mocks.config = function () {
-      return {
-        gcloud: sinon.stub()
-      };
+    mocks.config = {
+      GCLOUD_PROJECT: process.env.GCLOUD_PROJECT
+    };
+    mocks.config.get = function (key) {
+      return this[key];
     };
     mocks.subscription = {
       on: sinon.stub()
@@ -48,8 +49,9 @@ describe('background.js', function () {
     // Load background.js with provided mocks
     background = proxyquire('../lib/background', {
       gcloud: mocks.gcloud,
-      '../config': mocks.config
-    })(null, mocks.logging);
+      '../config': mocks.config,
+      './logging': mocks.logging
+    });
 
     assert.ok(
       mocks.gcloud.pubsub.calledOnce,

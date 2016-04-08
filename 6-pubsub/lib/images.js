@@ -15,89 +15,92 @@
 
 var request = require('request');
 var gcloud = require('gcloud');
+var config = require('../config');
+var logging = require('./logging');
 
-module.exports = function (gcloudConfig, cloudStorageBucket, logging) {
-  var storage = gcloud.storage(gcloudConfig);
-  var bucket = storage.bucket(cloudStorageBucket);
+var CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-  // Downloads a given image (by URL) and then uploads it to
-  // Google Cloud Storage. Provides the publicly accessable URL to the callback.
-  // [START download_and_upload]
-  function downloadAndUploadImage (sourceUrl, destFileName, cb) {
-    var file = bucket.file(destFileName);
+var storage = gcloud.storage({
+  projectId: config.get('GCLOUD_PROJECT')
+});
+var bucket = storage.bucket(CLOUD_BUCKET);
 
-    request
-      .get(sourceUrl)
-      .on('error', function (err) {
-        logging.warn('Could not fetch image ' + sourceUrl, err);
-        cb(err);
-      })
-      .pipe(file.createWriteStream())
-      .on('finish', function () {
-        logging.info('Uploaded image ' + destFileName);
-        file.makePublic(function () {
-          cb(null, getPublicUrl(destFileName));
-        });
-      })
-      .on('error', function (err) {
-        logging.error('Could not upload image', err);
-        cb(err);
+// Downloads a given image (by URL) and then uploads it to
+// Google Cloud Storage. Provides the publicly accessable URL to the callback.
+// [START download_and_upload]
+function downloadAndUploadImage (sourceUrl, destFileName, cb) {
+  var file = bucket.file(destFileName);
+
+  request
+    .get(sourceUrl)
+    .on('error', function (err) {
+      logging.warn('Could not fetch image ' + sourceUrl, err);
+      cb(err);
+    })
+    .pipe(file.createWriteStream())
+    .on('finish', function () {
+      logging.info('Uploaded image ' + destFileName);
+      file.makePublic(function () {
+        cb(null, getPublicUrl(destFileName));
       });
-  }
-  // [END download_and_upload]
-
-  // Returns the public, anonymously accessable URL to a given Cloud Storage
-  // object.
-  // The object's ACL has to be set to public read.
-  function getPublicUrl (filename) {
-    return 'https://storage.googleapis.com/' + cloudStorageBucket +
-      '/' + filename;
-  }
-
-  // Express middleware that will automatically pass uploads to Cloud Storage.
-  // req.file is processed and will have two new properties:
-  // * ``cloudStorageObject`` the object name in cloud storage.
-  // * ``cloudStoragePublicUrl`` the public url to the object.
-  function sendUploadToGCS (req, res, next) {
-    if (!req.file) {
-      return next();
-    }
-
-    var gcsname = Date.now() + req.file.originalname;
-    var file = bucket.file(gcsname);
-    var stream = file.createWriteStream();
-
-    stream.on('error', function (err) {
-      req.file.cloudStorageError = err;
-      next(err);
+    })
+    .on('error', function (err) {
+      logging.error('Could not upload image', err);
+      cb(err);
     });
+}
+// [END download_and_upload]
 
-    stream.on('finish', function () {
-      req.file.cloudStorageObject = gcsname;
-      req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
-      next();
-    });
+// Returns the public, anonymously accessable URL to a given Cloud Storage
+// object.
+// The object's ACL has to be set to public read.
+function getPublicUrl (filename) {
+  return 'https://storage.googleapis.com/' + CLOUD_BUCKET + '/' + filename;
+}
 
-    stream.end(req.file.buffer);
+// Express middleware that will automatically pass uploads to Cloud Storage.
+// req.file is processed and will have two new properties:
+// * ``cloudStorageObject`` the object name in cloud storage.
+// * ``cloudStoragePublicUrl`` the public url to the object.
+function sendUploadToGCS (req, res, next) {
+  if (!req.file) {
+    return next();
   }
 
-  // Multer handles parsing multipart/form-data requests.
-  // This instance is configured to store images in memory and re-name to avoid
-  // conflicting with existing objects. This makes it straightforward to upload
-  // to Cloud Storage.
-  var multer = require('multer')({
-    inMemory: true,
-    fileSize: 5 * 1024 * 1024, // no larger than 5mb
-    rename: function (fieldname, filename) {
-      // generate a unique filename
-      return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
-    }
+  var gcsname = Date.now() + req.file.originalname;
+  var file = bucket.file(gcsname);
+  var stream = file.createWriteStream();
+
+  stream.on('error', function (err) {
+    req.file.cloudStorageError = err;
+    next(err);
   });
 
-  return {
-    downloadAndUploadImage: downloadAndUploadImage,
-    getPublicUrl: getPublicUrl,
-    sendUploadToGCS: sendUploadToGCS,
-    multer: multer
-  };
+  stream.on('finish', function () {
+    req.file.cloudStorageObject = gcsname;
+    req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
+    next();
+  });
+
+  stream.end(req.file.buffer);
+}
+
+// Multer handles parsing multipart/form-data requests.
+// This instance is configured to store images in memory and re-name to avoid
+// conflicting with existing objects. This makes it straightforward to upload
+// to Cloud Storage.
+var multer = require('multer')({
+  inMemory: true,
+  fileSize: 5 * 1024 * 1024, // no larger than 5mb
+  rename: function (fieldname, filename) {
+    // generate a unique filename
+    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
+  }
+});
+
+module.exports = {
+  downloadAndUploadImage: downloadAndUploadImage,
+  getPublicUrl: getPublicUrl,
+  sendUploadToGCS: sendUploadToGCS,
+  multer: multer
 };
