@@ -34,7 +34,7 @@ html(lang="en")
           // [START profile]
           if profile
             if profile.image
-              img.img-circle(src=profile.image.url, width=24)
+              img.img-circle(src=profile.image, width=24)
             span #{profile.displayName} &nbsp;
               a(href=logout) (logout)
           else

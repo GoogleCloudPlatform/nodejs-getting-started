@@ -53,6 +53,9 @@ nconf
     // This is the id of your project in the Google Cloud Developers Console.
     GCLOUD_PROJECT: '',
 
+    // Connection url for the Memcache instance used to store session data
+    MEMCACHE_URL: '127.0.0.1:11211',
+
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
     MONGO_URL: 'mongodb://localhost:27017',
@@ -64,7 +67,7 @@ nconf
 
     OAUTH2_CLIENT_ID: '',
     OAUTH2_CLIENT_SECRET: '',
-    OAUTH2_CALLBACK: 'http://localhost:8080/oauth2callback',
+    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
 
     // Port the HTTP server
     PORT: 8080,
