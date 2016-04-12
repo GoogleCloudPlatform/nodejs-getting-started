@@ -15,7 +15,9 @@
 
 var path = require('path');
 var express = require('express');
-var session = require('cookie-session');
+var session = require('express-session');
+var MemcachedStore = require('connect-memcached')(session);
+var passport = require('passport');
 var config = require('./config');
 
 var app = express();
@@ -25,18 +27,29 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
-// Configure the session and session storage.
-// MemoryStore isn't viable in a multi-server configuration, so we
-// use encrypted cookies. Redis or Memcache is a great option for
-// more secure sessions, if desired.
 // [START session]
-app.use(session({
+// Configure the session and session storage.
+var sessionConfig = {
+  resave: false,
+  saveUninitialized: false,
   secret: config.get('SECRET'),
   signed: true
-}));
+};
+
+// In production use the App Engine Memcache instance to store session data,
+// otherwise fallback to the default MemoryStore in development.
+if (config.get('NODE_ENV') === 'production') {
+  sessionConfig.store = new MemcachedStore({
+    hosts: [config.get('MEMCACHE_URL')]
+  });
+}
+
+app.use(session(sessionConfig));
 // [END session]
 
 // OAuth2
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(require('./lib/oauth2').router);
 
 // Books

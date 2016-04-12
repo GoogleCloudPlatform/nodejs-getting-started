@@ -18,13 +18,13 @@ var stubs = {};
 var MongoClient = require('mongodb').MongoClient;
 
 describe('Bookshelf app', function () {
-  // require('../1-hello-world/test');
-  // proxyquire('../2-structured-data/test', stubs);
-  // proxyquire('../3-binary-data/test', stubs);
+  require('../1-hello-world/test');
+  proxyquire('../2-structured-data/test', stubs);
+  proxyquire('../3-binary-data/test', stubs);
   proxyquire('../4-auth/test', stubs);
-  // proxyquire('../5-logging/test', stubs);
-  // proxyquire('../6-pubsub/test', stubs);
-  // proxyquire('../7-gce/test', stubs);
+  proxyquire('../5-logging/test', stubs);
+  proxyquire('../6-pubsub/test', stubs);
+  proxyquire('../7-gce/test', stubs);
   after(function (done) {
     var config = proxyquire('../7-gce/config', stubs);
     if (config.get('DATA_BACKEND') !== 'mongodb') {

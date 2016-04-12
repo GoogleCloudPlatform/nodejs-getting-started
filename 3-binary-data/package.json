@@ -39,6 +39,7 @@
     "mongodb": "^2.1.15",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
+    "nconf": "^0.8.4",
     "prompt": "^1.0.0"
   },
   "devDependencies": {

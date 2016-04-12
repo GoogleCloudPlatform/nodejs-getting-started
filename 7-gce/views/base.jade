@@ -33,7 +33,7 @@ html(lang="en")
         p.navbar-text.navbar-right
           if profile
             if profile.image
-              img.img-circle(src=profile.image.url, width=24)
+              img.img-circle(src=profile.image, width=24)
             span #{profile.displayName} &nbsp;
               a(href=logout) (logout)
           else

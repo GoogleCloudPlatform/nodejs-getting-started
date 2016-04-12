@@ -23,7 +23,6 @@ var router = express.Router();
 
 // Use the oauth middleware to automatically get the user's profile
 // information and expose login/logout URLs to templates.
-router.use(oauth2.aware);
 router.use(oauth2.template);
 
 // Set Content-Type for all responses for these routes
@@ -53,7 +52,7 @@ router.get('/', function list (req, res, next) {
 // can access this handler.
 router.get('/mine', oauth2.required, function list (req, res, next) {
   model.listBy(
-    req.session.profile.id,
+    req.user.id,
     10,
     req.query.pageToken,
     function (err, entities, cursor, apiResponse) {
@@ -94,9 +93,9 @@ router.post(
     var data = req.body;
 
     // If the user is logged in, set them as the creator of the book.
-    if (req.session.profile) {
-      data.createdBy = req.session.profile.displayName;
-      data.createdById = req.session.profile.id;
+    if (req.user) {
+      data.createdBy = req.user.displayName;
+      data.createdById = req.user.id;
     } else {
       data.createdBy = 'Anonymous';
     }

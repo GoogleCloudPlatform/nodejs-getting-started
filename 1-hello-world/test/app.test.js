@@ -14,7 +14,7 @@
 'use strict';
 
 var assert = require('assert');
-var config = require('../config');
+var config = require('./config');
 var request = require('supertest');
 var utils = require('../../test/utils');
 

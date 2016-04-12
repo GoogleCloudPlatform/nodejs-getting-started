@@ -30,5 +30,6 @@ describe(config.test + '/', function () {
   });
   describe('lib/', function () {
     proxyquire('./background.test', stubs);
+    proxyquire('./oauth2.test', stubs);
   });
 });
