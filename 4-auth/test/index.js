@@ -28,4 +28,7 @@ describe(config.test + '/', function () {
     proxyquire('./api.test', stubs);
     proxyquire('./crud.test', stubs);
   });
+  describe('lib/', function () {
+    proxyquire('./oauth2.test', stubs);
+  });
 });

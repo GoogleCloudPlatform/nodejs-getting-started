@@ -15,91 +15,94 @@
 
 var extend = require('lodash').assign;
 var mysql = require('mysql');
+var config = require('../config');
 
-module.exports = function (config) {
-  function getConnection () {
-    return mysql.createConnection(extend({
-      database: 'library'
-    }, config.mysql));
-  }
+function getConnection () {
+  return mysql.createConnection(extend({
+    database: 'library'
+  }, {
+    host: config.get('MYSQL_HOST'),
+    user: config.get('MYSQL_USER'),
+    password: config.get('MYSQL_PASSWORD')
+  }));
+}
 
-  // [START list]
-  function list (limit, token, cb) {
-    token = token ? parseInt(token, 10) : 0;
-    var connection = getConnection();
-    connection.query(
-      'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
-      function (err, results) {
-        if (err) {
-          return cb(err);
-        }
-        var hasMore = results.length === limit ? token + results.length : false;
-        cb(null, results, hasMore);
-      }
-    );
-    connection.end();
-  }
-  // [END list]
-
-  // [START create]
-  function create (data, cb) {
-    var connection = getConnection();
-    connection.query('INSERT INTO `books` SET ?', data, function (err, res) {
+// [START list]
+function list (limit, token, cb) {
+  token = token ? parseInt(token, 10) : 0;
+  var connection = getConnection();
+  connection.query(
+    'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
+    function (err, results) {
       if (err) {
         return cb(err);
       }
-      read(res.insertId, cb);
+      var hasMore = results.length === limit ? token + results.length : false;
+      cb(null, results, hasMore);
+    }
+  );
+  connection.end();
+}
+// [END list]
+
+// [START create]
+function create (data, cb) {
+  var connection = getConnection();
+  connection.query('INSERT INTO `books` SET ?', data, function (err, res) {
+    if (err) {
+      return cb(err);
+    }
+    read(res.insertId, cb);
+  });
+  connection.end();
+}
+// [END create]
+
+function read (id, cb) {
+  var connection = getConnection();
+  connection.query(
+    'SELECT * FROM `books` WHERE `id` = ?', id, function (err, results) {
+      if (err) {
+        return cb(err);
+      }
+      if (!results.length) {
+        return cb({
+          code: 404,
+          message: 'Not found'
+        });
+      }
+      cb(null, results[0]);
     });
-    connection.end();
-  }
-  // [END create]
+  connection.end();
+}
 
-  function read (id, cb) {
-    var connection = getConnection();
-    connection.query(
-      'SELECT * FROM `books` WHERE `id` = ?', id, function (err, results) {
-        if (err) {
-          return cb(err);
-        }
-        if (!results.length) {
-          return cb({
-            code: 404,
-            message: 'Not found'
-          });
-        }
-        cb(null, results[0]);
-      });
-    connection.end();
-  }
+// [START update]
+function update (id, data, cb) {
+  var connection = getConnection();
+  connection.query(
+    'UPDATE `books` SET ? WHERE `id` = ?', [data, id], function (err) {
+      if (err) {
+        return cb(err);
+      }
+      read(id, cb);
+    });
+  connection.end();
+}
+// [END update]
 
-  // [START update]
-  function update (id, data, cb) {
-    var connection = getConnection();
-    connection.query(
-      'UPDATE `books` SET ? WHERE `id` = ?', [data, id], function (err) {
-        if (err) {
-          return cb(err);
-        }
-        read(id, cb);
-      });
-    connection.end();
-  }
-  // [END update]
+function _delete (id, cb) {
+  var connection = getConnection();
+  connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
+  connection.end();
+}
 
-  function _delete (id, cb) {
-    var connection = getConnection();
-    connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
-    connection.end();
-  }
-
-  return {
-    createSchema: createSchema,
-    list: list,
-    create: create,
-    read: read,
-    update: update,
-    delete: _delete
-  };
+module.exports = {
+  createSchema: createSchema,
+  list: list,
+  create: create,
+  read: read,
+  update: update,
+  delete: _delete
 };
 
 if (module === require.main) {

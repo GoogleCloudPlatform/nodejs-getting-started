@@ -16,21 +16,13 @@
 var request = require('request');
 var waterfall = require('async').waterfall;
 var express = require('express');
-var config = require('./config')();
+var config = require('./config');
 
-var logging = require('./lib/logging')(config.logPath);
-var images = require('./lib/images')(
-  config.gcloud, config.cloudStorageBucket, logging);
-var background = require('./lib/background')(config.gcloud, logging);
+var logging = require('./lib/logging');
+var images = require('./lib/images');
+var background = require('./lib/background');
 
-// We'll pass this to the model so that we don't get an infinite loop of book
-// processing requests.
-var backgroundStub = {
-  queueBook: function () {}
-};
-
-var model = require('./books/model-' + config.dataBackend)(
-  config, backgroundStub);
+var model = require('./books/model-' + config.get('DATA_BACKEND'));
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
@@ -51,28 +43,30 @@ app.get('/', function (req, res) {
 
 app.use(logging.errorLogger);
 
-var server = app.listen(config.port || 8080, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+if (module === require.main) {
+  var server = app.listen(config.get('PORT'), function () {
+    var host = server.address().address;
+    var port = server.address().port;
 
-  console.log('App listening at http://%s:%s', host, port);
-});
+    console.log('App listening at http://%s:%s', host, port);
+  });
 
-// Subscribe to Cloud Pub/Sub and receive messages to process books.
-// The subscription will continue to listen for messages until the process
-// is killed.
-background.subscribe(function (err, message) {
-  // Any errors received are considered fatal.
-  if (err) {
-    throw err;
-  }
-  if (message.action === 'processBook') {
-    logging.info('Received request to process book ' + message.bookId);
-    processBook(message.bookId);
-  } else {
-    logging.warn('Unknown request', message);
-  }
-});
+  // Subscribe to Cloud Pub/Sub and receive messages to process books.
+  // The subscription will continue to listen for messages until the process
+  // is killed.
+  background.subscribe(function (err, message) {
+    // Any errors received are considered fatal.
+    if (err) {
+      throw err;
+    }
+    if (message.action === 'processBook') {
+      logging.info('Received request to process book ' + message.bookId);
+      processBook(message.bookId);
+    } else {
+      logging.warn('Unknown request', message);
+    }
+  });
+}
 
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
@@ -86,7 +80,7 @@ function processBook (bookId) {
     findBookInfo,
     // Save the updated data
     function (updated, cb) {
-      model.update(updated.id, updated, cb, true);
+      model.update(updated.id, updated, false, cb);
     }
   ], function (err) {
     if (err) {
@@ -152,3 +146,8 @@ function queryBooksApi (query, cb) {
     }
   );
 }
+
+exports.app = app;
+exports.processBook = processBook;
+exports.findBookInfo = findBookInfo;
+exports.queryBooksApi = queryBooksApi;

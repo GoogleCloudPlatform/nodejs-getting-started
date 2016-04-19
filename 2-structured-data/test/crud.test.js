@@ -79,7 +79,7 @@ describe('crud.js', function () {
         .expect(function (response) {
           var location = response.headers.location;
           var idPart = location.replace('/books/', '');
-          if (require('../config')().dataBackend !== 'mongodb') {
+          if (require('../config').get('DATA_BACKEND') !== 'mongodb') {
             id = parseInt(idPart, 10);
           } else {
             id = idPart;

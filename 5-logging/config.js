@@ -13,72 +13,86 @@
 
 'use strict';
 
-var getConfig = module.exports = function () {
-  return {
-    port: process.env.PORT || 8080,
+// Hierarchical node.js configuration with command-line arguments, environment
+// variables, and files.
+var nconf = module.exports = require('nconf');
+var path = require('path');
 
-    // Secret is used by sessions to encrypt the cookie.
-    secret: process.env.SESSION_SECRET || 'your-secret-here',
+nconf
+  // 1. Command-line arguments
+  .argv()
+  // 2. Environment variables
+  .env([
+    'CLOUD_BUCKET',
+    'DATA_BACKEND',
+    'GCLOUD_PROJECT',
+    'MONGO_URL',
+    'MONGO_COLLECTION',
+    'MYSQL_USER',
+    'MYSQL_PASSWORD',
+    'MYSQL_HOST',
+    'OAUTH2_CLIENT_ID',
+    'OAUTH2_CLIENT_SECRET',
+    'OAUTH2_CALLBACK',
+    'PORT',
+    'SECRET'
+  ])
+  // 3. Config file
+  .file({ file: path.join(__dirname, 'config.json') })
+  // 4. Defaults
+  .defaults({
+    // Typically you will create a bucket with the same name as your project ID.
+    CLOUD_BUCKET: '',
 
     // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
     // configure the appropriate settings for each storage engine below.
     // If you are unsure, use datastore as it requires no additional
     // configuration.
-    dataBackend: process.env.BACKEND || 'datastore',
+    DATA_BACKEND: 'datastore',
 
-    // This is the id of your project in the Google Developers Console.
-    gcloud: {
-      projectId: process.env.GCLOUD_PROJECT || 'your-project-id'
-    },
+    // This is the id of your project in the Google Cloud Developers Console.
+    GCLOUD_PROJECT: '',
 
-    // Typically you will create a bucket with the same name as your project ID.
-    cloudStorageBucket: process.env.CLOUD_BUCKET || 'your-bucket-name',
+    // Connection url for the Memcache instance used to store session data
+    MEMCACHE_URL: '127.0.0.1:11211',
 
-    mysql: {
-      user: process.env.MYSQL_USER || 'your-mysql-user',
-      password: process.env.MYSQL_PASSWORD || 'your-mysql-password',
-      host: process.env.MYSQL_HOST || 'your-mysql-host'
-    },
+    // MongoDB connection string
+    // https://docs.mongodb.org/manual/reference/connection-string/
+    MONGO_URL: 'mongodb://localhost:27017',
+    MONGO_COLLECTION: 'books',
 
-    mongodb: {
-      url: process.env.MONGO_URL || 'mongodb://localhost:27017',
-      collection: process.env.MONGO_COLLECTION || 'books'
-    },
+    MYSQL_USER: '',
+    MYSQL_PASSWORD: '',
+    MYSQL_HOST: '',
 
-    // The client ID and secret can be obtained by generating a new web
-    // application client ID on Google Developers Console.
-    oauth2: {
-      clientId: process.env.OAUTH_CLIENT_ID || 'your-client-id',
-      clientSecret: process.env.OAUTH_CLIENT_SECRET || 'your-client-secret',
-      redirectUrl: process.env.OAUTH2_CALLBACK ||
-        'http://localhost:8080/oauth2callback',
-      scopes: ['email', 'profile']
-    }
-  };
-};
+    OAUTH2_CLIENT_ID: '',
+    OAUTH2_CLIENT_SECRET: '',
+    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
 
-var config = getConfig();
-var projectId = config.gcloud.projectId;
-var cloudStorageBucket = config.cloudStorageBucket;
-var clientId = config.oauth2.clientId;
-var clientSecret = config.oauth2.clientSecret;
+    // Port the HTTP server
+    PORT: 8080,
 
-if (!projectId || projectId === 'your-project-id') {
-  throw new Error('You must set the GCLOUD_PROJECT env var or add your ' +
-    'project id to config.js!');
+    SECRET: 'keyboardcat'
+  });
+
+// Check for required settings
+checkConfig('GCLOUD_PROJECT');
+checkConfig('CLOUD_BUCKET');
+checkConfig('OAUTH2_CLIENT_ID');
+checkConfig('OAUTH2_CLIENT_SECRET');
+
+if (nconf.get('DATA_BACKEND') === 'cloudsql') {
+  checkConfig('MYSQL_USER');
+  checkConfig('MYSQL_PASSWORD');
+  checkConfig('MYSQL_HOST');
+} else if (nconf.get('DATA_BACKEND') === 'mongodb') {
+  checkConfig('MONGO_URL');
+  checkConfig('MONGO_COLLECTION');
 }
 
-if (!cloudStorageBucket || cloudStorageBucket === 'your-bucket-name') {
-  throw new Error('You must set the CLOUD_BUCKET env var or add your ' +
-    'bucket name to config.js!');
-}
-
-if (!clientId || clientId === 'your-client-id') {
-  throw new Error('You must set the OAUTH_CLIENT_ID env var or add your ' +
-    'client id to config.js!');
-}
-
-if (!clientSecret || clientSecret === 'your-client-secret') {
-  throw new Error('You must set the OAUTH_CLIENT_SECRET env var or add your ' +
-    'client secret config.js!');
+function checkConfig (setting) {
+  if (!nconf.get(setting)) {
+    throw new Error('You must set the ' + setting + ' environment variable or' +
+      ' add it to config.json!');
+  }
 }

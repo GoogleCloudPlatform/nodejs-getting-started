@@ -15,9 +15,11 @@
 
 var path = require('path');
 var express = require('express');
-var session = require('cookie-session');
-var config = require('./config')();
-var logging = require('./lib/logging')();
+var session = require('express-session');
+var MemcachedStore = require('connect-memcached')(session);
+var passport = require('passport');
+var config = require('./config');
+var logging = require('./lib/logging');
 
 var app = express();
 
@@ -31,30 +33,31 @@ app.set('trust proxy', true);
 app.use(logging.requestLogger);
 
 // Configure the session and session storage.
-// MemoryStore isn't viable in a multi-server configuration, so we
-// use encrypted cookies. Redis or Memcache is a great option for
-// more secure sessions, if desired.
-app.use(session({
-  secret: config.secret,
+var sessionConfig = {
+  resave: false,
+  saveUninitialized: false,
+  secret: config.get('SECRET'),
   signed: true
-}));
+};
+
+// In production use the App Engine Memcache instance to store session data,
+// otherwise fallback to the default MemoryStore in development.
+if (config.get('NODE_ENV') === 'production') {
+  sessionConfig.store = new MemcachedStore({
+    hosts: [config.get('MEMCACHE_URL')]
+  });
+}
+
+app.use(session(sessionConfig));
 
 // OAuth2
-var oauth2 = require('./lib/oauth2')(config.oauth2);
-app.use(oauth2.router);
-
-// Setup modules and dependencies
-var background = require('./lib/background')(config.gcloud, logging);
-var images = require('./lib/images')(
-  config.gcloud,
-  config.cloudStorageBucket,
-  logging
-);
-var model = require('./books/model')(config, background);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(require('./lib/oauth2').router);
 
 // Books
-app.use('/books', require('./books/crud')(model, images, oauth2));
-app.use('/api/books', require('./books/api')(model));
+app.use('/books', require('./books/crud'));
+app.use('/api/books', require('./books/api'));
 
 // Redirect root to /books
 app.get('/', function (req, res) {
@@ -81,7 +84,7 @@ app.use(function (err, req, res, next) {
 
 if (module === require.main) {
   // Start the server
-  var server = app.listen(config.port, function () {
+  var server = app.listen(config.get('PORT'), function () {
     var host = server.address().address;
     var port = server.address().port;
 

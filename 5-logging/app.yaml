@@ -14,9 +14,6 @@
 runtime: nodejs
 vm: true
 
-env_variables:
-  OAUTH2_CALLBACK: https://your-project-id.appspot.com/oauth2callback
-
 # Temporary setting to keep gcloud from uploading node_modules
 skip_files:
  - ^node_modules$

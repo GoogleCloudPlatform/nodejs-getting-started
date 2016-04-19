@@ -9,7 +9,7 @@
     "mocha": "mocha test/index.js -t 30000",
     "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- test/index.js -t 30000",
     "test": "npm run lint && npm run cover",
-    "coveralls": "cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "cat ./coverage/lcov.info | codecov"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -51,12 +51,13 @@
     "mongodb": "^2.1.15",
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
+    "nconf": "^0.8.4",
     "prompt": "^1.0.0",
     "request": "^2.70.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.9",
+    "codecov": "^1.0.1",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "proxyquire": "^1.7.4",
