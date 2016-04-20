@@ -14,11 +14,16 @@
 'use strict';
 
 var path = require('path');
+var test = '7-gce';
 
 module.exports = {
-  test: '7-gce',
-  path: path.resolve(path.join(__dirname, '../')),
+  test: test,
+  cwd: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
   args: ['app.js'],
-  msg: 'No books found.'
+  msg: 'Bookshelf',
+  env: {
+    SUBSCRIPTION_NAME: test + '-shared-worker-subscription',
+    TOPIC_NAME: test + '-book-process-queue'
+  }
 };

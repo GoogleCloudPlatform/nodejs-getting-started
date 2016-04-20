@@ -15,15 +15,17 @@
 
 var assert = require('assert');
 var config = require('./config');
-var request = require('supertest');
-var utils = require('../../test/utils');
+var utils = require('nodejs-repo-tools');
 
 describe('app.js', function () {
-  it('should run', function (done) {
-    utils.testLocalApp(config, done);
-  });
+  if (!process.env.E2E_TESTS) {
+    it('should run', function (done) {
+      utils.testLocalApp(config, done);
+    });
+  }
+
   it('should create an express app', function (done) {
-    request(require('../app'))
+    utils.getRequest(config)
       .get('/')
       .expect(200)
       .expect(function (response) {

@@ -91,10 +91,8 @@ app.use(function (err, req, res, next) {
 if (module === require.main) {
   // Start the server
   var server = app.listen(config.get('PORT'), function () {
-    var host = server.address().address;
     var port = server.address().port;
-
-    console.log('App listening at http://%s:%s', host, port);
+    console.log('App listening on port %s', port);
   });
 }
 

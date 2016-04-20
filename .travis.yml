@@ -14,8 +14,7 @@
 sudo: false
 language: node_js
 node_js:
-- "stable"
-- "0.12"
+- "4"
 
 cache:
   directories:
@@ -34,12 +33,6 @@ env:
     - GOOGLE_APPLICATION_CREDENTIALS=$TRAVIS_BUILD_DIR/test/encrypted/nodejs-docs-samples.json
     - CLOUD_BUCKET=nodejs-docs-samples
     - GCLOUD_PROJECT=nodejs-docs-samples
-    - OAUTH_CLIENT_ID=test-id
-    - OAUTH_CLIENT_SECRET=test-secret
-  matrix:
-    - DATA_BACKEND=datastore
-    - DATA_BACKEND=mongodb
-    - DATA_BACKEND=cloudsql
 
 before_install:
   - if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
@@ -57,4 +50,4 @@ before_install:
     fi
 
 after_success:
-- npm run coveralls
+- npm run codecov

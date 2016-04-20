@@ -43,18 +43,11 @@ app.get('/', function (req, res) {
 
 app.use(logging.errorLogger);
 
-if (module === require.main) {
-  var server = app.listen(config.get('PORT'), function () {
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('App listening at http://%s:%s', host, port);
-  });
-
+function subscribe () {
   // Subscribe to Cloud Pub/Sub and receive messages to process books.
   // The subscription will continue to listen for messages until the process
   // is killed.
-  background.subscribe(function (err, message) {
+  return background.subscribe(function (err, message) {
     // Any errors received are considered fatal.
     if (err) {
       throw err;
@@ -68,9 +61,20 @@ if (module === require.main) {
   });
 }
 
+if (module === require.main) {
+  var server = app.listen(config.get('PORT'), function () {
+    var port = server.address().port;
+    console.log('App listening on port %s', port);
+  });
+  subscribe();
+}
+
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
-function processBook (bookId) {
+function processBook (bookId, callback) {
+  if (!callback) {
+    callback = logging.error;
+  }
   waterfall([
     // Load the current data
     function (cb) {
@@ -85,10 +89,11 @@ function processBook (bookId) {
   ], function (err) {
     if (err) {
       logging.error('Error occurred', err);
-    } else {
-      logging.info('Updated book ' + bookId);
-      bookCount += 1;
+      return callback(err);
     }
+    logging.info('Updated book ' + bookId);
+    bookCount += 1;
+    callback();
   });
 }
 

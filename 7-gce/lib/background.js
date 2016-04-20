@@ -17,8 +17,8 @@ var gcloud = require('gcloud');
 var config = require('../config');
 var logging = require('./logging');
 
-var topicName = 'book-process-queue';
-var subscriptionName = 'shared-worker-subscription';
+var topicName = config.get('TOPIC_NAME');
+var subscriptionName = config.get('SUBSCRIPTION_NAME');
 
 var pubsub = gcloud.pubsub({
   projectId: config.get('GCLOUD_PROJECT')
@@ -44,6 +44,16 @@ function getTopic (cb) {
 // subscription, which means that pub/sub will evenly distribute messages
 // to each worker.
 function subscribe (cb) {
+  var subscription;
+
+  // Event handlers
+  function handleMessage (message) {
+    cb(null, message.data);
+  }
+  function handleError (err) {
+    console.error(err);
+  }
+
   getTopic(function (err, topic) {
     if (err) {
       return cb(err);
@@ -52,19 +62,31 @@ function subscribe (cb) {
     topic.subscribe(subscriptionName, {
       autoAck: true,
       reuseExisting: true
-    }, function (err, subscription) {
+    }, function (err, sub) {
       if (err) {
         return cb(err);
       }
 
-      subscription.on('message', function (message) {
-        cb(null, message.data);
-      });
+      subscription = sub;
+
+      // Listen to and handle message and error events
+      subscription.on('message', handleMessage);
+      subscription.on('error', handleError);
 
       logging.info('Listening to ' + topicName +
         ' with subscription ' + subscriptionName);
     });
   });
+
+  // Subscription cancellation function
+  return function () {
+    if (subscription) {
+      // Remove event listeners
+      subscription.removeListener('message', handleMessage);
+      subscription.removeListener('error', handleError);
+      subscription = undefined;
+    }
+  };
 }
 
 // Adds a book to the queue to be processed by the worker.

@@ -31,11 +31,14 @@ nconf
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'MYSQL_HOST',
+    'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
     'OAUTH2_CALLBACK',
     'PORT',
-    'SECRET'
+    'SECRET',
+    'SUBSCRIPTION_NAME',
+    'TOPIC_NAME'
   ])
   // 3. Config file
   .file({ file: path.join(__dirname, 'config.json') })
@@ -72,7 +75,10 @@ nconf
     // Port the HTTP server
     PORT: 8080,
 
-    SECRET: 'keyboardcat'
+    SECRET: 'keyboardcat',
+
+    SUBSCRIPTION_NAME: 'shared-worker-subscription',
+    TOPIC_NAME: 'book-process-queue'
   });
 
 // Check for required settings

@@ -17,8 +17,8 @@ var path = require('path');
 
 module.exports = {
   test: '2-structured-data',
-  path: path.resolve(path.join(__dirname, '../')),
+  cwd: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
   args: ['app.js'],
-  msg: 'No books found.'
+  msg: 'Bookshelf'
 };

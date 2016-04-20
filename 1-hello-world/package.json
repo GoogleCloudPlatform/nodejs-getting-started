@@ -8,8 +8,8 @@
     "start": "node app.js",
     "monitor": "nodemon app.js",
     "deploy": "gcloud preview app deploy app.yaml",
-    "lint": "jshint --exclude-path=../.gitignore .",
     "mocha": "mocha test/index.js -t 30000",
+    "lint": "semistandard \"**/*.js\"",
     "test": "npm run lint && npm run mocha"
   },
   "author": "Google Inc.",
@@ -28,12 +28,23 @@
     }
   ],
   "license": "Apache Version 2.0",
+  "semistandard": {
+    "globals": [
+      "after",
+      "afterEach",
+      "before",
+      "beforeEach",
+      "describe",
+      "it"
+    ]
+  },
   "dependencies": {
     "express": "^4.13.4"
   },
   "devDependencies": {
-    "jshint": "^2.9.1",
     "mocha": "^2.4.5",
+    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+    "semistandard": "^7.0.5",
     "supertest": "^1.2.0"
   },
   "engines": {

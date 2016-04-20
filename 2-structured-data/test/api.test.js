@@ -14,44 +14,60 @@
 'use strict';
 
 var assert = require('assert');
-var request = require('supertest');
-var proxyquire = require('proxyquire').noPreserveCache();
-var stubs = {};
+var config = require('./config');
+var utils = require('nodejs-repo-tools');
 
-describe('api.js', function () {
-  var id;
+module.exports = function (DATA_BACKEND) {
+  describe('api.js', function () {
+    var ORIG_DATA_BACKEND;
+    var id;
 
-  it('should create a book', function (done) {
-    request(proxyquire('../app', stubs))
-      .post('/api/books')
-      .send({ title: 'beep' })
-      .expect(200)
-      .expect(function (response) {
-        id = response.body.id;
-        assert.ok(response.body.id);
-        assert.equal(response.body.title, 'beep');
-      })
-      .end(done);
+    before(function () {
+      var appConfig = require('../config');
+      ORIG_DATA_BACKEND = appConfig.get('DATA_BACKEND');
+      appConfig.set('DATA_BACKEND', DATA_BACKEND);
+    });
+
+    it('should create a book', function (done) {
+      utils.getRequest(config)
+        .post('/api/books')
+        .send({ title: 'beep' })
+        .expect(200)
+        .expect(function (response) {
+          id = response.body.id;
+          assert.ok(response.body.id);
+          assert.equal(response.body.title, 'beep');
+        })
+        .end(done);
+    });
+
+    it('should list books', function (done) {
+      // Give Datastore time to become consistent
+      setTimeout(function () {
+        utils.getRequest(config)
+          .get('/api/books')
+          .expect(200)
+          .expect(function (response) {
+            assert.ok(Array.isArray(response.body.items));
+            assert.ok(response.body.items.length >= 1);
+          })
+          .end(done);
+      }, 1000);
+    });
+
+    it('should delete a book', function (done) {
+      utils.getRequest(config)
+        .delete('/api/books/' + id)
+        .expect(200)
+        .expect(function (response) {
+          assert.equal(response.text, 'OK');
+        })
+        .end(done);
+    });
+
+    after(function () {
+      require('../config').set('DATA_BACKEND', ORIG_DATA_BACKEND);
+    });
   });
+};
 
-  it('should list books', function (done) {
-    request(proxyquire('../app', stubs))
-      .get('/api/books')
-      .expect(200)
-      .expect(function (response) {
-        assert.ok(Array.isArray(response.body.items));
-        assert.ok(response.body.items.length >= 1);
-      })
-      .end(done);
-  });
-
-  it('should delete a book', function (done) {
-    request(proxyquire('../app', stubs))
-      .delete('/api/books/' + id)
-      .expect(200)
-      .expect(function (response) {
-        assert.equal(response.text, 'OK');
-      })
-      .end(done);
-  });
-});
