@@ -13,20 +13,18 @@
 
 'use strict';
 
-var proxyquire = require('proxyquire').noPreserveCache();
-var stubs = {};
 var MongoClient = require('mongodb').MongoClient;
 
 describe('Bookshelf app', function () {
   require('../1-hello-world/test');
-  proxyquire('../2-structured-data/test', stubs);
-  proxyquire('../3-binary-data/test', stubs);
-  proxyquire('../4-auth/test', stubs);
-  proxyquire('../5-logging/test', stubs);
-  proxyquire('../6-pubsub/test', stubs);
-  proxyquire('../7-gce/test', stubs);
+  require('../2-structured-data/test');
+  require('../3-binary-data/test');
+  require('../4-auth/test');
+  require('../5-logging/test');
+  require('../6-pubsub/test');
+  require('../7-gce/test');
   after(function (done) {
-    var config = proxyquire('../7-gce/config', stubs);
+    var config = require('../7-gce/config');
     if (config.get('DATA_BACKEND') !== 'mongodb') {
       return done();
     }

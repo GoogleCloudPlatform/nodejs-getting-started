@@ -15,8 +15,11 @@
 
 var express = require('express');
 var config = require('../config');
-var model = require('./model-' + config.get('DATA_BACKEND'));
 var images = require('../lib/images');
+
+function getModel () {
+  return require('./model-' + config.get('DATA_BACKEND'));
+}
 
 var router = express.Router();
 
@@ -32,7 +35,7 @@ router.use(function (req, res, next) {
  * Display a page of books (up to ten at a time).
  */
 router.get('/', function list (req, res, next) {
-  model.list(10, req.query.pageToken, function (err, entities, cursor) {
+  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
     if (err) {
       return next(err);
     }
@@ -75,7 +78,7 @@ router.post(
     }
 
     // Save the data to the database.
-    model.create(data, function (err, savedData) {
+    getModel().create(data, function (err, savedData) {
       if (err) {
         return next(err);
       }
@@ -91,7 +94,7 @@ router.post(
  * Display a book for editing.
  */
 router.get('/:book/edit', function editForm (req, res, next) {
-  model.read(req.params.book, function (err, entity) {
+  getModel().read(req.params.book, function (err, entity) {
     if (err) {
       return next(err);
     }
@@ -120,7 +123,7 @@ router.post(
       req.body.imageUrl = req.file.cloudStoragePublicUrl;
     }
 
-    model.update(req.params.book, data, function (err, savedData) {
+    getModel().update(req.params.book, data, function (err, savedData) {
       if (err) {
         return next(err);
       }
@@ -135,7 +138,7 @@ router.post(
  * Display a book.
  */
 router.get('/:book', function get (req, res, next) {
-  model.read(req.params.book, function (err, entity) {
+  getModel().read(req.params.book, function (err, entity) {
     if (err) {
       return next(err);
     }
@@ -151,7 +154,7 @@ router.get('/:book', function get (req, res, next) {
  * Delete a book.
  */
 router.get('/:book/delete', function _delete (req, res, next) {
-  model.delete(req.params.book, function (err) {
+  getModel().delete(req.params.book, function (err) {
     if (err) {
       return next(err);
     }

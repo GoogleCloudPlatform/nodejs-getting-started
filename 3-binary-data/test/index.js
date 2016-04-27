@@ -14,18 +14,30 @@
 'use strict';
 
 var config = require('./config');
-var utils = require('../../test/utils');
-var proxyquire = require('proxyquire').noPreserveCache();
-var stubs = {};
+var utils = require('nodejs-repo-tools');
 
 describe(config.test + '/', function () {
-  it('should install dependencies', function (done) {
-    this.timeout(60 * 1000); // Allow 1 minute to test installation
-    utils.testInstallation(config, done);
-  });
-  proxyquire('./app.test', stubs);
+  if (!process.env.E2E_TESTS) {
+    it('should install dependencies', function (done) {
+      this.timeout(120 * 1000); // Allow 2 minutes to test installation
+      utils.testInstallation(config, done);
+    });
+  }
+  require('./app.test');
   describe('books/', function () {
-    proxyquire('./api.test', stubs);
-    proxyquire('./crud.test', stubs);
+    var appConfig = require('../config');
+    var DATA_BACKEND = appConfig.get('DATA_BACKEND');
+    if (DATA_BACKEND === 'datastore' || process.env.TEST_DATASTORE) {
+      require('./api.test')('datastore');
+      require('./crud.test')('datastore');
+    }
+    if (DATA_BACKEND === 'cloudsql' || process.env.TEST_CLOUDSQL) {
+      require('./api.test')('cloudsql');
+      require('./crud.test')('cloudsql');
+    }
+    if (DATA_BACKEND === 'mongodb' || process.env.TEST_MONGODB) {
+      require('./api.test')('mongodb');
+      require('./crud.test')('mongodb');
+    }
   });
 });

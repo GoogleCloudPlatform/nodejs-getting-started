@@ -14,11 +14,21 @@
 'use strict';
 
 var path = require('path');
+var projectId = process.env.GCLOUD_PROJECT;
+var test = '7-gce';
 
 module.exports = {
-  test: '1-hello-world',
+  test: test,
+  url: 'http://localhost:8081',
+  demoUrl: 'http://' + test + '-dot-worker-dot-' + projectId + '.appspot.com',
+  yaml: 'worker.yaml',
   cwd: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
-  args: ['app.js'],
-  msg: 'Hello, world!'
+  args: ['worker.js'],
+  msg: 'This worker has processed',
+  env: {
+    PORT: 8081,
+    SUBSCRIPTION_NAME: 'shared-worker-subscription-' + test,
+    TOPIC_NAME: 'book-process-queue-' + test
+  }
 };

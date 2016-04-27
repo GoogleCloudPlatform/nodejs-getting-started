@@ -14,12 +14,14 @@
 'use strict';
 
 var config = require('./config');
-var utils = require('../../test/utils');
+var utils = require('nodejs-repo-tools');
 
 describe(config.test + '/', function () {
-  it('should install dependencies', function (done) {
-    this.timeout(60 * 1000); // Allow 1 minute to test installation
-    utils.testInstallation(config, done);
-  });
+  if (!process.env.E2E_TESTS) {
+    it('should install dependencies', function (done) {
+      this.timeout(120 * 1000); // Allow 2 minutes to test installation
+      utils.testInstallation(config, done);
+    });
+  }
   require('./app.test');
 });

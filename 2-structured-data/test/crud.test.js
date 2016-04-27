@@ -14,178 +14,194 @@
 'use strict';
 
 var assert = require('assert');
-var request = require('supertest');
-var proxyquire = require('proxyquire').noPreserveCache();
-var stubs = {};
+var config = require('./config');
+var utils = require('nodejs-repo-tools');
 
-describe('crud.js', function () {
-  describe('/books', function () {
-    var id;
+module.exports = function (DATA_BACKEND) {
+  describe('crud.js', function () {
+    var ORIG_DATA_BACKEND;
 
-    // setup a book
-    before(function (done) {
-      request(proxyquire('../app', stubs))
-        .post('/api/books')
-        .send({ title: 'my book' })
-        .expect(200)
-        .expect(function (response) {
-          id = response.body.id;
-          assert.ok(response.body.id);
-          assert.equal(response.body.title, 'my book');
-        })
-        .end(done);
+    before(function () {
+      var appConfig = require('../config');
+      ORIG_DATA_BACKEND = appConfig.get('DATA_BACKEND');
+      appConfig.set('DATA_BACKEND', DATA_BACKEND);
     });
 
-    it('should show a list of books', function (done) {
-      var expected = '<div class="media-body"><h4>my book</h4><p></p></div>';
-      request(proxyquire('../app', stubs))
-        .get('/books')
-        .expect(200)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
-        .end(done);
-    });
+    describe('/books', function () {
+      var id;
 
-    it('should handle error', function (done) {
-      request(proxyquire('../app', stubs))
-        .get('/books')
-        .query({ pageToken: 'badrequest' })
-        .expect(500)
-        .end(done);
-    });
-
-    // delete the book
-    after(function (done) {
-      if (id) {
-        request(proxyquire('../app', stubs))
-          .delete('/api/books/' + id)
+      // setup a book
+      before(function (done) {
+        utils.getRequest(config)
+          .post('/api/books')
+          .send({ title: 'my book' })
           .expect(200)
+          .expect(function (response) {
+            id = response.body.id;
+            assert.ok(response.body.id);
+            assert.equal(response.body.title, 'my book');
+          })
           .end(done);
-      } else {
-        done();
-      }
+      });
+
+      it('should show a list of books', function (done) {
+        // Give Datastore time to become consistent
+        setTimeout(function () {
+          var expected = '<div class="media-body">';
+          utils.getRequest(config)
+            .get('/books')
+            .expect(200)
+            .expect(function (response) {
+              assert.ok(response.text.indexOf(expected) !== -1);
+            })
+            .end(done);
+        }, 2000);
+      });
+
+      it('should handle error', function (done) {
+        utils.getRequest(config)
+          .get('/books')
+          .query({ pageToken: 'badrequest' })
+          .expect(500)
+          .end(done);
+      });
+
+      // delete the book
+      after(function (done) {
+        if (id) {
+          utils.getRequest(config)
+            .delete('/api/books/' + id)
+            .expect(200)
+            .end(done);
+        } else {
+          done();
+        }
+      });
+    });
+
+    describe('/books/add', function () {
+      var id;
+
+      it('should post to add book form', function (done) {
+        utils.getRequest(config)
+          .post('/books/add')
+          .send('title=my%20book')
+          .expect(302)
+          .expect(function (response) {
+            var location = response.headers.location;
+            var idPart = location.replace('/books/', '');
+            if (require('../config').get('DATA_BACKEND') !== 'mongodb') {
+              id = parseInt(idPart, 10);
+            } else {
+              id = idPart;
+            }
+            assert.ok(response.text.indexOf('Redirecting to /books/') !== -1);
+          })
+          .end(done);
+      });
+
+      it('should show add book form', function (done) {
+        utils.getRequest(config)
+          .get('/books/add')
+          .expect(200)
+          .expect(function (response) {
+            assert.ok(response.text.indexOf('Add book') !== -1);
+          })
+          .end(done);
+      });
+
+      // delete the book
+      after(function (done) {
+        if (id) {
+          utils.getRequest(config)
+            .delete('/api/books/' + id)
+            .expect(200)
+            .end(done);
+        } else {
+          done();
+        }
+      });
+    });
+
+    describe('/books/:book/edit & /books/:book', function () {
+      var id;
+
+      // setup a book
+      before(function (done) {
+        utils.getRequest(config)
+          .post('/api/books')
+          .send({ title: 'my book' })
+          .expect(200)
+          .expect(function (response) {
+            id = response.body.id;
+            assert.ok(response.body.id);
+            assert.equal(response.body.title, 'my book');
+          })
+          .end(done);
+      });
+
+      it('should update a book', function (done) {
+        var expected = 'Redirecting to /books/' + id;
+        utils.getRequest(config)
+          .post('/books/' + id + '/edit')
+          .send('title=my%20other%20book')
+          .expect(302)
+          .expect(function (response) {
+            assert.ok(response.text.indexOf(expected) !== -1);
+          })
+          .end(done);
+      });
+
+      it('should show edit book form', function (done) {
+        var expected = '<input type="text" name="title" id="title" ' +
+                       'value="my other book" class="form-control">';
+        utils.getRequest(config)
+          .get('/books/' + id + '/edit')
+          .expect(200)
+          .expect(function (response) {
+            assert.ok(response.text.indexOf(expected) !== -1);
+          })
+          .end(done);
+      });
+
+      it('should show a book', function (done) {
+        var expected = '<h4>my other book&nbsp;<small></small></h4>';
+        utils.getRequest(config)
+          .get('/books/' + id)
+          .expect(200)
+          .expect(function (response) {
+            assert.ok(response.text.indexOf(expected) !== -1);
+          })
+          .end(done);
+      });
+
+      it('should delete a book', function (done) {
+        var expected = 'Redirecting to /books';
+        utils.getRequest(config)
+          .get('/books/' + id + '/delete')
+          .expect(302)
+          .expect(function (response) {
+            id = undefined;
+            assert.ok(response.text.indexOf(expected) !== -1);
+          })
+          .end(done);
+      });
+
+      // clean up if necessary
+      after(function (done) {
+        if (id) {
+          utils.getRequest(config)
+            .delete('/api/books/' + id)
+            .expect(200)
+            .end(done);
+        } else {
+          done();
+        }
+      });
+    });
+
+    after(function () {
+      require('../config').set('DATA_BACKEND', ORIG_DATA_BACKEND);
     });
   });
-
-  describe('/books/add', function () {
-    var id;
-
-    it('should post to add book form', function (done) {
-      request(proxyquire('../app', stubs))
-        .post('/books/add')
-        .send('title=my%20book')
-        .expect(302)
-        .expect(function (response) {
-          var location = response.headers.location;
-          var idPart = location.replace('/books/', '');
-          if (require('../config').get('DATA_BACKEND') !== 'mongodb') {
-            id = parseInt(idPart, 10);
-          } else {
-            id = idPart;
-          }
-          assert.ok(response.text.indexOf('Redirecting to /books/') !== -1);
-        })
-        .end(done);
-    });
-
-    it('should show add book form', function (done) {
-      request(proxyquire('../app', stubs))
-        .get('/books/add')
-        .expect(200)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf('Add book') !== -1);
-        })
-        .end(done);
-    });
-
-    // delete the book
-    after(function (done) {
-      if (id) {
-        request(proxyquire('../app', stubs))
-          .delete('/api/books/' + id)
-          .expect(200)
-          .end(done);
-      } else {
-        done();
-      }
-    });
-  });
-
-  describe('/books/:book/edit & /books/:book', function () {
-    var id;
-
-    // setup a book
-    before(function (done) {
-      request(proxyquire('../app', stubs))
-        .post('/api/books')
-        .send({ title: 'my book' })
-        .expect(200)
-        .expect(function (response) {
-          id = response.body.id;
-          assert.ok(response.body.id);
-          assert.equal(response.body.title, 'my book');
-        })
-        .end(done);
-    });
-
-    it('should update a book', function (done) {
-      var expected = 'Redirecting to /books/' + id;
-      request(proxyquire('../app', stubs))
-        .post('/books/' + id + '/edit')
-        .send('title=my%20other%20book')
-        .expect(302)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
-        .end(done);
-    });
-
-    it('should show edit book form', function (done) {
-      var expected = '<input type="text" name="title" id="title" ' +
-                     'value="my other book" class="form-control">';
-      request(proxyquire('../app', stubs))
-        .get('/books/' + id + '/edit')
-        .expect(200)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
-        .end(done);
-    });
-
-    it('should show a book', function (done) {
-      var expected = '<h4>my other book&nbsp;<small></small></h4>';
-      request(proxyquire('../app', stubs))
-        .get('/books/' + id)
-        .expect(200)
-        .expect(function (response) {
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
-        .end(done);
-    });
-
-    it('should delete a book', function (done) {
-      var expected = 'Redirecting to /books';
-      request(proxyquire('../app', stubs))
-        .get('/books/' + id + '/delete')
-        .expect(302)
-        .expect(function (response) {
-          id = undefined;
-          assert.ok(response.text.indexOf(expected) !== -1);
-        })
-        .end(done);
-    });
-
-    // clean up if necessary
-    after(function (done) {
-      if (id) {
-        request(proxyquire('../app', stubs))
-          .delete('/api/books/' + id)
-          .expect(200)
-          .end(done);
-      } else {
-        done();
-      }
-    });
-  });
-});
+};

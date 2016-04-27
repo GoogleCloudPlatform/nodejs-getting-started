@@ -31,6 +31,7 @@ nconf
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'MYSQL_HOST',
+    'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
     'OAUTH2_CALLBACK',

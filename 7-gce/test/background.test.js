@@ -23,7 +23,9 @@ describe('background.js', function () {
   beforeEach(function () {
     // Mock dependencies used by background.js
     mocks.config = {
-      GCLOUD_PROJECT: process.env.GCLOUD_PROJECT
+      GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
+      SUBSCRIPTION_NAME: 'shared-worker-subscription',
+      TOPIC_NAME: 'book-process-queue'
     };
     mocks.config.get = function (key) {
       return this[key];
@@ -104,8 +106,8 @@ describe('background.js', function () {
           'topic.subscribe() should have been called with the right arguments'
         );
         assert.ok(
-          mocks.subscription.on.calledOnce,
-          'subscription.on should have been called once'
+          mocks.subscription.on.calledTwice,
+          'subscription.on should have been called twice'
         );
         assert.equal(
           mocks.subscription.on.firstCall.args[0],
@@ -114,6 +116,15 @@ describe('background.js', function () {
         );
         assert.ok(
           typeof mocks.subscription.on.firstCall.args[1] === 'function',
+          'subscription.on() should have been called with the right arguments'
+        );
+        assert.equal(
+          mocks.subscription.on.secondCall.args[0],
+          'error',
+          'subscription.on() should have been called with the right arguments'
+        );
+        assert.ok(
+          typeof mocks.subscription.on.secondCall.args[1] === 'function',
           'subscription.on() should have been called with the right arguments'
         );
         done();

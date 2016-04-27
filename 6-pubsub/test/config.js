@@ -14,11 +14,16 @@
 'use strict';
 
 var path = require('path');
+var test = '6-pubsub';
 
 module.exports = {
-  test: '6-pubsub',
-  path: path.resolve(path.join(__dirname, '../')),
+  test: test,
+  cwd: path.resolve(path.join(__dirname, '../')),
   cmd: 'node',
   args: ['app.js'],
-  msg: 'No books found.'
+  msg: 'Bookshelf',
+  env: {
+    SUBSCRIPTION_NAME: test + '-shared-worker-subscription',
+    TOPIC_NAME: test + '-book-process-queue'
+  }
 };

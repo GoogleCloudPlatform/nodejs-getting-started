@@ -16,7 +16,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var config = require('../config');
-var model = require('./model-' + config.get('DATA_BACKEND'));
+
+function getModel () {
+  return require('./model-' + config.get('DATA_BACKEND'));
+}
 
 var router = express.Router();
 
@@ -29,7 +32,7 @@ router.use(bodyParser.json());
  * Retrieve a page of books (up to ten at a time).
  */
 router.get('/', function list (req, res, next) {
-  model.list(10, req.query.pageToken, function (err, entities, cursor) {
+  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
     if (err) {
       return next(err);
     }
@@ -46,7 +49,7 @@ router.get('/', function list (req, res, next) {
  * Create a new book.
  */
 router.post('/', function insert (req, res, next) {
-  model.create(req.body, function (err, entity) {
+  getModel().create(req.body, function (err, entity) {
     if (err) {
       return next(err);
     }
@@ -60,7 +63,7 @@ router.post('/', function insert (req, res, next) {
  * Retrieve a book.
  */
 router.get('/:book', function get (req, res, next) {
-  model.read(req.params.book, function (err, entity) {
+  getModel().read(req.params.book, function (err, entity) {
     if (err) {
       return next(err);
     }
@@ -74,7 +77,7 @@ router.get('/:book', function get (req, res, next) {
  * Update a book.
  */
 router.put('/:book', function update (req, res, next) {
-  model.update(req.params.book, req.body, function (err, entity) {
+  getModel().update(req.params.book, req.body, function (err, entity) {
     if (err) {
       return next(err);
     }
@@ -88,7 +91,7 @@ router.put('/:book', function update (req, res, next) {
  * Delete a book.
  */
 router.delete('/:book', function _delete (req, res, next) {
-  model.delete(req.params.book, function (err) {
+  getModel().delete(req.params.book, function (err) {
     if (err) {
       return next(err);
     }
