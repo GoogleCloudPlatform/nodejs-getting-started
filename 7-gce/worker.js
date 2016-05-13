@@ -13,6 +13,12 @@
 
 'use strict';
 
+// Activate Google Cloud Trace and Debug when in production
+if (process.env.NODE_ENV === 'production') {
+  require('@google/cloud-trace').start();
+  require('@google/cloud-debug');
+}
+
 var request = require('request');
 var waterfall = require('async').waterfall;
 var express = require('express');
