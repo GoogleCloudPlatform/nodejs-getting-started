@@ -13,6 +13,14 @@
 
 'use strict';
 
+// [START debug]
+// Activate Google Cloud Trace and Debug when in production
+if (process.env.NODE_ENV === 'production') {
+  require('@google/cloud-trace').start();
+  require('@google/cloud-debug');
+}
+// [END debug]
+
 var path = require('path');
 var express = require('express');
 var session = require('express-session');
