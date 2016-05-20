@@ -70,7 +70,11 @@ describe('worker.js', function () {
       warn: sinon.stub()
     };
     var stubs = {
-      './lib/logging': loggingStub
+      './lib/logging': loggingStub,
+      '@google/cloud-trace': {
+        start: sinon.stub()
+      },
+      '@google/cloud-debug': {}
     };
     stubs['./books/model-' + appConfig.get('DATA_BACKEND')] = {
       read: function (bookId, cb) {
