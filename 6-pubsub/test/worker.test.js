@@ -72,9 +72,12 @@ describe('worker.js', function () {
     var stubs = {
       './lib/logging': loggingStub,
       '@google/cloud-trace': {
-        start: sinon.stub()
+        start: sinon.stub(),
+        '@noCallThru': true
       },
-      '@google/cloud-debug': {}
+      '@google/cloud-debug': {
+        '@noCallThru': true
+      }
     };
     stubs['./books/model-' + appConfig.get('DATA_BACKEND')] = {
       read: function (bookId, cb) {
