@@ -25,8 +25,8 @@ push: build
 
 .PHONY: template
 template:
-	sed -i ".tmpl" "s/\$$GCLOUD_PROJECT/$(GCLOUD_PROJECT)/g" bookshelf-frontend.yaml
-	sed -i ".tmpl" "s/\$$GCLOUD_PROJECT/$(GCLOUD_PROJECT)/g" bookshelf-worker.yaml
+	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-frontend.yaml
+	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-worker.yaml
 
 .PHONY: create-service
 create-service:
