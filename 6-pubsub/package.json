@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ${SCRIPT:-app.js}",
     "monitor": "nodemon ${SCRIPT:-app.js}",
-    "deploy": "gcloud preview app deploy app.yaml worker.yaml",
+    "deploy": "gcloud app deploy app.yaml worker.yaml",
     "mocha": "mocha test/index.js -t 30000",
     "lint": "semistandard \"**/*.js\"",
     "test": "npm run lint && npm run mocha",
