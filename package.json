@@ -64,6 +64,7 @@
     "proxyquire": "^1.7.10",
     "request": "^2.74.0",
     "semistandard": "^8.0.0",
+    "shelljs": "^0.7.3",
     "sinon": "^1.17.5",
     "supertest": "^2.0.0"
   },
