@@ -29,25 +29,16 @@ cache:
 
 env:
   global:
-    - PATH=$PATH:$HOME/gcloud/google-cloud-sdk/bin
-    - GOOGLE_APPLICATION_CREDENTIALS=$TRAVIS_BUILD_DIR/test/encrypted/nodejs-docs-samples.json
-    - CLOUD_BUCKET=nodejs-docs-samples
-    - GCLOUD_PROJECT=nodejs-docs-samples
+    - GOOGLE_APPLICATION_CREDENTIALS=$TRAVIS_BUILD_DIR/key.json
+    - CLOUD_BUCKET=nodejs-getting-started-tests
+    - GCLOUD_PROJECT=nodejs-getting-started-tests
 
 before_install:
-  - if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
-      mkdir -p $HOME/gcloud &&
-      wget https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz --directory-prefix=$HOME/gcloud &&
-      cd $HOME/gcloud &&
-      tar xzf google-cloud-sdk.tar.gz &&
-      printf '\ny\n\ny\ny\n' | ./google-cloud-sdk/install.sh &&
-      source $HOME/.bashrc &&
-      cd $TRAVIS_BUILD_DIR;
-    fi
-  - openssl aes-256-cbc -K $encrypted_06352980ac5c_key -iv $encrypted_06352980ac5c_iv -in test/encrypted/nodejs-docs-samples.json.enc -out test/encrypted/nodejs-docs-samples.json -d
-  - if [ -a test/encrypted/nodejs-docs-samples.json ]; then
-      gcloud auth activate-service-account --key-file test/encrypted/nodejs-docs-samples.json;
-    fi
+  - openssl aes-256-cbc -K $encrypted_06352980ac5c_key -iv $encrypted_06352980ac5c_iv -in key.json.enc -out key.json -d
+  - npm set progress=false
+
+before_script:
+  - node scripts/install
 
 after_success:
 - npm run codecov

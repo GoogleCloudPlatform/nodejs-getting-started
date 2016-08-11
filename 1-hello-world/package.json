@@ -7,10 +7,8 @@
   "scripts": {
     "start": "node app.js",
     "monitor": "nodemon app.js",
-    "deploy": "gcloud preview app deploy app.yaml",
-    "mocha": "mocha test/index.js -t 30000",
-    "lint": "semistandard \"**/*.js\"",
-    "test": "npm run lint && npm run mocha"
+    "deploy": "gcloud app deploy app.yaml",
+    "test": "mocha test/index.js -t 30000"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -39,13 +37,12 @@
     ]
   },
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.14.0"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
+    "mocha": "^3.0.2",
     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
-    "semistandard": "^7.0.5",
-    "supertest": "^1.2.0"
+    "supertest": "^2.0.0"
   },
   "engines": {
     "node": ">=0.12.7"
