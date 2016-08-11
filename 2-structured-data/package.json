@@ -7,10 +7,8 @@
   "scripts": {
     "start": "node app.js",
     "monitor": "nodemon app.js",
-    "deploy": "gcloud preview app deploy app.yaml",
-    "mocha": "mocha test/index.js -t 30000",
-    "lint": "semistandard \"**/*.js\"",
-    "test": "npm run lint && npm run mocha",
+    "deploy": "gcloud app deploy app.yaml",
+    "test": "mocha test/index.js -t 30000",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
   "author": "Google Inc.",
@@ -40,24 +38,22 @@
     ]
   },
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "express": "^4.13.4",
-    "gcloud": "~0.31.0",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "gcloud": "~0.37.0",
     "jade": "^1.11.0",
-    "kerberos": "^0.0.19",
-    "lodash": "^4.11.1",
-    "mongodb": "^2.1.16",
-    "mysql": "^2.10.2",
+    "kerberos": "^0.0.21",
+    "lodash": "^4.14.2",
+    "mongodb": "^2.2.5",
+    "mysql": "^2.11.1",
     "nconf": "^0.8.4",
     "prompt": "^1.0.0"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
+    "mocha": "^3.0.2",
     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
-    "proxyquire": "^1.7.4",
-    "semistandard": "^7.0.5",
-    "sinon": "^1.17.3",
-    "supertest": "^1.2.0"
+    "proxyquire": "^1.7.10",
+    "sinon": "^1.17.5"
   },
   "engines": {
     "node": ">=0.12.7"
