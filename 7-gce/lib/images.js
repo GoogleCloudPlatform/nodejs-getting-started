@@ -67,7 +67,11 @@ function sendUploadToGCS (req, res, next) {
 
   var gcsname = Date.now() + req.file.originalname;
   var file = bucket.file(gcsname);
-  var stream = file.createWriteStream();
+  var stream = file.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype
+    }
+  });
 
   stream.on('error', function (err) {
     req.file.cloudStorageError = err;
