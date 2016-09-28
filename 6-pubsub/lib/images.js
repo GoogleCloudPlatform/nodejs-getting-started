@@ -90,15 +90,13 @@ function sendUploadToGCS (req, res, next) {
 }
 
 // Multer handles parsing multipart/form-data requests.
-// This instance is configured to store images in memory and re-name to avoid
-// conflicting with existing objects. This makes it straightforward to upload
-// to Cloud Storage.
-var multer = require('multer')({
-  inMemory: true,
-  fileSize: 5 * 1024 * 1024, // no larger than 5mb
-  rename: function (fieldname, filename) {
-    // generate a unique filename
-    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
+// This instance is configured to store images in memory.
+// This makes it straightforward to upload to Cloud Storage.
+var Multer = require('multer');
+var multer = Multer({
+  storage: Multer.MemoryStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // no larger than 5mb
   }
 });
 
