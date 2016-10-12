@@ -95,7 +95,7 @@ function list (limit, token, cb) {
     if (err) {
       return cb(err);
     }
-    var hasMore = entities.length === limit ? nextQuery.startVal : false;
+    var hasMore = nextQuery.moreResults === 'MORE_RESULTS_AFTER_LIMIT' ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }
@@ -113,7 +113,7 @@ function listBy (userId, limit, token, cb) {
     if (err) {
       return cb(err);
     }
-    var hasMore = entities.length === limit ? nextQuery.startVal : false;
+    var hasMore = nextQuery.moreResults === 'MORE_RESULTS_AFTER_LIMIT' ? nextQuery.endCursor : false;;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }
