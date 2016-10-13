@@ -105,7 +105,7 @@ function list (limit, token, cb) {
 // [START listby]
 function listBy (userId, limit, token, cb) {
   var q = ds.createQuery([kind])
-    .filter('createdById =', userId)
+    .filter('createdById', '=', userId)
     .limit(limit)
     .start(token);
 
