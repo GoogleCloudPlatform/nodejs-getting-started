@@ -41,6 +41,7 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "gcloud": "~0.37.0",
+    "@google-cloud/datastore": "^0.1.1",
     "jade": "^1.11.0",
     "kerberos": "^0.0.21",
     "lodash": "^4.14.2",
