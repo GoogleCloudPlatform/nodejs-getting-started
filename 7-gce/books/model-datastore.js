@@ -13,11 +13,11 @@
 
 'use strict';
 
-var gcloud = require('gcloud');
+var Datastore = require('@google-cloud/datastore');
 var config = require('../config');
 var background = require('../lib/background');
 
-var ds = gcloud.datastore({
+var ds = Datastore({
   projectId: config.get('GCLOUD_PROJECT')
 });
 var kind = 'Book';
@@ -96,7 +96,7 @@ function list (limit, token, cb) {
     if (err) {
       return cb(err);
     }
-    var hasMore = entities.length === limit ? nextQuery.startVal : false;
+    var hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }
@@ -113,7 +113,7 @@ function listBy (userId, limit, token, cb) {
     if (err) {
       return cb(err);
     }
-    var hasMore = entities.length === limit ? nextQuery.startVal : false;
+    var hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }

@@ -13,11 +13,11 @@
 
 'use strict';
 
-var gcloud = require('gcloud');
+var Datastore = require('@google-cloud/datastore');
 var config = require('../config');
 var background = require('../lib/background');
 
-var ds = gcloud.datastore({
+var ds = Datastore({
   projectId: config.get('GCLOUD_PROJECT')
 });
 var kind = 'Book';
