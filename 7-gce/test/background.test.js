@@ -41,23 +41,21 @@ describe('background.js', function () {
       createTopic: sinon.stub().callsArgWith(1, null, mocks.topic),
       topic: sinon.stub().returns(mocks.topic)
     };
-    mocks.gcloud = {
-      pubsub: sinon.stub().returns(mocks.pubsub)
-    };
+    mocks.Pubsub = sinon.stub().returns(mocks.pubsub);
     mocks.logging = {
       info: sinon.stub(),
       error: sinon.stub()
     };
     // Load background.js with provided mocks
     background = proxyquire('../lib/background', {
-      gcloud: mocks.gcloud,
+      '@google-cloud/pubsub': mocks.Pubsub,
       '../config': mocks.config,
       './logging': mocks.logging
     });
 
     assert.ok(
-      mocks.gcloud.pubsub.calledOnce,
-      'gcloud.pubsub() should have been called once'
+      mocks.Pubsub.calledOnce,
+      'Pubsub() should have been called once'
     );
   });
 

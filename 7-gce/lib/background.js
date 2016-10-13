@@ -13,14 +13,14 @@
 
 'use strict';
 
-var gcloud = require('gcloud');
+var Pubsub = require('@google-cloud/pubsub');
 var config = require('../config');
 var logging = require('./logging');
 
 var topicName = config.get('TOPIC_NAME');
 var subscriptionName = config.get('SUBSCRIPTION_NAME');
 
-var pubsub = gcloud.pubsub({
+var pubsub = Pubsub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 

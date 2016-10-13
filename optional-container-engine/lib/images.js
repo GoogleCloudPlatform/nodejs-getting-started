@@ -14,13 +14,13 @@
 'use strict';
 
 var request = require('request');
-var gcloud = require('gcloud');
+var Storage = require('@google-cloud/storage');
 var config = require('../config');
 var logging = require('./logging');
 
 var CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-var storage = gcloud.storage({
+var storage = Storage({
   projectId: config.get('GCLOUD_PROJECT')
 });
 var bucket = storage.bucket(CLOUD_BUCKET);
