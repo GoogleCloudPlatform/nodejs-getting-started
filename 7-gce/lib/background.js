@@ -13,14 +13,14 @@
 
 'use strict';
 
-var Pubsub = require('@google-cloud/pubsub');
-var config = require('../config');
-var logging = require('./logging');
+const Pubsub = require('@google-cloud/pubsub');
+const config = require('../config');
+const logging = require('./logging');
 
-var topicName = config.get('TOPIC_NAME');
-var subscriptionName = config.get('SUBSCRIPTION_NAME');
+const topicName = config.get('TOPIC_NAME');
+const subscriptionName = config.get('SUBSCRIPTION_NAME');
 
-var pubsub = Pubsub({
+const pubsub = Pubsub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
@@ -30,7 +30,7 @@ var pubsub = Pubsub({
 // publishing anything to it as topics without subscribers
 // will essentially drop any messages.
 function getTopic (cb) {
-  pubsub.createTopic(topicName, function (err, topic) {
+  pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
     if (err && err.code === 409) {
       return cb(null, pubsub.topic(topicName));
@@ -44,7 +44,7 @@ function getTopic (cb) {
 // subscription, which means that pub/sub will evenly distribute messages
 // to each worker.
 function subscribe (cb) {
-  var subscription;
+  let subscription;
 
   // Event handlers
   function handleMessage (message) {
@@ -54,7 +54,7 @@ function subscribe (cb) {
     console.error(err);
   }
 
-  getTopic(function (err, topic) {
+  getTopic((err, topic) => {
     if (err) {
       return cb(err);
     }
@@ -62,7 +62,7 @@ function subscribe (cb) {
     topic.subscribe(subscriptionName, {
       autoAck: true,
       reuseExisting: true
-    }, function (err, sub) {
+    }, (err, sub) => {
       if (err) {
         return cb(err);
       }
@@ -73,13 +73,12 @@ function subscribe (cb) {
       subscription.on('message', handleMessage);
       subscription.on('error', handleError);
 
-      logging.info('Listening to ' + topicName +
-        ' with subscription ' + subscriptionName);
+      logging.info(`Listening to ${topicName} with subscription ${subscriptionName}`);
     });
   });
 
   // Subscription cancellation function
-  return function () {
+  return () => {
     if (subscription) {
       // Remove event listeners
       subscription.removeListener('message', handleMessage);
@@ -91,7 +90,7 @@ function subscribe (cb) {
 
 // Adds a book to the queue to be processed by the worker.
 function queueBook (bookId) {
-  getTopic(function (err, topic) {
+  getTopic((err, topic) => {
     if (err) {
       logging.error('Error occurred while getting pubsub topic', err);
       return;
@@ -102,17 +101,17 @@ function queueBook (bookId) {
         action: 'processBook',
         bookId: bookId
       }
-    }, function (err) {
+    }, (err) => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {
-        logging.info('Book ' + bookId + ' queued for background processing');
+        logging.info(`Book ${bookId} queued for background processing`);
       }
     });
   });
 }
 
 module.exports = {
-  subscribe: subscribe,
-  queueBook: queueBook
+  subscribe,
+  queueBook
 };

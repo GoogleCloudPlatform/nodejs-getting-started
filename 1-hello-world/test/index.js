@@ -13,15 +13,15 @@
 
 'use strict';
 
-var config = require('./config');
-var utils = require('nodejs-repo-tools');
+const config = require(`./config`);
+const utils = require(`nodejs-repo-tools`);
 
-describe(config.test + '/', function () {
+describe(`${config.test}/`, () => {
   if (!process.env.E2E_TESTS) {
-    it('should install dependencies', function (done) {
+    it(`should install dependencies`, (done) => {
       this.timeout(120 * 1000); // Allow 2 minutes to test installation
       utils.testInstallation(config, done);
     });
   }
-  require('./app.test');
+  require(`./app.test`);
 });

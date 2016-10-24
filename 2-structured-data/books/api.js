@@ -13,15 +13,15 @@
 
 'use strict';
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var config = require('../config');
+config express = require('express');
+config bodyParser = require('body-parser');
+config config = require('../config');
 
 function getModel () {
-  return require('./model-' + config.get('DATA_BACKEND'));
+  return require(`./model-${config.get('DATA_BACKEND')}`);
 }
 
-var router = express.Router();
+config router = express.Router();
 
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
@@ -32,7 +32,7 @@ router.use(bodyParser.json());
  * Retrieve a page of books (up to ten at a time).
  */
 router.get('/', function list (req, res, next) {
-  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
+  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
       return next(err);
     }
@@ -49,7 +49,7 @@ router.get('/', function list (req, res, next) {
  * Create a new book.
  */
 router.post('/', function insert (req, res, next) {
-  getModel().create(req.body, function (err, entity) {
+  getModel().create(req.body, (err, entity) => {
     if (err) {
       return next(err);
     }
@@ -63,7 +63,7 @@ router.post('/', function insert (req, res, next) {
  * Retrieve a book.
  */
 router.get('/:book', function get (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
       return next(err);
     }
@@ -77,7 +77,7 @@ router.get('/:book', function get (req, res, next) {
  * Update a book.
  */
 router.put('/:book', function update (req, res, next) {
-  getModel().update(req.params.book, req.body, function (err, entity) {
+  getModel().update(req.params.book, req.body, (err, entity) => {
     if (err) {
       return next(err);
     }
@@ -91,7 +91,7 @@ router.put('/:book', function update (req, res, next) {
  * Delete a book.
  */
 router.delete('/:book', function _delete (req, res, next) {
-  getModel().delete(req.params.book, function (err) {
+  getModel().delete(req.params.book, (err) => {
     if (err) {
       return next(err);
     }

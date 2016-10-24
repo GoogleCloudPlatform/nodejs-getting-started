@@ -13,15 +13,15 @@
 
 'use strict';
 
-var express = require('express');
-var config = require('../config');
+const express = require('express');
+const config = require('../config');
 
 // [START setup]
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 function extractProfile (profile) {
-  var imageUrl = '';
+  let imageUrl = '';
   if (profile.photos && profile.photos.length) {
     imageUrl = profile.photos[0].value;
   }
@@ -44,21 +44,21 @@ passport.use(new GoogleStrategy({
   clientSecret: config.get('OAUTH2_CLIENT_SECRET'),
   callbackURL: config.get('OAUTH2_CALLBACK'),
   accessType: 'offline'
-}, function (accessToken, refreshToken, profile, cb) {
+}, (accessToken, refreshToken, profile, cb) => {
   // Extract the minimal profile information we need from the profile object
   // provided by Google
   cb(null, extractProfile(profile));
 }));
 
-passport.serializeUser(function (user, cb) {
+passport.serializeUser((user, cb) => {
   cb(null, user);
 });
-passport.deserializeUser(function (obj, cb) {
+passport.deserializeUser((obj, cb) => {
   cb(null, obj);
 });
 // [END setup]
 
-var router = express.Router();
+const router = express.Router();
 
 // [START middleware]
 // Middleware that requires the user to be logged in. If the user is not logged
@@ -76,10 +76,8 @@ function authRequired (req, res, next) {
 // any templates. These are available as `profile`, `login`, and `logout`.
 function addTemplateVariables (req, res, next) {
   res.locals.profile = req.user;
-  res.locals.login = '/auth/login?return=' +
-    encodeURIComponent(req.originalUrl);
-  res.locals.logout = '/auth/logout?return=' +
-    encodeURIComponent(req.originalUrl);
+  res.locals.login = `/auth/login?return=${encodeURIComponent(req.originalUrl)}`;
+  res.locals.logout = `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`;
   next();
 }
 // [END middleware]
@@ -96,7 +94,7 @@ router.get(
 
   // Save the url of the user's current page so the app can redirect back to
   // it after authorization
-  function (req, res, next) {
+  (req, res, next) => {
     if (req.query.return) {
       req.session.oauth2return = req.query.return;
     }
@@ -118,8 +116,8 @@ router.get(
   passport.authenticate('google'),
 
   // Redirect back to the original page, if any
-  function (req, res) {
-    var redirect = req.session.oauth2return || '/';
+  (req, res) => {
+    const redirect = req.session.oauth2return || '/';
     delete req.session.oauth2return;
     res.redirect(redirect);
   }
@@ -128,7 +126,7 @@ router.get(
 
 // Deletes the user's credentials and profile from the session.
 // This does not revoke any active tokens.
-router.get('/auth/logout', function (req, res) {
+router.get('/auth/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 });

@@ -13,13 +13,13 @@
 
 'use strict';
 
-var Datastore = require('@google-cloud/datastore');
-var config = require('../config');
+const Datastore = require('@google-cloud/datastore');
+const config = require('../config');
 
-var ds = Datastore({
+const ds = Datastore({
   projectId: config.get('GCLOUD_PROJECT')
 });
-var kind = 'Book';
+const kind = 'Book';
 
 // Translates from Datastore's entity format to
 // the format expected by the application.
@@ -68,7 +68,7 @@ function fromDatastore (obj) {
 function toDatastore (obj, nonIndexed) {
   nonIndexed = nonIndexed || [];
   var results = [];
-  Object.keys(obj).forEach(function (k) {
+  Object.keys(obj).forEach((k) => {
     if (obj[k] === undefined) {
       return;
     }
@@ -86,16 +86,16 @@ function toDatastore (obj, nonIndexed) {
 // return per page. The ``token`` argument allows requesting additional
 // pages. The callback is invoked with ``(err, books, nextPageToken)``.
 function list (limit, token, cb) {
-  var q = ds.createQuery([kind])
+  const q = ds.createQuery([kind])
     .limit(limit)
     .order('title')
     .start(token);
 
-  ds.runQuery(q, function (err, entities, nextQuery) {
+  ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
       return cb(err);
     }
-    var hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
+    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }
@@ -111,23 +111,27 @@ function update (id, data, cb) {
     key = ds.key(kind);
   }
 
-  var entity = {
+  const entity = {
     key: key,
     data: toDatastore(data, ['description'])
   };
 
   ds.save(
     entity,
-    function (err) {
+    (err) => {
       data.id = entity.key.id;
       cb(err, err ? null : data);
     }
   );
 }
 
+function create (data, cb) {
+    update(null, data, cb);
+}
+
 function read (id, cb) {
-  var key = ds.key([kind, parseInt(id, 10)]);
-  ds.get(key, function (err, entity) {
+  const key = ds.key([kind, parseInt(id, 10)]);
+  ds.get(key, (err, entity) => {
     if (err) {
       return cb(err);
     }
@@ -141,17 +145,15 @@ function read (id, cb) {
   });
 }
 
-function _delete (id, cb) {
-  var key = ds.key([kind, parseInt(id, 10)]);
+function delete (id, cb) {
+  const key = ds.key([kind, parseInt(id, 10)]);
   ds.delete(key, cb);
 }
 
 module.exports = {
-  create: function (data, cb) {
-    update(null, data, cb);
-  },
-  read: read,
-  update: update,
-  delete: _delete,
-  list: list
+  create,
+  read,
+  update,
+  delete,
+  list
 };

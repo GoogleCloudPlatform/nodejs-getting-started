@@ -13,17 +13,17 @@
 
 'use strict';
 
-var path = require('path');
-var test = '6-pubsub';
+const path = require(`path`);
+const test = `6-pubsub`;
 
 module.exports = {
   test: test,
-  cwd: path.resolve(path.join(__dirname, '../')),
-  cmd: 'node',
-  args: ['app.js'],
-  msg: 'Bookshelf',
+  cwd: path.resolve(path.join(__dirname, `../`)),
+  cmd: `node`,
+  args: [`app.js`],
+  msg: `Bookshelf`,
   env: {
-    SUBSCRIPTION_NAME: test + '-shared-worker-subscription',
-    TOPIC_NAME: test + '-book-process-queue'
+    SUBSCRIPTION_NAME: `${test}-shared-worker-subscription`,
+    TOPIC_NAME: `${test}-book-process-queue`
   }
 };

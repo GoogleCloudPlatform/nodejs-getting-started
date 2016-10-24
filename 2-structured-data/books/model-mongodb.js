@@ -13,11 +13,11 @@
 
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
-var config = require('../config');
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
+const config = require('../config');
 
-var collection;
+const collection;
 
 // [START translate]
 function fromMongo (item) {
@@ -37,12 +37,12 @@ function toMongo (item) {
 
 function getCollection (cb) {
   if (collection) {
-    setImmediate(function () {
+    setImmediate(() => {
       cb(null, collection);
     });
     return;
   }
-  MongoClient.connect(config.get('MONGO_URL'), function (err, db) {
+  MongoClient.connect(config.get('MONGO_URL'), (err, db) => {
     if (err) {
       return cb(err);
     }
@@ -57,18 +57,18 @@ function list (limit, token, cb) {
   if (isNaN(token)) {
     return cb(new Error('invalid token'));
   }
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
     collection.find({})
       .skip(token)
       .limit(limit)
-      .toArray(function (err, results) {
+      .toArray((err, results) => {
         if (err) {
           return cb(err);
         }
-        var hasMore =
+        const hasMore =
           results.length === limit ? token + results.length : false;
         cb(null, results.map(fromMongo), hasMore);
       });
@@ -78,15 +78,15 @@ function list (limit, token, cb) {
 
 // [START create]
 function create (data, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
-    collection.insert(data, {w: 1}, function (err, result) {
+    collection.insert(data, {w: 1}, (err, result) => {
       if (err) {
         return cb(err);
       }
-      var item = fromMongo(result.ops);
+      const item = fromMongo(result.ops);
       cb(null, item);
     });
   });
@@ -94,13 +94,13 @@ function create (data, cb) {
 // [END create]
 
 function read (id, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
     collection.findOne({
       _id: new ObjectID(id)
-    }, function (err, result) {
+    }, (err, result) => {
       if (err) {
         return cb(err);
       }
@@ -117,7 +117,7 @@ function read (id, cb) {
 
 // [START update]
 function update (id, data, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
@@ -125,7 +125,7 @@ function update (id, data, cb) {
       { _id: new ObjectID(id) },
       { '$set': toMongo(data) },
       { w: 1 },
-      function (err) {
+      (err) => {
         if (err) {
           return cb(err);
         }
@@ -137,7 +137,7 @@ function update (id, data, cb) {
 // [END update]
 
 function _delete (id, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
@@ -148,9 +148,9 @@ function _delete (id, cb) {
 }
 
 module.exports = {
-  create: create,
-  read: read,
-  update: update,
+  create,
+  read,
+  update,
   delete: _delete,
-  list: list
+  list
 };

@@ -15,12 +15,12 @@
 
 // Hierarchical node.js configuration with command-line arguments, environment
 // variables, and files.
-var nconf = module.exports = require('nconf');
-var path = require('path');
+const nconf = module.exports = require('nconf');
+const path = require('path');
 
 // Memcache configuration settings
-var MEMCACHE_HOST = process.env.MEMCACHE_PORT_11211_TCP_ADDR || 'localhost';
-var MEMCACHE_PORT = process.env.MEMCACHE_PORT_11211_TCP_PORT || 11211;
+const MEMCACHE_HOST = process.env.MEMCACHE_PORT_11211_TCP_ADDR || 'localhost';
+const MEMCACHE_PORT = process.env.MEMCACHE_PORT_11211_TCP_PORT || 11211;
 
 nconf
   // 1. Command-line arguments
@@ -61,7 +61,7 @@ nconf
     GCLOUD_PROJECT: '',
 
     // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: MEMCACHE_HOST + ':' + MEMCACHE_PORT,
+    MEMCACHE_URL: `${MEMCACHE_HOST}:${MEMCACHE_PORT}`,
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
@@ -102,7 +102,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
 
 function checkConfig (setting) {
   if (!nconf.get(setting)) {
-    throw new Error('You must set the ' + setting + ' environment variable or' +
-      ' add it to config.json!');
+    throw new Error(`You must set ${setting} as an environment variable or in config.json!`);
   }
 }

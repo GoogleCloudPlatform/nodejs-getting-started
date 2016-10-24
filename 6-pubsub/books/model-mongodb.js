@@ -13,12 +13,12 @@
 
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
-var config = require('../config');
-var background = require('../lib/background');
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
+const config = require('../config');
+const background = require('../lib/background');
 
-var collection;
+let collection;
 
 function fromMongo (item) {
   if (Array.isArray(item) && item.length) {
@@ -36,12 +36,12 @@ function toMongo (item) {
 
 function getCollection (cb) {
   if (collection) {
-    setImmediate(function () {
+    setImmediate(() => {
       cb(null, collection);
     });
     return;
   }
-  MongoClient.connect(config.get('MONGO_URL'), function (err, db) {
+  MongoClient.connect(config.get('MONGO_URL'), (err, db) => {
     if (err) {
       return cb(err);
     }
@@ -55,18 +55,18 @@ function list (limit, token, cb) {
   if (isNaN(token)) {
     return cb(new Error('invalid token'));
   }
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
     collection.find({})
       .skip(token)
       .limit(limit)
-      .toArray(function (err, results) {
+      .toArray((err, results) => {
         if (err) {
           return cb(err);
         }
-        var hasMore =
+        const hasMore =
           results.length === limit ? token + results.length : false;
         cb(null, results.map(fromMongo), hasMore);
       });
@@ -78,18 +78,18 @@ function listBy (userid, limit, token, cb) {
   if (isNaN(token)) {
     return cb(new Error('invalid token'));
   }
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return err;
     }
     collection.find({createdById: userid})
       .skip(token)
       .limit(limit)
-      .toArray(function (err, results) {
+      .toArray((err, results) => {
         if (err) {
           return cb(err);
         }
-        var hasMore =
+        const hasMore =
           results.length === limit ? token + results.length : false;
         cb(null, results.map(fromMongo), hasMore);
       });
@@ -98,15 +98,15 @@ function listBy (userid, limit, token, cb) {
 
 // [START create]
 function create (data, queueBook, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
-    collection.insert(data, {w: 1}, function (err, result) {
+    collection.insert(data, {w: 1}, (err, result) => {
       if (err) {
         return cb(err);
       }
-      var item = fromMongo(result.ops);
+      const item = fromMongo(result.ops);
       if (queueBook) {
         background.queueBook(item.id);
       }
@@ -117,13 +117,13 @@ function create (data, queueBook, cb) {
 // [END create]
 
 function read (id, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
     collection.findOne({
       _id: new ObjectID(id)
-    }, function (err, result) {
+    }, (err, result) => {
       if (err) {
         return cb(err);
       }
@@ -140,7 +140,7 @@ function read (id, cb) {
 
 // [START update]
 function update (id, data, queueBook, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }
@@ -148,7 +148,7 @@ function update (id, data, queueBook, cb) {
       { _id: new ObjectID(id) },
       { '$set': toMongo(data) },
       { w: 1 },
-      function (err) {
+      (err) => {
         if (err) {
           return cb(err);
         }
@@ -163,7 +163,7 @@ function update (id, data, queueBook, cb) {
 // [END update]
 
 function _delete (id, cb) {
-  getCollection(function (err, collection) {
+  getCollection((err, collection) => {
     if (err) {
       return cb(err);
     }

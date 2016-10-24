@@ -13,21 +13,21 @@
 
 'use strict';
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var config = require('../config');
+const express = require('express');
+const bodyParser = require('body-parser');
+const config = require('../config');
 
 function getModel () {
-  return require('./model-' + config.get('DATA_BACKEND'));
+  return require(`./model-${config.get('DATA_BACKEND')}`);
 }
 
-var router = express.Router();
+const router = express.Router();
 
 // Automatically parse request body as form data
 router.use(bodyParser.urlencoded({ extended: false }));
 
 // Set Content-Type for all responses for these routes
-router.use(function (req, res, next) {
+router.use((req, res, next) => {
   res.set('Content-Type', 'text/html');
   next();
 });
@@ -37,8 +37,8 @@ router.use(function (req, res, next) {
  *
  * Display a page of books (up to ten at a time).
  */
-router.get('/', function list (req, res, next) {
-  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
+router.get('/', (req, res, next) => {
+  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
       return next(err);
     }
@@ -55,7 +55,7 @@ router.get('/', function list (req, res, next) {
  * Display a form for creating a book.
  */
 // [START add_get]
-router.get('/add', function addForm (req, res) {
+router.get('/add', (req, res) => {
   res.render('books/form.jade', {
     book: {},
     action: 'Add'
@@ -69,15 +69,15 @@ router.get('/add', function addForm (req, res) {
  * Create a book.
  */
 // [START add_post]
-router.post('/add', function insert (req, res, next) {
-  var data = req.body;
+router.post('/add', (req, res, next) => {
+  const data = req.body;
 
   // Save the data to the database.
-  getModel().create(data, function (err, savedData) {
+  getModel().create(data, (err, savedData) => {
     if (err) {
       return next(err);
     }
-    res.redirect(req.baseUrl + '/' + savedData.id);
+    res.redirect(`${req.baseUrl}/${savedData.id}`);
   });
 });
 // [END add_post]
@@ -87,8 +87,8 @@ router.post('/add', function insert (req, res, next) {
  *
  * Display a book for editing.
  */
-router.get('/:book/edit', function editForm (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+router.get('/:book/edit', (req, res, next) => {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
       return next(err);
     }
@@ -104,14 +104,14 @@ router.get('/:book/edit', function editForm (req, res, next) {
  *
  * Update a book.
  */
-router.post('/:book/edit', function update (req, res, next) {
-  var data = req.body;
+router.post('/:book/edit', (req, res, next) => {
+  const data = req.body;
 
-  getModel().update(req.params.book, data, function (err, savedData) {
+  getModel().update(req.params.book, data, (err, savedData) => {
     if (err) {
       return next(err);
     }
-    res.redirect(req.baseUrl + '/' + savedData.id);
+    res.redirect(`${req.baseUrl}/${savedData.id}`);
   });
 });
 
@@ -120,8 +120,8 @@ router.post('/:book/edit', function update (req, res, next) {
  *
  * Display a book.
  */
-router.get('/:book', function get (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+router.get('/:book', (req, res, next) => {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
       return next(err);
     }
@@ -136,8 +136,8 @@ router.get('/:book', function get (req, res, next) {
  *
  * Delete a book.
  */
-router.get('/:book/delete', function _delete (req, res, next) {
-  getModel().delete(req.params.book, function (err) {
+router.get('/:book/delete', (req, res, next) => {
+  getModel().delete(req.params.book, (err) => {
     if (err) {
       return next(err);
     }
@@ -148,7 +148,7 @@ router.get('/:book/delete', function _delete (req, res, next) {
 /**
  * Errors on "/books/*" routes.
  */
-router.use(function handleRpcError (err, req, res, next) {
+router.use((err, req, res, next) => {
   // Format error and forward to generic error handler for logging and
   // responding to the request
   err.response = err.message;
