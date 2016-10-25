@@ -95,7 +95,7 @@ module.exports = (DATA_BACKEND) => {
             } else {
               id = idPart;
             }
-            assert.equals(response.text.includes(`Redirecting to /books/`), true);
+            assert.equal(response.text.includes(`Redirecting to /books/`), true);
           })
           .end(done);
       });
@@ -105,7 +105,7 @@ module.exports = (DATA_BACKEND) => {
           .get(`/books/add`)
           .expect(200)
           .expect((response) => {
-            assert.equals(response.text.includes(`Add book`), true);
+            assert.equal(response.text.includes(`Add book`), true);
           })
           .end(done);
       });

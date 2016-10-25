@@ -16,7 +16,7 @@
 const assert = require(`assert`);
 const sinon = require(`sinon`);
 const proxyquire = require(`proxyquire`).noPreserveCache();
-const background;
+let background;
 const mocks = {};
 
 describe(`background.js`, () => {

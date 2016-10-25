@@ -13,12 +13,12 @@
 
 'use strict';
 
-const express = require(`express`);
-const config = require(`../config`);
+const express = require('express');
+const config = require('../config');
 
 // [START setup]
-const passport = require(`passport`);
-const GoogleStrategy = require(`passport-google-oauth20`).Strategy;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 function extractProfile (profile) {
   let imageUrl = ``;
@@ -40,10 +40,10 @@ function extractProfile (profile) {
 // object, which will be set at `req.user` in route handlers after
 // authentication.
 passport.use(new GoogleStrategy({
-  clientID: config.get(`OAUTH2_CLIENT_ID`),
-  clientSecret: config.get(`OAUTH2_CLIENT_SECRET`),
-  callbackURL: config.get(`OAUTH2_CALLBACK`),
-  accessType: `offline`
+  clientID: config.get('OAUTH2_CLIENT_ID'),
+  clientSecret: config.get('OAUTH2_CLIENT_SECRET'),
+  callbackURL: config.get('OAUTH2_CALLBACK'),
+  accessType: 'offline'
 }, (accessToken, refreshToken, profile, cb) => {
   // Extract the minimal profile information we need from the profile object
   // provided by Google
@@ -67,7 +67,7 @@ const router = express.Router();
 function authRequired (req, res, next) {
   if (!req.user) {
     req.session.oauth2return = req.originalUrl;
-    return res.redirect(`/auth/login`);
+    return res.redirect('/auth/login');
   }
   next();
 }
@@ -90,7 +90,7 @@ function addTemplateVariables (req, res, next) {
 // [START authorize]
 router.get(
   // Login url
-  `/auth/login`,
+  '/auth/login',
 
   // Save the url of the user's current page so the app can redirect back to
   // it after authorization
@@ -102,7 +102,7 @@ router.get(
   },
 
   // Start OAuth 2 flow using Passport.js
-  passport.authenticate(`google`, { scope: [`email`, `profile`] })
+  passport.authenticate('google', { scope: ['email', 'profile'] })
 );
 // [END authorize]
 
@@ -110,14 +110,14 @@ router.get(
 router.get(
   // OAuth 2 callback url. Use this url to configure your OAuth client in the
   // Google Developers console
-  `/auth/google/callback`,
+  '/auth/google/callback',
 
   // Finish OAuth 2 flow using Passport.js
-  passport.authenticate(`google`),
+  passport.authenticate('google'),
 
   // Redirect back to the original page, if any
   (req, res) => {
-    const redirect = req.session.oauth2return || `/`;
+    const redirect = req.session.oauth2return || '/';
     delete req.session.oauth2return;
     res.redirect(redirect);
   }
@@ -126,9 +126,9 @@ router.get(
 
 // Deletes the user's credentials and profile from the session.
 // This does not revoke any active tokens.
-router.get(`/auth/logout`, (req, res) => {
+router.get('/auth/logout', (req, res) => {
   req.logout();
-  res.redirect(`/`);
+  res.redirect('/');
 });
 
 module.exports = {

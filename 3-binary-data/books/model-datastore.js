@@ -154,6 +154,6 @@ module.exports = {
   create,
   read,
   update,
-  delete,
+  delete: _delete,
   list
 };

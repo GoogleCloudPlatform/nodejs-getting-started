@@ -19,8 +19,8 @@ const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
   describe(`api.js`, () => {
-    const ORIG_DATA_BACKEND;
-    const id;
+    let ORIG_DATA_BACKEND;
+    let id;
 
     before(() => {
       const appConfig = require(`../config`);

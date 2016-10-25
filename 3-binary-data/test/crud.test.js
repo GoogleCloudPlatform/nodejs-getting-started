@@ -201,7 +201,7 @@ module.exports = (DATA_BACKEND) => {
     });
 
     after(() => {
-      require(`../config`).set('DATA_BACKEND', ORIG_DATA_BACKEND);
+      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
     });
   });
 };

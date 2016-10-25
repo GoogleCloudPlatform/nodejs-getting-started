@@ -33,18 +33,18 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
 
   request
     .get(sourceUrl)
-    .on(`error`, (err) => {
+    .on('error', (err) => {
       logging.warn(`Could not fetch image ${sourceUrl}`, err);
       cb(err);
     })
     .pipe(file.createWriteStream())
-    .on(`finish`, () => {
+    .on('finish', () => {
       logging.info(`Uploaded image ${destFileName}`);
       file.makePublic(() => {
         cb(null, getPublicUrl(destFileName));
       });
     })
-    .on(`error`, (err) => {
+    .on('error', (err) => {
       logging.error('Could not upload image', err);
       cb(err);
     });

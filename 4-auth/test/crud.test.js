@@ -19,7 +19,7 @@ const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
   describe(`crud.js`, () => {
-    const ORIG_DATA_BACKEND;
+    let ORIG_DATA_BACKEND;
 
     before(() => {
       const appConfig = require(`../config`);

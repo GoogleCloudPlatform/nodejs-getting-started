@@ -17,7 +17,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const config = require('../config');
 
-const collection;
+let collection;
 
 function fromMongo (item) {
   if (Array.isArray(item) && item.length) {
