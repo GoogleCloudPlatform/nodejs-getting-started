@@ -43,7 +43,8 @@ function getCollection (cb) {
   }
   MongoClient.connect(config.get('MONGO_URL'), (err, db) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection = db.collection(config.get('MONGO_COLLECTION'));
     cb(null, collection);
@@ -53,20 +54,23 @@ function getCollection (cb) {
 function list (limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   if (isNaN(token)) {
-    return cb(new Error('invalid token'));
+    cb(new Error('invalid token'));
+    return;
   }
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.find({})
       .skip(token)
       .limit(limit)
       .toArray((err, results) => {
         if (err) {
-          return cb(err);
+          cb(err);
+          return;
         }
-        var hasMore =
+        const hasMore =
           results.length === limit ? token + results.length : false;
         cb(null, results.map(fromMongo), hasMore);
       });
@@ -76,20 +80,23 @@ function list (limit, token, cb) {
 function listBy (userid, limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   if (isNaN(token)) {
-    return cb(new Error('invalid token'));
+    cb(new Error('invalid token'));
+    return;
   }
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.find({ createdById: userid })
       .skip(token)
       .limit(limit)
       .toArray((err, results) => {
         if (err) {
-          return cb(err);
+          cb(err);
+          return;
         }
-        var hasMore =
+        const hasMore =
           results.length === limit ? token + results.length : false;
         cb(null, results.map(fromMongo), hasMore);
       });
@@ -99,13 +106,15 @@ function listBy (userid, limit, token, cb) {
 function create (data, queueBook, cb) {
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.insert(data, {w: 1}, (err, result) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
-      var item = fromMongo(result.ops);
+      const item = fromMongo(result.ops);
       if (queueBook) {
         background.queueBook(item.id);
       }
@@ -117,19 +126,22 @@ function create (data, queueBook, cb) {
 function read (id, cb) {
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.findOne({
       _id: new ObjectID(id)
     }, (err, result) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
       if (!result) {
-        return cb({
+        cb({
           code: 404,
           message: 'Not found'
         });
+        return;
       }
       cb(null, fromMongo(result));
     });
@@ -139,7 +151,8 @@ function read (id, cb) {
 function update (id, data, queueBook, cb) {
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.update(
       { _id: new ObjectID(id) },
@@ -147,7 +160,8 @@ function update (id, data, queueBook, cb) {
       { w: 1 },
       (err) => {
         if (err) {
-          return cb(err);
+          cb(err);
+          return;
         }
         if (queueBook) {
           background.queueBook(id);
@@ -161,7 +175,8 @@ function update (id, data, queueBook, cb) {
 function _delete (id, cb) {
   getCollection((err, collection) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     collection.remove({
       _id: new ObjectID(id)

@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-`use strict`;
+'use strict';
 
 const assert = require(`assert`);
 const config = require(`./config`);
@@ -19,8 +19,8 @@ const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
   describe(`api.js`, () => {
-    const ORIG_DATA_BACKEND;
-    const id;
+    let ORIG_DATA_BACKEND;
+    let id;
 
     before(() => {
       const appConfig = require(`../config`);

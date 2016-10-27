@@ -27,7 +27,7 @@ describe(`background.js`, () => {
       SUBSCRIPTION_NAME: `shared-worker-subscription`,
       TOPIC_NAME: `book-process-queue`
     };
-    mocks.config.get = (key) => {
+    mocks.config.get = function (key) {
       return this[key];
     };
     mocks.subscription = {
@@ -48,9 +48,9 @@ describe(`background.js`, () => {
     };
     // Load background.js with provided mocks
     background = proxyquire(`../lib/background`, {
-      `@google-cloud/pubsub`: mocks.Pubsub,
-      `../config`: mocks.config,
-      `./logging`: mocks.logging
+      '@google-cloud/pubsub': mocks.Pubsub,
+      '../config': mocks.config,
+      './logging': mocks.logging
     });
 
     assert.ok(

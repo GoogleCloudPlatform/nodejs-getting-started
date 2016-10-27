@@ -31,7 +31,7 @@ describe(`app.js`, () => {
       .get(`/`)
       .expect(302)
       .expect((response) => {
-        assert.equals(response.text.includes(`Redirecting to /books`), true);
+        assert.equal(response.text.includes(`Redirecting to /books`), true);
       })
       .end(done);
   });
@@ -42,7 +42,7 @@ describe(`app.js`, () => {
       env: sinon.stub().returnsThis(),
       file: sinon.stub().returnsThis(),
       defaults: sinon.stub().returnsThis(),
-      get: (setting) => {
+      get: function (setting) {
         return this[setting];
       }
     };

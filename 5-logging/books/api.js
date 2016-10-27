@@ -34,7 +34,8 @@ router.use(bodyParser.json());
 router.get('/', (req, res, next) => {
   getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json({
       items: entities,
@@ -51,7 +52,8 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   getModel().create(req.body, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -65,7 +67,8 @@ router.post('/', (req, res, next) => {
 router.get('/:book', (req, res, next) => {
   getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -79,7 +82,8 @@ router.get('/:book', (req, res, next) => {
 router.put('/:book', (req, res, next) => {
   getModel().update(req.params.book, req.body, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -93,7 +97,8 @@ router.put('/:book', (req, res, next) => {
 router.delete('/:book', (req, res, next) => {
   getModel().delete(req.params.book, (err) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.status(200).send('OK');
   });

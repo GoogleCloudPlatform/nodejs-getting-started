@@ -40,7 +40,8 @@ router.use((req, res, next) => {
 router.get('/', (req, res, next) => {
   getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/list.jade', {
       books: entities,
@@ -75,7 +76,8 @@ router.post('/add', (req, res, next) => {
   // Save the data to the database.
   getModel().create(data, (err, savedData) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.redirect(`${req.baseUrl}/${savedData.id}`);
   });
@@ -90,7 +92,8 @@ router.post('/add', (req, res, next) => {
 router.get('/:book/edit', (req, res, next) => {
   getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/form.jade', {
       book: entity,
@@ -109,7 +112,8 @@ router.post('/:book/edit', (req, res, next) => {
 
   getModel().update(req.params.book, data, (err, savedData) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.redirect(`${req.baseUrl}/${savedData.id}`);
   });
@@ -123,7 +127,8 @@ router.post('/:book/edit', (req, res, next) => {
 router.get('/:book', (req, res, next) => {
   getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/view.jade', {
       book: entity
@@ -139,7 +144,8 @@ router.get('/:book', (req, res, next) => {
 router.get('/:book/delete', (req, res, next) => {
   getModel().delete(req.params.book, (err) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.redirect(req.baseUrl);
   });

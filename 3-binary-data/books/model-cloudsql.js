@@ -34,7 +34,8 @@ function list (limit, token, cb) {
     'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
     (err, results) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
       const hasMore = results.length === limit ? token + results.length : false;
       cb(null, results, hasMore);
@@ -47,7 +48,8 @@ function create (data, cb) {
   const connection = getConnection();
   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     read(res.insertId, cb);
   });
@@ -59,13 +61,15 @@ function read (id, cb) {
   connection.query(
     'SELECT * FROM `books` WHERE `id` = ?', id, (err, results) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
       if (!results.length) {
-        return cb({
+        cb({
           code: 404,
           message: 'Not found'
         });
+        return;
       }
       cb(null, results[0]);
     });

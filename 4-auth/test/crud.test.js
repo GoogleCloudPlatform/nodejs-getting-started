@@ -153,8 +153,8 @@ module.exports = (DATA_BACKEND) => {
       });
 
       it(`should show edit book form`, (done) => {
-        const expected = `<input type="text" name="title" id="title"
-                          value="my other book" class="form-control">`;
+        const expected =
+          `<input type="text" name="title" id="title" value="my other book" class="form-control">`;
         utils.getRequest(config)
           .get(`/books/${id}/edit`)
           .expect(200)

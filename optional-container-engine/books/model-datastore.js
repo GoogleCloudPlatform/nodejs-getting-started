@@ -94,7 +94,8 @@ function list (limit, token, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     const hasMore = entities.length === limit ? nextQuery.startVal : false;
     cb(null, entities.map(fromDatastore), hasMore);
@@ -111,7 +112,8 @@ function listBy (userId, limit, token, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     const hasMore = entities.length === limit ? nextQuery.startVal : false;
     cb(null, entities.map(fromDatastore), hasMore);
@@ -138,7 +140,8 @@ function update (id, data, queueBook, cb) {
     entity,
     (err) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
       data.id = entity.key.id;
       if (queueBook) {
@@ -153,13 +156,15 @@ function read (id, cb) {
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.get(key, (err, entity) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     if (!entity) {
-      return cb({
+      cb({
         code: 404,
         message: 'Not found'
       });
+      return;
     }
     cb(null, fromDatastore(entity));
   });

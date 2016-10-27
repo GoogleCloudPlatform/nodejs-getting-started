@@ -19,9 +19,8 @@ const utils = require(`nodejs-repo-tools`);
 describe(`${config.test}/`, () => {
   if (!process.env.E2E_TESTS) {
     it(`should install dependencies`, (done) => {
-      this.timeout(120 * 1000); // Allow 2 minutes to test installation
       utils.testInstallation(config, done);
-    });
+    }).timeout(120 * 1000);
   }
   require(`./app.test`);
 });

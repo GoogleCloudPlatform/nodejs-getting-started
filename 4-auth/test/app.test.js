@@ -42,7 +42,7 @@ describe(`app.js`, () => {
       env: sinon.stub().returnsThis(),
       file: sinon.stub().returnsThis(),
       defaults: sinon.stub().returnsThis(),
-      get: (setting) => {
+      get: function (setting) {
         return this[setting];
       }
     };

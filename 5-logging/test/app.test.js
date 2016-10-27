@@ -42,13 +42,13 @@ describe(`app.js`, () => {
       env: sinon.stub().returnsThis(),
       file: sinon.stub().returnsThis(),
       defaults: sinon.stub().returnsThis(),
-      get: (setting) => {
+      get: function (setting) {
         return this[setting];
       }
     };
 
     function getMsg (setting) {
-      return `You must set ${setting} as an environment variable or in config.json!`
+      return `You must set ${setting} as an environment variable or in config.json!`;
     }
 
     nconfMock.DATA_BACKEND = `datastore`;

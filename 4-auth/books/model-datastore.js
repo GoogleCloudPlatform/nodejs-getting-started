@@ -93,7 +93,8 @@ function list (limit, token, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
@@ -111,7 +112,8 @@ function listBy (userId, limit, token, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
@@ -148,13 +150,15 @@ function read (id, cb) {
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.get(key, (err, entity) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     if (!entity) {
-      return cb({
+      cb({
         code: 404,
         message: 'Not found'
       });
+      return;
     }
     cb(null, fromDatastore(entity));
   });

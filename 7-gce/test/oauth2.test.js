@@ -46,7 +46,7 @@ describe(`oauth2.js`, () => {
     });
     const app = proxyquire(`../app`, {
       passport: passportMock,
-      `./lib/oauth2`: proxyquire(`../lib/oauth2`, {
+      './lib/oauth2': proxyquire(`../lib/oauth2`, {
         passport: passportMock
       })
     });
@@ -79,7 +79,7 @@ describe(`oauth2.js`, () => {
     });
     const app = proxyquire(`../app`, {
       passport: passportMock,
-      `./lib/oauth2`: oauth2
+      './lib/oauth2': oauth2
     });
     request(app)
       .get(`/auth/google/callback?code=foo`)
@@ -131,7 +131,7 @@ describe(`oauth2.js`, () => {
   it(`should logout`, (done) => {
     const app = proxyquire(`../app`, {
       passport: passportMock,
-      `./lib/oauth2`: proxyquire(`../lib/oauth2`, {
+      './lib/oauth2': proxyquire(`../lib/oauth2`, {
         passport: passportMock
       })
     });
@@ -140,7 +140,7 @@ describe(`oauth2.js`, () => {
       .expect(302)
       .expect((response) => {
         const text = response.text;
-        assert.equal(text.includes(`Redirecting to /`), -1);
+        assert.equal(text.includes(`Redirecting to /`), true);
         assert(passportMock.initialize.calledOnce);
         assert(passportMock.session.calledOnce);
         assert(passportMock.use.calledOnce);

@@ -42,13 +42,13 @@ describe(`app.js`, () => {
       env: sinon.stub().returnsThis(),
       file: sinon.stub().returnsThis(),
       defaults: sinon.stub().returnsThis(),
-      get: (setting) => {
+      get: function (setting) {
         return this[setting];
       }
     };
 
     function getMsg (setting) {
-      return `You must set ${setting} as an environment variable or in config.json!`
+      return `You must set ${setting} as an environment variable or in config.json!`;
     }
 
     nconfMock.DATA_BACKEND = `datastore`;
@@ -57,7 +57,7 @@ describe(`app.js`, () => {
       proxyquire(`../config`, { nconf: nconfMock });
     }, Error, getMsg(`GCLOUD_PROJECT`));
 
-    nconfMock.GCLOUD_PROJECT = `project`;
+    nconfMock.GCLOUD_PROJECT = 'project';
     assert.throws(() => {
       proxyquire(`../config`, { nconf: nconfMock });
     }, Error, getMsg(`CLOUD_BUCKET`));

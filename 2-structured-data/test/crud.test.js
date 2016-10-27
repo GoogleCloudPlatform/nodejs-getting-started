@@ -153,12 +153,14 @@ module.exports = (DATA_BACKEND) => {
       });
 
       it(`should show edit book form`, (done) => {
-        const expected = `<input type="text" name="title" id="title"
-                          value="my other book" class="form-control">`;
+        const expected =
+          `<input type="text" name="title" id="title" value="my other book" class="form-control">`;
         utils.getRequest(config)
           .get(`/books/${id}/edit`)
           .expect(200)
           .expect((response) => {
+            console.log('RT', response.text);
+            console.log('expected', expected);
             assert.equal(response.text.includes(expected), true);
           })
           .end(done);

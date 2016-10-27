@@ -67,7 +67,7 @@ function fromDatastore (obj) {
 //   ]
 function toDatastore (obj, nonIndexed) {
   nonIndexed = nonIndexed || [];
-  var results = [];
+  let results = [];
   Object.keys(obj).forEach((k) => {
     if (obj[k] === undefined) {
       return;
@@ -93,7 +93,8 @@ function list (limit, token, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
@@ -104,7 +105,7 @@ function list (limit, token, cb) {
 // data is automatically translated into Datastore format. The book will be
 // queued for background processing.
 function update (id, data, cb) {
-  var key;
+  let key;
   if (id) {
     key = ds.key([kind, parseInt(id, 10)]);
   } else {
@@ -126,26 +127,28 @@ function update (id, data, cb) {
 }
 
 function create (data, cb) {
-    update(null, data, cb);
+  update(null, data, cb);
 }
 
 function read (id, cb) {
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.get(key, (err, entity) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     if (!entity) {
-      return cb({
+      cb({
         code: 404,
         message: 'Not found'
       });
+      return;
     }
     cb(null, fromDatastore(entity));
   });
 }
 
-function delete (id, cb) {
+function _delete (id, cb) {
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.delete(key, cb);
 }

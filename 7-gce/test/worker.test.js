@@ -69,13 +69,13 @@ describe(`worker.js`, () => {
       warn: sinon.stub()
     };
     const stubs = {
-      `./lib/logging`: loggingStub,
-      `@google/cloud-trace`: {
+      './lib/logging': loggingStub,
+      '@google/cloud-trace': {
         start: sinon.stub(),
-        `@noCallThru`: true
+        '@noCallThru': true
       },
-      `@google/cloud-debug`: {
-        `@noCallThru`: true
+      '@google/cloud-debug': {
+        '@noCallThru': true
       }
     };
     stubs[`./books/model-${appConfig.get('DATA_BACKEND')}`] = {

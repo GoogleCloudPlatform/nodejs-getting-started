@@ -61,7 +61,7 @@ function tryToFinish (numTests, steps, done) {
 }
 
 it(`should deploy all app steps`, (done) => {
-  const numTests = 0;
+  let numTests = 0;
 
   steps.forEach((config) => {
     numTests++;
@@ -74,7 +74,7 @@ it(`should deploy all app steps`, (done) => {
 });
 
 it(`should deploy all worker steps`, (done) => {
-  const numTests = 0;
+  let numTests = 0;
 
   workerSteps.forEach((config) => {
     numTests++;

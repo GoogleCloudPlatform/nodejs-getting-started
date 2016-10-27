@@ -33,9 +33,10 @@ function getTopic (cb) {
   pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
     if (err && err.code === 409) {
-      return cb(null, pubsub.topic(topicName));
+      cb(null, pubsub.topic(topicName));
+      return;
     }
-    return cb(err, topic);
+    cb(err, topic);
   });
 }
 
@@ -56,7 +57,8 @@ function subscribe (cb) {
 
   getTopic((err, topic) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
 
     topic.subscribe(subscriptionName, {
@@ -64,7 +66,8 @@ function subscribe (cb) {
       reuseExisting: true
     }, (err, sub) => {
       if (err) {
-        return cb(err);
+        cb(err);
+        return;
       }
 
       subscription = sub;

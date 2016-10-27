@@ -63,7 +63,7 @@
     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
     "proxyquire": "^1.7.10",
     "request": "^2.74.0",
-    "semistandard": "^8.0.0",
+    "semistandard": "^9.1.0",
     "shelljs": "^0.7.3",
     "sinon": "^1.17.5",
     "supertest": "^2.0.0"

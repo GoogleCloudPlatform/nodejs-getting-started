@@ -95,7 +95,8 @@ function processBook (bookId, callback) {
   ], (err) => {
     if (err) {
       logging.error(`Error occurred`, err);
-      return callback(err);
+      callback(err);
+      return;
     }
     logging.info(`Updated book ${bookId}`);
     bookCount += 1;
@@ -109,10 +110,12 @@ function processBook (bookId, callback) {
 function findBookInfo (book, cb) {
   queryBooksApi(book.title, (err, r) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     if (!r.items) {
-      return cb('Not found');
+      cb('Not found');
+      return;
     }
     const top = r.items[0];
 
@@ -150,7 +153,8 @@ function queryBooksApi (query, cb) {
     `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`,
     (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        return cb(err || `Response returned ${resp.statusCode}`);
+        cb(err || `Response returned ${resp.statusCode}`);
+        return;
       }
       cb(null, JSON.parse(body));
     }
