@@ -13,22 +13,22 @@
 
 'use strict';
 
-var Storage = require('@google-cloud/storage');
-var config = require('../config');
+const Storage = require('@google-cloud/storage');
+const config = require('../config');
 
-var CLOUD_BUCKET = config.get('CLOUD_BUCKET');
+const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-var storage = Storage({
+const storage = Storage({
   projectId: config.get('GCLOUD_PROJECT')
 });
-var bucket = storage.bucket(CLOUD_BUCKET);
+const bucket = storage.bucket(CLOUD_BUCKET);
 
 // Returns the public, anonymously accessable URL to a given Cloud Storage
 // object.
 // The object's ACL has to be set to public read.
 // [START public_url]
 function getPublicUrl (filename) {
-  return 'https://storage.googleapis.com/' + CLOUD_BUCKET + '/' + filename;
+  return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
 }
 // [END public_url]
 
@@ -42,21 +42,21 @@ function sendUploadToGCS (req, res, next) {
     return next();
   }
 
-  var gcsname = Date.now() + req.file.originalname;
-  var file = bucket.file(gcsname);
+  const gcsname = Date.now() + req.file.originalname;
+  const file = bucket.file(gcsname);
 
-  var stream = file.createWriteStream({
+  const stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype
     }
   });
 
-  stream.on('error', function (err) {
+  stream.on('error', (err) => {
     req.file.cloudStorageError = err;
     next(err);
   });
 
-  stream.on('finish', function () {
+  stream.on('finish', () => {
     req.file.cloudStorageObject = gcsname;
     req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
     next();
@@ -70,8 +70,8 @@ function sendUploadToGCS (req, res, next) {
 // This instance is configured to store images in memory.
 // This makes it straightforward to upload to Cloud Storage.
 // [START multer]
-var Multer = require('multer');
-var multer = Multer({
+const Multer = require('multer');
+const multer = Multer({
   storage: Multer.MemoryStorage,
   limits: {
     fileSize: 5 * 1024 * 1024 // no larger than 5mb
@@ -80,7 +80,7 @@ var multer = Multer({
 // [END multer]
 
 module.exports = {
-  getPublicUrl: getPublicUrl,
-  sendUploadToGCS: sendUploadToGCS,
-  multer: multer
+  getPublicUrl,
+  sendUploadToGCS,
+  multer
 };

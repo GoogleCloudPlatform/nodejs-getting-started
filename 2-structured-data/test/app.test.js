@@ -11,33 +11,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-'use strict';
+`use strict`;
 
-var assert = require('assert');
-var config = require('./config');
-var proxyquire = require('proxyquire').noPreserveCache();
-var sinon = require('sinon');
-var utils = require('nodejs-repo-tools');
+const assert = require(`assert`);
+const config = require(`./config`);
+const proxyquire = require(`proxyquire`).noPreserveCache();
+const sinon = require(`sinon`);
+const utils = require(`nodejs-repo-tools`);
 
-describe('app.js', function () {
+describe(`app.js`, () => {
   if (!process.env.E2E_TESTS) {
-    it('should run', function (done) {
+    it(`should run`, (done) => {
       utils.testLocalApp(config, done);
     });
   }
 
-  it('should redirect / to /books', function (done) {
+  it(`should redirect / to /books`, (done) => {
     utils.getRequest(config)
-      .get('/')
+      .get(`/`)
       .expect(302)
-      .expect(function (response) {
-        assert.ok(response.text.indexOf('Redirecting to /books') !== -1);
+      .expect((response) => {
+        assert.equal(response.text.includes(`Redirecting to /books`), true);
       })
       .end(done);
   });
 
-  it('should check config', function () {
-    var nconfMock = {
+  it(`should check config`, () => {
+    const nconfMock = {
       argv: sinon.stub().returnsThis(),
       env: sinon.stub().returnsThis(),
       file: sinon.stub().returnsThis(),
@@ -48,49 +48,48 @@ describe('app.js', function () {
     };
 
     function getMsg (setting) {
-      return 'You must set the ' + setting + ' environment variable or' +
-      ' add it to config.json!';
+      return `You must set ${setting} as an environment variable or in config.json!`;
     }
 
-    nconfMock.DATA_BACKEND = 'datastore';
+    nconfMock.DATA_BACKEND = `datastore`;
 
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('GCLOUD_PROJECT'));
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`GCLOUD_PROJECT`));
 
-    nconfMock.GCLOUD_PROJECT = 'project';
-    assert.doesNotThrow(function () {
-      proxyquire('../config', { nconf: nconfMock });
+    nconfMock.GCLOUD_PROJECT = `project`;
+    assert.doesNotThrow(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
     });
 
-    nconfMock.DATA_BACKEND = 'cloudsql';
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('MYSQL_USER'));
-    nconfMock.MYSQL_USER = 'user';
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('MYSQL_PASSWORD'));
-    nconfMock.MYSQL_PASSWORD = 'password';
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('MYSQL_HOST'));
-    nconfMock.MYSQL_HOST = 'host';
-    assert.doesNotThrow(function () {
-      proxyquire('../config', { nconf: nconfMock });
+    nconfMock.DATA_BACKEND = `cloudsql`;
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`MYSQL_USER`));
+    nconfMock.MYSQL_USER = `user`;
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`MYSQL_PASSWORD`));
+    nconfMock.MYSQL_PASSWORD = `password`;
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`MYSQL_HOST`));
+    nconfMock.MYSQL_HOST = `host`;
+    assert.doesNotThrow(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
     });
 
-    nconfMock.DATA_BACKEND = 'mongodb';
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('MONGO_URL'));
-    nconfMock.MONGO_URL = 'url';
-    assert.throws(function () {
-      proxyquire('../config', { nconf: nconfMock });
-    }, Error, getMsg('MONGO_COLLECTION'));
-    nconfMock.MONGO_COLLECTION = 'collection';
-    assert.doesNotThrow(function () {
-      proxyquire('../config', { nconf: nconfMock });
+    nconfMock.DATA_BACKEND = `mongodb`;
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`MONGO_URL`));
+    nconfMock.MONGO_URL = `url`;
+    assert.throws(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
+    }, Error, getMsg(`MONGO_COLLECTION`));
+    nconfMock.MONGO_COLLECTION = `collection`;
+    assert.doesNotThrow(() => {
+      proxyquire(`../config`, { nconf: nconfMock });
     });
   });
 });

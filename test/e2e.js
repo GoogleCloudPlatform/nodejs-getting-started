@@ -13,28 +13,28 @@
 
 'use strict';
 
-var utils = require('nodejs-repo-tools');
+const utils = require(`nodejs-repo-tools`);
 
-var steps = [
-  require('../1-hello-world/test/config'),
-  require('../2-structured-data/test/config'),
-  require('../3-binary-data/test/config'),
-  require('../4-auth/test/config'),
-  require('../5-logging/test/config'),
-  require('../6-pubsub/test/config'),
-  require('../7-gce/test/config')
+const steps = [
+  require(`../1-hello-world/test/config`),
+  require(`../2-structured-data/test/config`),
+  require(`../3-binary-data/test/config`),
+  require(`../4-auth/test/config`),
+  require(`../5-logging/test/config`),
+  require(`../6-pubsub/test/config`),
+  require(`../7-gce/test/config`)
 ];
 
-var workerSteps = [
-  require('../6-pubsub/test/config.worker'),
-  require('../7-gce/test/config.worker')
+const workerSteps = [
+  require(`../6-pubsub/test/config.worker`),
+  require(`../7-gce/test/config.worker`)
 ];
 
 function tryToFinish (numTests, steps, done) {
-  var doneCount = 0;
-  var errCount = 0;
-  var err = '';
-  steps.forEach(function (config) {
+  let doneCount = 0;
+  let errCount = 0;
+  let err = ``;
+  steps.forEach((config) => {
     if (config.done) {
       doneCount++;
     }
@@ -46,26 +46,26 @@ function tryToFinish (numTests, steps, done) {
       err += config.err.message || config.err;
     }
   });
-  console.log('' + doneCount + ' deployments completed..');
-  console.log('' + errCount + ' errors so far...');
+  console.log(`${doneCount} deployments completed...`);
+  console.log(`${errCount} errors so far...`);
   if (doneCount === numTests) {
-    console.log('All tests complete!');
+    console.log(`All tests complete!`);
     if (errCount) {
-      done(err || 'Unknown failure!');
+      done(err || `Unknown failure!`);
     } else {
       done();
     }
   } else {
-    console.log('' + (numTests - doneCount) + ' deployments remaining...');
+    console.log(`${(numTests - doneCount)} deployments remaining...`);
   }
 }
 
-it('should deploy all app steps', function (done) {
-  var numTests = 0;
+it(`should deploy all app steps`, (done) => {
+  let numTests = 0;
 
-  steps.forEach(function (config) {
+  steps.forEach((config) => {
     numTests++;
-    utils.testDeploy(config, function (err) {
+    utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
       tryToFinish(numTests, steps, done);
@@ -73,12 +73,12 @@ it('should deploy all app steps', function (done) {
   });
 });
 
-it('should deploy all worker steps', function (done) {
-  var numTests = 0;
+it(`should deploy all worker steps`, (done) => {
+  let numTests = 0;
 
-  workerSteps.forEach(function (config) {
+  workerSteps.forEach((config) => {
     numTests++;
-    utils.testDeploy(config, function (err) {
+    utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
       tryToFinish(numTests, workerSteps, done);

@@ -13,12 +13,12 @@
 
 'use strict';
 
-var path = require('path');
+const path = require(`path`);
 
 module.exports = {
-  test: '5-logging',
-  cwd: path.resolve(path.join(__dirname, '../')),
-  cmd: 'node',
-  args: ['app.js'],
-  msg: 'Bookshelf'
+  test: `5-logging`,
+  cwd: path.resolve(path.join(__dirname, `../`)),
+  cmd: `node`,
+  args: [`app.js`],
+  msg: `Bookshelf`
 };

@@ -13,120 +13,114 @@
 
 'use strict';
 
-var assert = require('assert');
-var sinon = require('sinon');
-var request = require('supertest');
-var proxyquire = require('proxyquire').noPreserveCache();
+const assert = require(`assert`);
+const sinon = require(`sinon`);
+const request = require(`supertest`);
+const proxyquire = require(`proxyquire`).noPreserveCache();
 
-describe('oauth2.js', function () {
-  var passportMock;
+describe(`oauth2.js`, () => {
+  let passportMock;
 
-  beforeEach(function () {
+  beforeEach(() => {
     passportMock = {
-      initialize: sinon.stub().returns(function (req, res, next) {
+      initialize: sinon.stub().returns((req, res, next) => {
         next();
       }),
-      session: sinon.stub().returns(function (req, res, next) {
+      session: sinon.stub().returns((req, res, next) => {
         next();
       }),
       use: sinon.stub(),
       serializeUser: sinon.stub(),
       deserializeUser: sinon.stub(),
-      authenticate: sinon.stub().returns(function (req, res, next) {
-        req.session.oauth2return = '/another/path';
+      authenticate: sinon.stub().returns((req, res, next) => {
+        req.session.oauth2return = `/another/path`;
         next();
       })
     };
   });
 
-  it('should start authorization', function (done) {
-    passportMock.authenticate = sinon.stub().returns(function (req, res, next) {
-      assert.equal(req.session.oauth2return, '/some/path');
-      res.redirect('/auth/google/callback?code=foo');
+  it(`should start authorization`, (done) => {
+    passportMock.authenticate = sinon.stub().returns((req, res, next) => {
+      assert.equal(req.session.oauth2return, `/some/path`);
+      res.redirect(`/auth/google/callback?code=foo`);
     });
-    var app = proxyquire('../app', {
+    const app = proxyquire(`../app`, {
       passport: passportMock,
-      './lib/oauth2': proxyquire('../lib/oauth2', {
+      './lib/oauth2': proxyquire(`../lib/oauth2`, {
         passport: passportMock
       })
     });
     request(app)
-      .get('/auth/login?return=%2Fsome%2Fpath')
+      .get(`/auth/login?return=%2Fsome%2Fpath`)
       .expect(302)
-      .expect(function (response) {
-        var text = response.text;
-        assert.notEqual(
-          text.indexOf('Redirecting to /auth/google/callback?code=foo'),
-          -1
-        );
+      .expect((response) => {
+        const text = response.text;
+        assert.equal(text.includes(`Redirecting to /auth/google/callback?code=foo`), true);
         assert(passportMock.initialize.calledOnce);
         assert(passportMock.session.calledOnce);
         assert(passportMock.use.calledOnce);
         assert(passportMock.serializeUser.calledOnce);
         assert(passportMock.deserializeUser.calledOnce);
         assert(passportMock.authenticate.calledTwice);
-        assert.equal(passportMock.authenticate.firstCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
         assert.deepEqual(
           passportMock.authenticate.firstCall.args[1],
-          { scope: ['email', 'profile'] }
+          { scope: [`email`, `profile`] }
         );
-        assert.equal(passportMock.authenticate.secondCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
         assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
       })
       .end(done);
   });
 
-  it('should finish authorization', function (done) {
-    var oauth2 = proxyquire('../lib/oauth2', {
+  it(`should finish authorization`, (done) => {
+    const oauth2 = proxyquire(`../lib/oauth2`, {
       passport: passportMock
     });
-    var app = proxyquire('../app', {
+    const app = proxyquire(`../app`, {
       passport: passportMock,
       './lib/oauth2': oauth2
     });
     request(app)
-      .get('/auth/google/callback?code=foo')
+      .get(`/auth/google/callback?code=foo`)
       .expect(302)
-      .expect(function (response) {
-        var text = response.text;
-        assert.notEqual(
-          text.indexOf('Redirecting to /another/path'),
-          -1
-        );
+      .expect((response) => {
+        const text = response.text;
+        assert.equal(text.includes(`Redirecting to /another/path`), true);
         assert(passportMock.initialize.calledOnce);
         assert(passportMock.session.calledOnce);
         assert(passportMock.use.calledOnce);
         assert(passportMock.serializeUser.calledOnce);
         assert(passportMock.deserializeUser.calledOnce);
         assert(passportMock.authenticate.calledTwice);
-        assert.equal(passportMock.authenticate.firstCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
         assert.deepEqual(
           passportMock.authenticate.firstCall.args[1],
-          { scope: ['email', 'profile'] }
+          { scope: [`email`, `profile`] }
         );
-        assert.equal(passportMock.authenticate.secondCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
         assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
         assert.deepEqual(
           oauth2.extractProfile({
-            photos: [{ value: 'image.jpg' }],
+            photos: [{ value: `image.jpg` }],
             id: 1,
-            displayName: 'Joe Developer'
+            displayName: `Joe Developer`
           }),
           {
             id: 1,
-            displayName: 'Joe Developer',
-            image: 'image.jpg'
+            displayName: `Joe Developer`,
+            image: `image.jpg`
           }
         );
-        var serializeUser = passportMock.serializeUser.firstCall.args[0];
-        var deserializeUser = passportMock.deserializeUser.firstCall.args[0];
-        var user = {};
-        var obj = {};
-        serializeUser(user, function (err, _user) {
+        const serializeUser = passportMock.serializeUser.firstCall.args[0];
+        const deserializeUser = passportMock.deserializeUser.firstCall.args[0];
+        const user = {};
+        const obj = {};
+        serializeUser(user, (err, _user) => {
           assert.equal(err, null);
           assert.strictEqual(_user, user);
         });
-        deserializeUser(obj, function (err, _obj) {
+        deserializeUser(obj, (err, _obj) => {
           assert.equal(err, null);
           assert.strictEqual(_obj, obj);
         });
@@ -134,52 +128,49 @@ describe('oauth2.js', function () {
       .end(done);
   });
 
-  it('should logout', function (done) {
-    var app = proxyquire('../app', {
+  it(`should logout`, (done) => {
+    const app = proxyquire(`../app`, {
       passport: passportMock,
-      './lib/oauth2': proxyquire('../lib/oauth2', {
+      './lib/oauth2': proxyquire(`../lib/oauth2`, {
         passport: passportMock
       })
     });
     request(app)
-      .get('/auth/logout')
+      .get(`/auth/logout`)
       .expect(302)
-      .expect(function (response) {
-        var text = response.text;
-        assert.notEqual(
-          text.indexOf('Redirecting to /'),
-          -1
-        );
+      .expect((response) => {
+        const text = response.text;
+        assert.equal(text.includes(`Redirecting to /`), true);
         assert(passportMock.initialize.calledOnce);
         assert(passportMock.session.calledOnce);
         assert(passportMock.use.calledOnce);
         assert(passportMock.serializeUser.calledOnce);
         assert(passportMock.deserializeUser.calledOnce);
         assert(passportMock.authenticate.calledTwice);
-        assert.equal(passportMock.authenticate.firstCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
         assert.deepEqual(
           passportMock.authenticate.firstCall.args[1],
-          { scope: ['email', 'profile'] }
+          { scope: [`email`, `profile`] }
         );
-        assert.equal(passportMock.authenticate.secondCall.args[0], 'google');
+        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
         assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
       })
       .end(done);
   });
 
-  it('should require authentication', function () {
-    var oauth2 = proxyquire('../lib/oauth2', {
+  it(`should require authentication`, () => {
+    const oauth2 = proxyquire(`../lib/oauth2`, {
       passport: passportMock
     });
-    var req = {
-      originalUrl: '/some/path',
+    const req = {
+      originalUrl: `/some/path`,
       user: {},
       session: {}
     };
-    var res = {
+    const res = {
       redirect: sinon.stub()
     };
-    var next = sinon.stub();
+    const next = sinon.stub();
     oauth2.required(req, res, next);
     assert(next.calledOnce);
 
@@ -188,35 +179,35 @@ describe('oauth2.js', function () {
     assert(next.calledOnce);
     assert.equal(req.session.oauth2return, req.originalUrl);
     assert(res.redirect.calledOnce);
-    assert.equal(res.redirect.firstCall.args[0], '/auth/login');
+    assert.equal(res.redirect.firstCall.args[0], `/auth/login`);
   });
 
-  it('should add template variables', function () {
-    var oauth2 = proxyquire('../lib/oauth2', {
+  it(`should add template variables`, () => {
+    const oauth2 = proxyquire(`../lib/oauth2`, {
       passport: passportMock
     });
-    var req = {
-      originalUrl: '/some/path',
+    const req = {
+      originalUrl: `/some/path`,
       user: {
         id: 1,
-        displayName: 'Joe Developer',
-        image: 'image.jpg'
+        displayName: `Joe Developer`,
+        image: `image.jpg`
       }
     };
-    var res = {
+    const res = {
       locals: {}
     };
-    var next = sinon.stub();
+    const next = sinon.stub();
     oauth2.template(req, res, next);
     assert(next.calledOnce);
     assert.strictEqual(res.locals.profile, req.user);
     assert.equal(
       res.locals.login,
-      '/auth/login?return=' + encodeURIComponent(req.originalUrl)
+      `/auth/login?return=${encodeURIComponent(req.originalUrl)}`
     );
     assert.equal(
       res.locals.logout,
-      '/auth/logout?return=' + encodeURIComponent(req.originalUrl)
+      `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`
     );
   });
 });

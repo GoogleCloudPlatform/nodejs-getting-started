@@ -13,64 +13,64 @@
 
 'use strict';
 
-var assert = require('assert');
-var config = require('./config');
-var utils = require('nodejs-repo-tools');
+const assert = require(`assert`);
+const config = require(`./config`);
+const utils = require(`nodejs-repo-tools`);
 
-module.exports = function (DATA_BACKEND) {
-  describe('crud.js', function () {
-    var ORIG_DATA_BACKEND;
+module.exports = (DATA_BACKEND) => {
+  describe(`crud.js`, () => {
+    let ORIG_DATA_BACKEND;
 
-    before(function () {
-      var appConfig = require('../config');
-      ORIG_DATA_BACKEND = appConfig.get('DATA_BACKEND');
-      appConfig.set('DATA_BACKEND', DATA_BACKEND);
+    before(() => {
+      const appConfig = require(`../config`);
+      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
     });
 
-    describe('/books', function () {
-      var id;
+    describe(`/books`, () => {
+      let id;
 
       // setup a book
-      before(function (done) {
+      before((done) => {
         utils.getRequest(config)
-          .post('/api/books')
-          .send({ title: 'my book' })
+          .post(`/api/books`)
+          .send({ title: `my book` })
           .expect(200)
-          .expect(function (response) {
+          .expect((response) => {
             id = response.body.id;
             assert.ok(response.body.id);
-            assert.equal(response.body.title, 'my book');
+            assert.equal(response.body.title, `my book`);
           })
           .end(done);
       });
 
-      it('should show a list of books', function (done) {
+      it(`should show a list of books`, (done) => {
         // Give Datastore time to become consistent
-        setTimeout(function () {
-          var expected = '<div class="media-body">';
+        setTimeout(() => {
+          const expected = `<div class="media-body">`;
           utils.getRequest(config)
-            .get('/books')
+            .get(`/books`)
             .expect(200)
-            .expect(function (response) {
-              assert.ok(response.text.indexOf(expected) !== -1);
+            .expect((response) => {
+              assert.equal(response.text.includes(expected), true);
             })
             .end(done);
         }, 2000);
       });
 
-      it('should handle error', function (done) {
+      it(`should handle error`, (done) => {
         utils.getRequest(config)
-          .get('/books')
-          .query({ pageToken: 'badrequest' })
+          .get(`/books`)
+          .query({ pageToken: `badrequest` })
           .expect(500)
           .end(done);
       });
 
       // delete the book
-      after(function (done) {
+      after((done) => {
         if (id) {
           utils.getRequest(config)
-            .delete('/api/books/' + id)
+            .delete(`/api/books/${id}`)
             .expect(200)
             .end(done);
         } else {
@@ -79,42 +79,42 @@ module.exports = function (DATA_BACKEND) {
       });
     });
 
-    describe('/books/add', function () {
-      var id;
+    describe(`/books/add`, () => {
+      let id;
 
-      it('should post to add book form', function (done) {
+      it(`should post to add book form`, (done) => {
         utils.getRequest(config)
-          .post('/books/add')
-          .send('title=my%20book')
+          .post(`/books/add`)
+          .send(`title=my%20book`)
           .expect(302)
-          .expect(function (response) {
-            var location = response.headers.location;
-            var idPart = location.replace('/books/', '');
-            if (require('../config').get('DATA_BACKEND') !== 'mongodb') {
+          .expect((response) => {
+            const location = response.headers.location;
+            const idPart = location.replace(`/books/`, ``);
+            if (require(`../config`).get(`DATA_BACKEND`) !== `mongodb`) {
               id = parseInt(idPart, 10);
             } else {
               id = idPart;
             }
-            assert.ok(response.text.indexOf('Redirecting to /books/') !== -1);
+            assert.equal(response.text.includes(`Redirecting to /books/`), true);
           })
           .end(done);
       });
 
-      it('should show add book form', function (done) {
+      it(`should show add book form`, (done) => {
         utils.getRequest(config)
-          .get('/books/add')
+          .get(`/books/add`)
           .expect(200)
-          .expect(function (response) {
-            assert.ok(response.text.indexOf('Add book') !== -1);
+          .expect((response) => {
+            assert.equal(response.text.includes(`Add book`), true);
           })
           .end(done);
       });
 
       // delete the book
-      after(function (done) {
+      after((done) => {
         if (id) {
           utils.getRequest(config)
-            .delete('/api/books/' + id)
+            .delete(`/api/books/${id}`)
             .expect(200)
             .end(done);
         } else {
@@ -123,75 +123,77 @@ module.exports = function (DATA_BACKEND) {
       });
     });
 
-    describe('/books/:book/edit & /books/:book', function () {
-      var id;
+    describe(`/books/:book/edit & /books/:book`, () => {
+      let id;
 
       // setup a book
-      before(function (done) {
+      before((done) => {
         utils.getRequest(config)
-          .post('/api/books')
-          .send({ title: 'my book' })
+          .post(`/api/books`)
+          .send({ title: `my book` })
           .expect(200)
-          .expect(function (response) {
+          .expect((response) => {
             id = response.body.id;
             assert.ok(response.body.id);
-            assert.equal(response.body.title, 'my book');
+            assert.equal(response.body.title, `my book`);
           })
           .end(done);
       });
 
-      it('should update a book', function (done) {
-        var expected = 'Redirecting to /books/' + id;
+      it(`should update a book`, (done) => {
+        const expected = `Redirecting to /books/${id}`;
         utils.getRequest(config)
-          .post('/books/' + id + '/edit')
-          .send('title=my%20other%20book')
+          .post(`/books/${id}/edit`)
+          .send(`title=my%20other%20book`)
           .expect(302)
-          .expect(function (response) {
-            assert.ok(response.text.indexOf(expected) !== -1);
+          .expect((response) => {
+            assert.equal(response.text.includes(expected), true);
           })
           .end(done);
       });
 
-      it('should show edit book form', function (done) {
-        var expected = '<input type="text" name="title" id="title" ' +
-                       'value="my other book" class="form-control">';
+      it(`should show edit book form`, (done) => {
+        const expected =
+          `<input type="text" name="title" id="title" value="my other book" class="form-control">`;
         utils.getRequest(config)
-          .get('/books/' + id + '/edit')
+          .get(`/books/${id}/edit`)
           .expect(200)
-          .expect(function (response) {
-            assert.ok(response.text.indexOf(expected) !== -1);
+          .expect((response) => {
+            console.log('RT', response.text);
+            console.log('expected', expected);
+            assert.equal(response.text.includes(expected), true);
           })
           .end(done);
       });
 
-      it('should show a book', function (done) {
-        var expected = '<h4>my other book&nbsp;<small></small></h4>';
+      it(`should show a book`, (done) => {
+        const expected = `<h4>my other book&nbsp;<small></small></h4>`;
         utils.getRequest(config)
-          .get('/books/' + id)
+          .get(`/books/${id}`)
           .expect(200)
-          .expect(function (response) {
-            assert.ok(response.text.indexOf(expected) !== -1);
+          .expect((response) => {
+            assert.equal(response.text.includes(expected), true);
           })
           .end(done);
       });
 
-      it('should delete a book', function (done) {
-        var expected = 'Redirecting to /books';
+      it(`should delete a book`, (done) => {
+        const expected = `Redirecting to /books`;
         utils.getRequest(config)
-          .get('/books/' + id + '/delete')
+          .get(`/books/${id}/delete`)
           .expect(302)
-          .expect(function (response) {
+          .expect((response) => {
             id = undefined;
-            assert.ok(response.text.indexOf(expected) !== -1);
+            assert.equal(response.text.includes(expected), true);
           })
           .end(done);
       });
 
       // clean up if necessary
-      after(function (done) {
+      after((done) => {
         if (id) {
           utils.getRequest(config)
-            .delete('/api/books/' + id)
+            .delete(`/api/books/${id}`)
             .expect(200)
             .end(done);
         } else {
@@ -200,8 +202,8 @@ module.exports = function (DATA_BACKEND) {
       });
     });
 
-    after(function () {
-      require('../config').set('DATA_BACKEND', ORIG_DATA_BACKEND);
+    after(() => {
+      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
     });
   });
 };

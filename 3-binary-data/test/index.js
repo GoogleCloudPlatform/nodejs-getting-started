@@ -13,31 +13,30 @@
 
 'use strict';
 
-var config = require('./config');
-var utils = require('nodejs-repo-tools');
+const config = require(`./config`);
+const utils = require(`nodejs-repo-tools`);
 
-describe(config.test + '/', function () {
+describe(`${config.test}/`, () => {
   if (!process.env.E2E_TESTS) {
-    it('should install dependencies', function (done) {
-      this.timeout(120 * 1000); // Allow 2 minutes to test installation
+    it(`should install dependencies`, (done) => {
       utils.testInstallation(config, done);
-    });
+    }).timeout(120 * 1000);
   }
-  require('./app.test');
-  describe('books/', function () {
-    var appConfig = require('../config');
-    var DATA_BACKEND = appConfig.get('DATA_BACKEND');
-    if (DATA_BACKEND === 'datastore' || process.env.TEST_DATASTORE) {
-      require('./api.test')('datastore');
-      require('./crud.test')('datastore');
+  require(`./app.test`);
+  describe(`books/`, () => {
+    const appConfig = require(`../config`);
+    const DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+    if (DATA_BACKEND === `datastore` || process.env.TEST_DATASTORE) {
+      require(`./api.test`)(`datastore`);
+      require(`./crud.test`)(`datastore`);
     }
-    if (DATA_BACKEND === 'cloudsql' || process.env.TEST_CLOUDSQL) {
-      require('./api.test')('cloudsql');
-      require('./crud.test')('cloudsql');
+    if (DATA_BACKEND === `cloudsql` || process.env.TEST_CLOUDSQL) {
+      require(`./api.test`)(`cloudsql`);
+      require(`./crud.test`)(`cloudsql`);
     }
-    if (DATA_BACKEND === 'mongodb' || process.env.TEST_MONGODB) {
-      require('./api.test')('mongodb');
-      require('./crud.test')('mongodb');
+    if (DATA_BACKEND === `mongodb` || process.env.TEST_MONGODB) {
+      require(`./api.test`)(`mongodb`);
+      require(`./crud.test`)(`mongodb`);
     }
   });
 });

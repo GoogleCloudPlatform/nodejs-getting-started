@@ -13,38 +13,38 @@
 
 'use strict';
 
-var request = require('request');
-var Storage = require('@google-cloud/storage');
-var config = require('../config');
-var logging = require('./logging');
+const request = require('request');
+const Storage = require('@google-cloud/storage');
+const config = require('../config');
+const logging = require('./logging');
 
-var CLOUD_BUCKET = config.get('CLOUD_BUCKET');
+const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-var storage = Storage({
+const storage = Storage({
   projectId: config.get('GCLOUD_PROJECT')
 });
-var bucket = storage.bucket(CLOUD_BUCKET);
+const bucket = storage.bucket(CLOUD_BUCKET);
 
 // Downloads a given image (by URL) and then uploads it to
 // Google Cloud Storage. Provides the publicly accessable URL to the callback.
 // [START download_and_upload]
 function downloadAndUploadImage (sourceUrl, destFileName, cb) {
-  var file = bucket.file(destFileName);
+  const file = bucket.file(destFileName);
 
   request
     .get(sourceUrl)
-    .on('error', function (err) {
-      logging.warn('Could not fetch image ' + sourceUrl, err);
+    .on('error', (err) => {
+      logging.warn(`Could not fetch image ${sourceUrl}`, err);
       cb(err);
     })
     .pipe(file.createWriteStream())
-    .on('finish', function () {
-      logging.info('Uploaded image ' + destFileName);
-      file.makePublic(function () {
+    .on('finish', () => {
+      logging.info(`Uploaded image ${destFileName}`);
+      file.makePublic(() => {
         cb(null, getPublicUrl(destFileName));
       });
     })
-    .on('error', function (err) {
+    .on('error', (err) => {
       logging.error('Could not upload image', err);
       cb(err);
     });
@@ -55,7 +55,7 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
 // object.
 // The object's ACL has to be set to public read.
 function getPublicUrl (filename) {
-  return 'https://storage.googleapis.com/' + CLOUD_BUCKET + '/' + filename;
+  return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
 }
 
 // Express middleware that will automatically pass uploads to Cloud Storage.
@@ -67,20 +67,20 @@ function sendUploadToGCS (req, res, next) {
     return next();
   }
 
-  var gcsname = Date.now() + req.file.originalname;
-  var file = bucket.file(gcsname);
-  var stream = file.createWriteStream({
+  const gcsname = Date.now() + req.file.originalname;
+  const file = bucket.file(gcsname);
+  const stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype
     }
   });
 
-  stream.on('error', function (err) {
+  stream.on('error', (err) => {
     req.file.cloudStorageError = err;
     next(err);
   });
 
-  stream.on('finish', function () {
+  stream.on('finish', () => {
     req.file.cloudStorageObject = gcsname;
     req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
     next();
@@ -92,8 +92,8 @@ function sendUploadToGCS (req, res, next) {
 // Multer handles parsing multipart/form-data requests.
 // This instance is configured to store images in memory.
 // This makes it straightforward to upload to Cloud Storage.
-var Multer = require('multer');
-var multer = Multer({
+const Multer = require('multer');
+const multer = Multer({
   storage: Multer.MemoryStorage,
   limits: {
     fileSize: 5 * 1024 * 1024 // no larger than 5mb
@@ -101,8 +101,8 @@ var multer = Multer({
 });
 
 module.exports = {
-  downloadAndUploadImage: downloadAndUploadImage,
-  getPublicUrl: getPublicUrl,
-  sendUploadToGCS: sendUploadToGCS,
-  multer: multer
+  downloadAndUploadImage,
+  getPublicUrl,
+  sendUploadToGCS,
+  multer
 };

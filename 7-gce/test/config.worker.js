@@ -13,22 +13,22 @@
 
 'use strict';
 
-var path = require('path');
-var projectId = process.env.GCLOUD_PROJECT;
-var test = '7-gce';
+const path = require(`path`);
+const projectId = process.env.GCLOUD_PROJECT;
+const test = `7-gce`;
 
 module.exports = {
   test: test,
-  url: 'http://localhost:8081',
-  demoUrl: 'http://' + test + '-dot-worker-dot-' + projectId + '.appspot.com',
-  yaml: 'worker.yaml',
-  cwd: path.resolve(path.join(__dirname, '../')),
-  cmd: 'node',
-  args: ['worker.js'],
-  msg: 'This worker has processed',
+  url: `http://localhost:8081`,
+  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
+  yaml: `worker.yaml`,
+  cwd: path.resolve(path.join(__dirname, `../`)),
+  cmd: `node`,
+  args: [`worker.js`],
+  msg: `This worker has processed`,
   env: {
     PORT: 8081,
-    SUBSCRIPTION_NAME: 'shared-worker-subscription-' + test,
-    TOPIC_NAME: 'book-process-queue-' + test
+    SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
+    TOPIC_NAME: `book-process-queue-${test}`
   }
 };

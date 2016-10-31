@@ -13,23 +13,23 @@
 
 'use strict';
 
-var express = require('express');
-var config = require('../config');
-var images = require('../lib/images');
-var oauth2 = require('../lib/oauth2');
+const express = require('express');
+const config = require('../config');
+const images = require('../lib/images');
+const oauth2 = require('../lib/oauth2');
 
 function getModel () {
-  return require('./model-' + config.get('DATA_BACKEND'));
+  return require(`./model-${config.get('DATA_BACKEND')}`);
 }
 
-var router = express.Router();
+const router = express.Router();
 
 // Use the oauth middleware to automatically get the user's profile
 // information and expose login/logout URLs to templates.
 router.use(oauth2.template);
 
 // Set Content-Type for all responses for these routes
-router.use(function (req, res, next) {
+router.use((req, res, next) => {
   res.set('Content-Type', 'text/html');
   next();
 });
@@ -39,10 +39,11 @@ router.use(function (req, res, next) {
  *
  * Display a page of books (up to ten at a time).
  */
-router.get('/', function list (req, res, next) {
-  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
+router.get('/', (req, res, next) => {
+  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/list.jade', {
       books: entities,
@@ -53,14 +54,15 @@ router.get('/', function list (req, res, next) {
 
 // Use the oauth2.required middleware to ensure that only logged-in users
 // can access this handler.
-router.get('/mine', oauth2.required, function list (req, res, next) {
+router.get('/mine', oauth2.required, (req, res, next) => {
   getModel().listBy(
     req.user.id,
     10,
     req.query.pageToken,
-    function (err, entities, cursor, apiResponse) {
+    (err, entities, cursor, apiResponse) => {
       if (err) {
-        return next(err);
+        next(err);
+        return;
       }
       res.render('books/list.jade', {
         books: entities,
@@ -75,7 +77,7 @@ router.get('/mine', oauth2.required, function list (req, res, next) {
  *
  * Display a form for creating a book.
  */
-router.get('/add', function addForm (req, res) {
+router.get('/add', (req, res) => {
   res.render('books/form.jade', {
     book: {},
     action: 'Add'
@@ -92,8 +94,8 @@ router.post(
   '/add',
   images.multer.single('image'),
   images.sendUploadToGCS,
-  function insert (req, res, next) {
-    var data = req.body;
+  (req, res, next) => {
+    const data = req.body;
 
     // If the user is logged in, set them as the creator of the book.
     if (req.user) {
@@ -110,11 +112,12 @@ router.post(
     }
 
     // Save the data to the database.
-    getModel().create(data, true, function (err, savedData) {
+    getModel().create(data, true, (err, savedData) => {
       if (err) {
-        return next(err);
+        next(err);
+        return;
       }
-      res.redirect(req.baseUrl + '/' + savedData.id);
+      res.redirect(`${req.baseUrl}/${savedData.id}`);
     });
   }
 );
@@ -125,10 +128,11 @@ router.post(
  *
  * Display a book for editing.
  */
-router.get('/:book/edit', function editForm (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+router.get('/:book/edit', (req, res, next) => {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/form.jade', {
       book: entity,
@@ -146,8 +150,8 @@ router.post(
   '/:book/edit',
   images.multer.single('image'),
   images.sendUploadToGCS,
-  function update (req, res, next) {
-    var data = req.body;
+  (req, res, next) => {
+    const data = req.body;
 
     // Was an image uploaded? If so, we'll use its public URL
     // in cloud storage.
@@ -155,11 +159,12 @@ router.post(
       req.body.imageUrl = req.file.cloudStoragePublicUrl;
     }
 
-    getModel().update(req.params.book, data, true, function (err, savedData) {
+    getModel().update(req.params.book, data, true, (err, savedData) => {
       if (err) {
-        return next(err);
+        next(err);
+        return;
       }
-      res.redirect(req.baseUrl + '/' + savedData.id);
+      res.redirect(`${req.baseUrl}/${savedData.id}`);
     });
   }
 );
@@ -169,10 +174,11 @@ router.post(
  *
  * Display a book.
  */
-router.get('/:book', function get (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+router.get('/:book', (req, res, next) => {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.render('books/view.jade', {
       book: entity
@@ -185,10 +191,11 @@ router.get('/:book', function get (req, res, next) {
  *
  * Delete a book.
  */
-router.get('/:book/delete', function _delete (req, res, next) {
-  getModel().delete(req.params.book, function (err) {
+router.get('/:book/delete', (req, res, next) => {
+  getModel().delete(req.params.book, (err) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.redirect(req.baseUrl);
   });
@@ -197,7 +204,7 @@ router.get('/:book/delete', function _delete (req, res, next) {
 /**
  * Errors on "/books/*" routes.
  */
-router.use(function handleRpcError (err, req, res, next) {
+router.use((err, req, res, next) => {
   // Format error and forward to generic error handler for logging and
   // responding to the request
   err.response = err.message;
