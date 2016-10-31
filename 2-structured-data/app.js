@@ -13,11 +13,11 @@
 
 'use strict';
 
-var path = require('path');
-var express = require('express');
-var config = require('./config');
+const path = require('path');
+const express = require('express');
+const config = require('./config');
 
-var app = express();
+const app = express();
 
 app.disable('etag');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,17 +29,17 @@ app.use('/books', require('./books/crud'));
 app.use('/api/books', require('./books/api'));
 
 // Redirect root to /books
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.redirect('/books');
 });
 
 // Basic 404 handler
-app.use(function (req, res) {
+app.use((req, res) => {
   res.status(404).send('Not Found');
 });
 
 // Basic error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   /* jshint unused:false */
   console.error(err);
   // If our routes specified a specific response, then send that. Otherwise,
@@ -49,9 +49,9 @@ app.use(function (err, req, res, next) {
 
 if (module === require.main) {
   // Start the server
-  var server = app.listen(config.get('PORT'), function () {
-    var port = server.address().port;
-    console.log('App listening on port %s', port);
+  const server = app.listen(config.get('PORT'), () => {
+    const port = server.address().port;
+    console.log(`App listening on port ${port}`);
   });
 }
 

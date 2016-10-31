@@ -15,8 +15,8 @@
 
 // Hierarchical node.js configuration with command-line arguments, environment
 // variables, and files.
-var nconf = module.exports = require('nconf');
-var path = require('path');
+const nconf = module.exports = require('nconf');
+const path = require('path');
 
 nconf
   // 1. Command-line arguments
@@ -72,7 +72,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
 
 function checkConfig (setting) {
   if (!nconf.get(setting)) {
-    throw new Error('You must set the ' + setting + ' environment variable or' +
-      ' add it to config.json!');
+    throw new Error(`You must set ${setting} as an environment variable or in config.json!`);
   }
 }

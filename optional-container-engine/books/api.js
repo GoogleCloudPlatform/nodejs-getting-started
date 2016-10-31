@@ -13,15 +13,15 @@
 
 'use strict';
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var config = require('../config');
+const express = require('express');
+const bodyParser = require('body-parser');
+const config = require('../config');
 
 function getModel () {
-  return require('./model-' + config.get('DATA_BACKEND'));
+  return require(`./model-${config.get('DATA_BACKEND')}`);
 }
 
-var router = express.Router();
+const router = express.Router();
 
 // Automatically parse request body as JSON
 router.use(bodyParser.json());
@@ -31,10 +31,11 @@ router.use(bodyParser.json());
  *
  * Retrieve a page of books (up to ten at a time).
  */
-router.get('/', function list (req, res, next) {
-  getModel().list(10, req.query.pageToken, function (err, entities, cursor) {
+router.get('/', (req, res, next) => {
+  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json({
       items: entities,
@@ -48,10 +49,11 @@ router.get('/', function list (req, res, next) {
  *
  * Create a new book.
  */
-router.post('/', function insert (req, res, next) {
-  getModel().create(req.body, true, function (err, entity) {
+router.post('/', (req, res, next) => {
+  getModel().create(req.body, true, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -62,10 +64,11 @@ router.post('/', function insert (req, res, next) {
  *
  * Retrieve a book.
  */
-router.get('/:book', function get (req, res, next) {
-  getModel().read(req.params.book, function (err, entity) {
+router.get('/:book', (req, res, next) => {
+  getModel().read(req.params.book, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -76,10 +79,11 @@ router.get('/:book', function get (req, res, next) {
  *
  * Update a book.
  */
-router.put('/:book', function update (req, res, next) {
-  getModel().update(req.params.book, req.body, true, function (err, entity) {
+router.put('/:book', (req, res, next) => {
+  getModel().update(req.params.book, req.body, true, (err, entity) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.json(entity);
   });
@@ -90,10 +94,11 @@ router.put('/:book', function update (req, res, next) {
  *
  * Delete a book.
  */
-router.delete('/:book', function _delete (req, res, next) {
-  getModel().delete(req.params.book, function (err) {
+router.delete('/:book', (req, res, next) => {
+  getModel().delete(req.params.book, (err) => {
     if (err) {
-      return next(err);
+      next(err);
+      return;
     }
     res.status(200).send('OK');
   });
@@ -102,7 +107,7 @@ router.delete('/:book', function _delete (req, res, next) {
 /**
  * Errors on "/api/books/*" routes.
  */
-router.use(function handleRpcError (err, req, res, next) {
+router.use((err, req, res, next) => {
   // Format error and forward to generic error handler for logging and
   // responding to the request
   err.response = {

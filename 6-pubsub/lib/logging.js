@@ -13,13 +13,13 @@
 
 'use strict';
 
-var winston = require('winston');
-var expressWinston = require('express-winston');
+const winston = require(`winston`);
+const expressWinston = require(`express-winston`);
 
-var colorize = process.env.NODE_ENV !== 'production';
+const colorize = process.env.NODE_ENV !== `production`;
 
 // Logger to capture all requests and output them to the console.
-var requestLogger = expressWinston.logger({
+const requestLogger = expressWinston.logger({
   transports: [
     new winston.transports.Console({
       json: false,
@@ -31,7 +31,7 @@ var requestLogger = expressWinston.logger({
 });
 
 // Logger to capture any top-level errors and output json diagnostic info.
-var errorLogger = expressWinston.errorLogger({
+const errorLogger = expressWinston.errorLogger({
   transports: [
     new winston.transports.Console({
       json: true,

@@ -13,17 +13,17 @@
 
 'use strict';
 
-var path = require('path');
-var test = '7-gce';
+const path = require(`path`);
+const test = `7-gce`;
 
 module.exports = {
   test: test,
-  cwd: path.resolve(path.join(__dirname, '../')),
-  cmd: 'node',
-  args: ['app.js'],
-  msg: 'Bookshelf',
+  cwd: path.resolve(path.join(__dirname, `../`)),
+  cmd: `node`,
+  args: [`app.js`],
+  msg: `Bookshelf`,
   env: {
-    SUBSCRIPTION_NAME: test + '-shared-worker-subscription',
-    TOPIC_NAME: test + '-book-process-queue'
+    SUBSCRIPTION_NAME: `${test}-shared-worker-subscription`,
+    TOPIC_NAME: `${test}-book-process-queue`
   }
 };

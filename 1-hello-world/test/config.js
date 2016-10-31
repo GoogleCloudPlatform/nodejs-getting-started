@@ -13,12 +13,12 @@
 
 'use strict';
 
-var path = require('path');
+const path = require(`path`);
 
 module.exports = {
-  test: '1-hello-world',
+  test: `1-hello-world`,
   cwd: path.resolve(path.join(__dirname, '../')),
-  cmd: 'node',
-  args: ['app.js'],
-  msg: 'Hello, world!'
+  cmd: `node`,
+  args: [`app.js`],
+  msg: `Hello, world!`
 };

@@ -19,32 +19,32 @@ if (process.env.NODE_ENV === 'production') {
   require('@google/cloud-debug');
 }
 
-var request = require('request');
-var waterfall = require('async').waterfall;
-var express = require('express');
-var config = require('./config');
+const request = require('request');
+const waterfall = require('async').waterfall;
+const express = require('express');
+const config = require('./config');
 
-var logging = require('./lib/logging');
-var images = require('./lib/images');
-var background = require('./lib/background');
+const logging = require('./lib/logging');
+const images = require('./lib/images');
+const background = require('./lib/background');
 
-var model = require('./books/model-' + config.get('DATA_BACKEND'));
+const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
-var app = express();
+const app = express();
 
 app.use(logging.requestLogger);
 
-app.get('/_ah/health', function (req, res) {
+app.get('/_ah/health', (req, res) => {
   res.status(200).send('ok');
 });
 
 // Keep count of how many books this worker has processed
-var bookCount = 0;
+let bookCount = 0;
 
-app.get('/', function (req, res) {
-  res.send('This worker has processed ' + bookCount + ' books.');
+app.get('/', (req, res) => {
+  res.send(`This worker has processed ${bookCount} books.`);
 });
 
 app.use(logging.errorLogger);
@@ -53,13 +53,13 @@ function subscribe () {
   // Subscribe to Cloud Pub/Sub and receive messages to process books.
   // The subscription will continue to listen for messages until the process
   // is killed.
-  return background.subscribe(function (err, message) {
+  return background.subscribe((err, message) => {
     // Any errors received are considered fatal.
     if (err) {
       throw err;
     }
     if (message.action === 'processBook') {
-      logging.info('Received request to process book ' + message.bookId);
+      logging.info(`Received request to process book ${message.bookId}`);
       processBook(message.bookId);
     } else {
       logging.warn('Unknown request', message);
@@ -68,9 +68,9 @@ function subscribe () {
 }
 
 if (module === require.main) {
-  var server = app.listen(config.get('PORT'), function () {
-    var port = server.address().port;
-    console.log('App listening on port %s', port);
+  const server = app.listen(config.get('PORT'), () => {
+    const port = server.address().port;
+    console.log(`App listening on port ${port}`);
   });
   subscribe();
 }
@@ -83,21 +83,22 @@ function processBook (bookId, callback) {
   }
   waterfall([
     // Load the current data
-    function (cb) {
+    (cb) => {
       model.read(bookId, cb);
     },
     // Find the information from Google
     findBookInfo,
     // Save the updated data
-    function (updated, cb) {
+    (updated, cb) => {
       model.update(updated.id, updated, false, cb);
     }
-  ], function (err) {
+  ], (err) => {
     if (err) {
-      logging.error('Error occurred', err);
-      return callback(err);
+      logging.error(`Error occurred`, err);
+      callback(err);
+      return;
     }
-    logging.info('Updated book ' + bookId);
+    logging.info(`Updated book ${bookId}`);
     bookCount += 1;
     callback();
   });
@@ -107,14 +108,16 @@ function processBook (bookId, callback) {
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
 function findBookInfo (book, cb) {
-  queryBooksApi(book.title, function (err, r) {
+  queryBooksApi(book.title, (err, r) => {
     if (err) {
-      return cb(err);
+      cb(err);
+      return;
     }
     if (!r.items) {
-      return cb('Not found');
+      cb('Not found');
+      return;
     }
-    var top = r.items[0];
+    const top = r.items[0];
 
     book.title = top.volumeInfo.title;
     book.author = (top.volumeInfo.authors || []).join(', ');
@@ -128,13 +131,13 @@ function findBookInfo (book, cb) {
     }
 
     // Otherwise, try to fetch them and upload to cloud storage.
-    var imageUrl =
+    const imageUrl =
       top.volumeInfo.imageLinks.thumbnail ||
       top.volumeInfo.imageLinks.smallThumbnail;
-    var imageName = book.id + '.jpg';
+    const imageName = `${book.id}.jpg`;
 
     images.downloadAndUploadImage(
-      imageUrl, imageName, function (err, publicUrl) {
+      imageUrl, imageName, (err, publicUrl) => {
         if (!err) {
           book.imageUrl = publicUrl;
         }
@@ -147,11 +150,11 @@ function findBookInfo (book, cb) {
 // information about a given book.
 function queryBooksApi (query, cb) {
   request(
-    'https://www.googleapis.com/books/v1/volumes?q=' +
-      encodeURIComponent(query),
-    function (err, resp, body) {
+    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`,
+    (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        return cb(err || 'Response returned ' + resp.statusCode);
+        cb(err || `Response returned ${resp.statusCode}`);
+        return;
       }
       cb(null, JSON.parse(body));
     }
