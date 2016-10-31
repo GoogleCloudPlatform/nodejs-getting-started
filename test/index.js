@@ -13,26 +13,26 @@
 
 'use strict';
 
-var MongoClient = require('mongodb').MongoClient;
+const MongoClient = require(`mongodb`).MongoClient;
 
-describe('Bookshelf app', function () {
-  require('../1-hello-world/test');
-  require('../2-structured-data/test');
-  require('../3-binary-data/test');
-  require('../4-auth/test');
-  require('../5-logging/test');
-  require('../6-pubsub/test');
-  require('../7-gce/test');
-  after(function (done) {
-    var config = require('../7-gce/config');
-    if (config.get('DATA_BACKEND') !== 'mongodb') {
+describe(`Bookshelf app`, () => {
+  require(`../1-hello-world/test`);
+  require(`../2-structured-data/test`);
+  require(`../3-binary-data/test`);
+  require(`../4-auth/test`);
+  require(`../5-logging/test`);
+  require(`../6-pubsub/test`);
+  require(`../7-gce/test`);
+  after((done) => {
+    const config = require(`../7-gce/config`);
+    if (config.get(`DATA_BACKEND`) !== `mongodb`) {
       return done();
     }
-    MongoClient.connect(config.get('MONGO_URL'), function (err, db) {
+    MongoClient.connect(config.get(`MONGO_URL`), (err, db) => {
       if (err) {
         return done(err);
       }
-      db.collection(config.get('MONGO_COLLECTION')).remove(done);
+      db.collection(config.get(`MONGO_COLLECTION`)).remove(done);
     });
   });
 });

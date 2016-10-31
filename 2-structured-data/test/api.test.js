@@ -13,41 +13,41 @@
 
 'use strict';
 
-var assert = require('assert');
-var config = require('./config');
-var utils = require('nodejs-repo-tools');
+const assert = require(`assert`);
+const config = require(`./config`);
+const utils = require(`nodejs-repo-tools`);
 
-module.exports = function (DATA_BACKEND) {
-  describe('api.js', function () {
-    var ORIG_DATA_BACKEND;
-    var id;
+module.exports = (DATA_BACKEND) => {
+  describe(`api.js`, () => {
+    let ORIG_DATA_BACKEND;
+    let id;
 
-    before(function () {
-      var appConfig = require('../config');
-      ORIG_DATA_BACKEND = appConfig.get('DATA_BACKEND');
-      appConfig.set('DATA_BACKEND', DATA_BACKEND);
+    before(() => {
+      const appConfig = require(`../config`);
+      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
     });
 
-    it('should create a book', function (done) {
+    it(`should create a book`, (done) => {
       utils.getRequest(config)
-        .post('/api/books')
-        .send({ title: 'beep' })
+        .post(`/api/books`)
+        .send({ title: `beep` })
         .expect(200)
-        .expect(function (response) {
+        .expect((response) => {
           id = response.body.id;
           assert.ok(response.body.id);
-          assert.equal(response.body.title, 'beep');
+          assert.equal(response.body.title, `beep`);
         })
         .end(done);
     });
 
-    it('should list books', function (done) {
+    it(`should list books`, (done) => {
       // Give Datastore time to become consistent
-      setTimeout(function () {
+      setTimeout(() => {
         utils.getRequest(config)
-          .get('/api/books')
+          .get(`/api/books`)
           .expect(200)
-          .expect(function (response) {
+          .expect((response) => {
             assert.ok(Array.isArray(response.body.items));
             assert.ok(response.body.items.length >= 1);
           })
@@ -55,18 +55,18 @@ module.exports = function (DATA_BACKEND) {
       }, 1000);
     });
 
-    it('should delete a book', function (done) {
+    it(`should delete a book`, (done) => {
       utils.getRequest(config)
-        .delete('/api/books/' + id)
+        .delete(`/api/books/${id}`)
         .expect(200)
-        .expect(function (response) {
-          assert.equal(response.text, 'OK');
+        .expect((response) => {
+          assert.equal(response.text, `OK`);
         })
         .end(done);
     });
 
-    after(function () {
-      require('../config').set('DATA_BACKEND', ORIG_DATA_BACKEND);
+    after(() => {
+      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
     });
   });
 };

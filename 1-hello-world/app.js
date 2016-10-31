@@ -13,13 +13,13 @@
 
 'use strict';
 
-var express = require('express');
+const express = require('express');
 
-var app = express();
+const app = express();
 
 // [START hello_world]
 // Say hello!
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.status(200).send('Hello, world!');
 });
 // [END hello_world]
@@ -27,9 +27,9 @@ app.get('/', function (req, res) {
 if (module === require.main) {
   // [START server]
   // Start the server
-  var server = app.listen(process.env.PORT || 8080, function () {
-    var port = server.address().port;
-    console.log('App listening on port %s', port);
+  const server = app.listen(process.env.PORT || 8080, () => {
+    const port = server.address().port;
+    console.log(`App listening on port ${port}`);
   });
   // [END server]
 }

@@ -13,22 +13,22 @@
 
 'use strict';
 
-var assert = require('assert');
-var config = require('./config');
-var utils = require('nodejs-repo-tools');
+const assert = require(`assert`);
+const config = require(`./config`);
+const utils = require(`nodejs-repo-tools`);
 
-describe('app.js', function () {
+describe(`app.js`, () => {
   if (!process.env.E2E_TESTS) {
-    it('should run', function (done) {
+    it(`should run`, (done) => {
       utils.testLocalApp(config, done);
     });
   }
 
-  it('should create an express app', function (done) {
+  it(`should create an express app`, (done) => {
     utils.getRequest(config)
-      .get('/')
+      .get(`/`)
       .expect(200)
-      .expect(function (response) {
+      .expect((response) => {
         assert.equal(response.text, config.msg);
       })
       .end(done);
