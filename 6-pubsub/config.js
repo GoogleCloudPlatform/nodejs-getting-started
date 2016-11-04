@@ -34,7 +34,6 @@ nconf
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
-    'MYSQL_HOST',
     'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
@@ -70,7 +69,6 @@ nconf
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
-    MYSQL_HOST: '',
 
     OAUTH2_CLIENT_ID: '',
     OAUTH2_CLIENT_SECRET: '',
@@ -94,7 +92,6 @@ checkConfig('OAUTH2_CLIENT_SECRET');
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');
   checkConfig('MYSQL_PASSWORD');
-  checkConfig('MYSQL_HOST');
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');
