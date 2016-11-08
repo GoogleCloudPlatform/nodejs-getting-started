@@ -18,10 +18,6 @@
 const nconf = module.exports = require('nconf');
 const path = require('path');
 
-// Memcache configuration settings
-const MEMCACHE_HOST = process.env.MEMCACHE_PORT_11211_TCP_ADDR || 'localhost';
-const MEMCACHE_PORT = process.env.MEMCACHE_PORT_11211_TCP_PORT || 11211;
-
 nconf
   // 1. Command-line arguments
   .argv()
@@ -58,7 +54,7 @@ nconf
     GCLOUD_PROJECT: '',
 
     // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: `${MEMCACHE_HOST}:${MEMCACHE_PORT}`,
+    MEMCACHE_URL: 'localhost:11211',
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/

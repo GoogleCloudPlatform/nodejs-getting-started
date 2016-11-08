@@ -56,7 +56,7 @@ nconf
     GCLOUD_PROJECT: '',
 
     // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: '127.0.0.1:11211',
+    MEMCACHE_URL: 'localhost:11211',
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
