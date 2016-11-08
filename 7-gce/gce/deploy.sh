@@ -99,7 +99,7 @@ gcloud compute http-health-checks create ah-health-check \
 gcloud compute backend-services create $SERVICE \
   --http-health-check ah-health-check \
   --port 8080
-# [END create_backend-service]
+# [END create_backend_service]
 
 # [START add_backend_service]
 gcloud compute backend-services add-backend $SERVICE \
