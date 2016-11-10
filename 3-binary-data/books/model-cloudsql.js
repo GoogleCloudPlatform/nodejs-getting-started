@@ -24,8 +24,8 @@ function getConnection () {
     database: 'bookshelf'
   };
 
-  if (process.env.INSTANCE_CONNECTION_NAME) {
-    options.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
+  if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
+    options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
   }
 
   return mysql.createConnection(options);
