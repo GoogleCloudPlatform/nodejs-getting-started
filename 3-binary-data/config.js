@@ -67,7 +67,7 @@ checkConfig('CLOUD_BUCKET');
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');
   checkConfig('MYSQL_PASSWORD');
-  if (config.get('NODE_ENV') === 'production') {
+  if (nconf.get('NODE_ENV') === 'production') {
     checkConfig('INSTANCE_CONNECTION_NAME');
   }
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
