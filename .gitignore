@@ -8,3 +8,4 @@ test/encrypted/nodejs-docs-samples.json
 .idea/
 config.json
 key.json
+yarn.lock
