@@ -76,10 +76,6 @@ describe(`app.js`, () => {
       proxyquire(`../config`, { nconf: nconfMock });
     }, Error, getMsg(`MYSQL_PASSWORD`));
     nconfMock.MYSQL_PASSWORD = `password`;
-    assert.throws(() => {
-      proxyquire(`../config`, { nconf: nconfMock });
-    }, Error, getMsg(`MYSQL_HOST`));
-    nconfMock.MYSQL_HOST = `host`;
     assert.doesNotThrow(() => {
       proxyquire(`../config`, { nconf: nconfMock });
     });

@@ -18,13 +18,17 @@ const mysql = require('mysql');
 const config = require('../config');
 
 function getConnection () {
-  return mysql.createConnection(extend({
-    database: 'library'
-  }, {
-    host: config.get('MYSQL_HOST'),
+  const options = {
     user: config.get('MYSQL_USER'),
-    password: config.get('MYSQL_PASSWORD')
-  }));
+    password: config.get('MYSQL_PASSWORD'),
+    database: 'bookshelf'
+  };
+
+  if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
+    options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
+  }
+
+  return mysql.createConnection(options);
 }
 
 // [START list]
@@ -118,7 +122,7 @@ if (module === require.main) {
     `Running this script directly will allow you to initialize your mysql database.
     This script will not modify any existing tables.`);
 
-  prompt.get(['host', 'user', 'password'], (err, result) => {
+  prompt.get(['user', 'password'], (err, result) => {
     if (err) {
       return;
     }
@@ -132,11 +136,11 @@ function createSchema (config) {
   }, config));
 
   connection.query(
-    `CREATE DATABASE IF NOT EXISTS \`library\`
+    `CREATE DATABASE IF NOT EXISTS \`bookshelf\`
       DEFAULT CHARACTER SET = \'utf8\'
       DEFAULT COLLATE \'utf8_general_ci\';
-    USE \`library\`;
-    CREATE TABLE IF NOT EXISTS \`library\`.\`books\` (
+    USE \`bookshelf\`;
+    CREATE TABLE IF NOT EXISTS \`bookshelf\`.\`books\` (
       \`id\` INT UNSIGNED NOT NULL AUTO_INCREMENT,
       \`title\` VARCHAR(255) NULL,
       \`author\` VARCHAR(255) NULL,
