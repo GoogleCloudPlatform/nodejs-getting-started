@@ -30,7 +30,6 @@ nconf
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
-    'MYSQL_HOST',
     'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
@@ -57,7 +56,7 @@ nconf
     GCLOUD_PROJECT: '',
 
     // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: '127.0.0.1:11211',
+    MEMCACHE_URL: 'localhost:11211',
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
@@ -66,7 +65,6 @@ nconf
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
-    MYSQL_HOST: '',
 
     OAUTH2_CLIENT_ID: 'your-client-id',
     OAUTH2_CLIENT_SECRET: 'your-client-secret',
@@ -90,7 +88,9 @@ checkConfig('OAUTH2_CLIENT_SECRET');
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');
   checkConfig('MYSQL_PASSWORD');
-  checkConfig('MYSQL_HOST');
+  if (nconf.get('NODE_ENV') === 'production') {
+    checkConfig('INSTANCE_CONNECTION_NAME');
+  }
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');

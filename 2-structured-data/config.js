@@ -29,7 +29,6 @@ nconf
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
-    'MYSQL_HOST',
     'PORT'
   ])
   // 3. Config file
@@ -52,7 +51,6 @@ nconf
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
-    MYSQL_HOST: '',
 
     // Port the HTTP server
     PORT: 8080
@@ -64,7 +62,9 @@ checkConfig('GCLOUD_PROJECT');
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');
   checkConfig('MYSQL_PASSWORD');
-  checkConfig('MYSQL_HOST');
+  if (nconf.get('NODE_ENV') === 'production') {
+    checkConfig('INSTANCE_CONNECTION_NAME');
+  }
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');

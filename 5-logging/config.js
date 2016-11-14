@@ -18,10 +18,6 @@
 const nconf = module.exports = require('nconf');
 const path = require('path');
 
-// Memcache configuration settings
-const MEMCACHE_HOST = process.env.MEMCACHE_PORT_11211_TCP_ADDR || 'localhost';
-const MEMCACHE_PORT = process.env.MEMCACHE_PORT_11211_TCP_PORT || 11211;
-
 nconf
   // 1. Command-line arguments
   .argv()
@@ -34,7 +30,6 @@ nconf
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
-    'MYSQL_HOST',
     'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
@@ -59,7 +54,7 @@ nconf
     GCLOUD_PROJECT: '',
 
     // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: `${MEMCACHE_HOST}:${MEMCACHE_PORT}`,
+    MEMCACHE_URL: 'localhost:11211',
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
@@ -68,7 +63,6 @@ nconf
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
-    MYSQL_HOST: '',
 
     OAUTH2_CLIENT_ID: '',
     OAUTH2_CLIENT_SECRET: '',
@@ -89,7 +83,9 @@ checkConfig('OAUTH2_CLIENT_SECRET');
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');
   checkConfig('MYSQL_PASSWORD');
-  checkConfig('MYSQL_HOST');
+  if (nconf.get('NODE_ENV') === 'production') {
+    checkConfig('INSTANCE_CONNECTION_NAME');
+  }
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');
