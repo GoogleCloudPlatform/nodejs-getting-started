@@ -1,0 +1,168 @@
+{#
+Copyright 2016 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{# [START all] #}
+
+{# [START env] #}
+{% set NAME = "bookshelf-" + env["deployment"] %}
+{% set SERVICE = "bookshelf-" + env["deployment"] + "-frontend" %}
+{# [END env] #}
+
+#
+# Instance group setup
+#
+
+# First we have to create an instance template.
+# This template will be used by the instance group
+# to create new instances.
+resources:
+- name : {{ NAME }}
+  type: compute.v1.instanceTemplate
+  properties:
+    properties:
+      tags:
+        items:
+          - http-server
+      disks:
+        - boot: True
+          type: PERSISTENT
+          initializeParams:
+            sourceImage: {{ properties['machine-image'] }}
+            diskSizeGb: 10
+            diskType: pd-ssd
+      machineType: {{ properties['machine-type'] }}
+      serviceAccounts:
+          - email: default
+            scopes: {{ properties['scopes'] }}
+      metadata:
+        items:
+          - key: startup-script
+{# [START startup] #}
+            value: |
+{{imports['startup-script']|indent(14, true)}}
+{# [END startup] #}
+      networkInterfaces:
+          - network: global/networks/default
+            accessConfigs:
+              - type: ONE_TO_ONE_NAT
+                name: External NAT
+
+# Creates the managed instance group. This is responsible for creating
+# new instances using the instance template, as well as providing a named
+# port the backend service can target
+- name: {{ NAME }}-frontend-group
+  type: compute.v1.instanceGroupManager
+  properties:
+    instanceTemplate: $(ref.{{  NAME  }}.selfLink)
+    baseInstanceName: frontend-group
+    targetSize: 3
+    zone: {{ properties['zone'] }}
+    namedPorts:
+      - name: http
+        port: 8080
+
+
+
+# Load Balancer Setup
+#
+
+# A complete HTTP load balancer is structured as follows:
+#
+# 1) A global forwarding rule directs incoming requests to a target HTTP proxy.
+# 2) The target HTTP proxy checks each request against a URL map to determine the
+#    appropriate backend service for the request.
+# 3) The backend service directs each request to an appropriate backend based on
+#    serving capacity, zone, and instance health of its attached backends. The
+#    health of each backend instance is verified using either a health check.
+#
+# We'll create these resources in reverse order:
+# service, health check, backend service, url map, proxy.
+
+# Create a health check
+# The load balancer will use this check to keep track of which instances to send traffic to.
+# Note that health checks will not cause the load balancer to shutdown any instances.
+- name: {{ NAME }}-health-check
+  type: compute.v1.httpHealthCheck
+  properties:
+    requestPath: /_ah/health
+    port: 8080
+
+# Create a backend service, associate it with the health check and instance group.
+# The backend service serves as a target for load balancing.
+- name: {{ SERVICE }}
+  type: compute.v1.backendService
+  properties:
+    healthChecks:
+      - $(ref.{{ NAME }}-health-check.selfLink)
+    portName: http
+    backends:
+{# [START reference] #}
+      - group: $(ref.{{ NAME }}-frontend-group.instanceGroup)
+        zone: {{ properties['zone'] }}
+{# [END reference] #}
+
+# Create a URL map and web Proxy. The URL map will send all requests to the
+# backend service defined above.
+- name: {{ SERVICE }}-map
+  type: compute.v1.urlMap
+  properties:
+    defaultService: $(ref.{{ SERVICE }}.selfLink)
+
+# This is the actual proxy which uses the URL map to route traffic
+# to the backend service
+- name: {{ SERVICE }}-proxy
+  type: compute.v1.targetHttpProxy
+  properties:
+    urlMap: $(ref.{{ SERVICE }}-map.selfLink)
+
+# This is the global forwarding rule which creates an external IP to
+# target the http poxy
+- name: {{ SERVICE }}-http-rule
+  type: compute.v1.globalForwardingRule
+  properties:
+    target: $(ref.{{ SERVICE }}-proxy.selfLink)
+    portRange: 80
+
+# Creates an autoscaler resource (note that when using the gcloud CLI,
+# autoscaling is set as a configuration of the managed instance group
+# but autoscaler is a resource so in deployment manager we explicitly
+# define it
+- name: {{ NAME }}-autoscaler
+  type: compute.v1.autoscaler
+  properties:
+    zone: {{ properties['zone'] }}
+    target: $(ref.{{ NAME }}-frontend-group.selfLink)
+    autoscalingPolicy:
+{# [START properties] #}
+      minNumReplicas: {{ properties['min-instances'] }}
+      maxNumReplicas: {{ properties['max-instances'] }}
+      loadBalancingUtilization:
+        utilizationTarget: {{ properties['target-utilization'] }}
+{# [END properties] #}
+
+# Firewall rule that allows traffic to GCE instances with the
+# http server tag we created
+- name: {{ NAME }}-allow-http
+  type: compute.v1.firewall
+  properties:
+    allowed:
+      - IPProtocol: tcp
+        ports:
+          - 8080
+    sourceRanges:
+      - 0.0.0.0/0
+    targetTags:
+      - http-server
+    description: "Allow port 8080 access to http-server"
+
+{# [END all] #}

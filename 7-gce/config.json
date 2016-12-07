@@ -1,0 +1,8 @@
+{
+	"GCLOUD_PROJECT": "anassri-nodejs-starter",
+	"CLOUD_BUCKET": "anassri-nodejs-starter",
+	"OAUTH2_CLIENT_ID": "none",
+	"OAUTH2_CLIENT_SECRET": "none",
+	"DATA_BACKEND": "datastore",
+	"OAUTH2_CALLBACK": "http://localhost:8080/auth/google/callback"
+}
