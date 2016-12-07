@@ -53,7 +53,7 @@ nconf
     MYSQL_PASSWORD: '',
 
     // Port the HTTP server
-    PORT: 8080
+    PORT: 8082
   });
 
 // Check for required settings
