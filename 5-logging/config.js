@@ -69,7 +69,7 @@ nconf
     OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
 
     // Port the HTTP server
-    PORT: 8080,
+    PORT: 8085,
 
     SECRET: 'keyboardcat'
   });
