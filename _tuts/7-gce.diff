@@ -1,0 +1,673 @@
+diff --git a/README.md b/README.md
+index 5abdc33..3db900b 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,7 @@
+-# 6 - Using Cloud Pub/Sub
++# 7 - Deploying to Google Compute Engine
+ 
+-This folder contains the sample code for the [Using Cloud Pub/Sub][step-6]
++This folder contains the sample code for the [Deploying to Google Compute Engine][step-7]
+ tutorial. Please refer to the tutorial for instructions on configuring, running,
+ and deploying this sample.
+ 
+-[step-6]: https://cloud.google.com/nodejs/getting-started/using-pub-sub
++[step-7]: https://cloud.google.com/nodejs/getting-started/run-on-compute-engine
+diff --git a/app.js b/app.js
+index 2ef967d..3cc8054 100644
+--- a/app.js
++++ b/app.js
+@@ -70,6 +70,12 @@ app.get('/', (req, res) => {
+   res.redirect('/books');
+ });
+ 
++// Our application will need to respond to health checks when running on
++// Compute Engine with Managed Instance Groups.
++app.get('/_ah/health', (req, res) => {
++  res.status(200).send('ok');
++});
++
+ // Add the error logger after all middleware and routes so that
+ // it can log errors from the whole application. Any custom error
+ // handlers should go after this.
+diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
+index 0459e67..e22b809 100644
+--- a/books/model-cloudsql.js
++++ b/books/model-cloudsql.js
+@@ -66,7 +66,6 @@ function listBy (userId, limit, token, cb) {
+   connection.end();
+ }
+ 
+-// [START create]
+ function create (data, queueBook, cb) {
+   const connection = getConnection();
+   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
+@@ -81,7 +80,6 @@ function create (data, queueBook, cb) {
+   });
+   connection.end();
+ }
+-// [END create]
+ 
+ function read (id, cb) {
+   const connection = getConnection();
+@@ -103,7 +101,6 @@ function read (id, cb) {
+   connection.end();
+ }
+ 
+-// [START update]
+ function update (id, data, queueBook, cb) {
+   const connection = getConnection();
+   connection.query(
+@@ -119,7 +116,6 @@ function update (id, data, queueBook, cb) {
+     });
+   connection.end();
+ }
+-// [END update]
+ 
+ function _delete (id, cb) {
+   const connection = getConnection();
+diff --git a/books/model-datastore.js b/books/model-datastore.js
+index 426563c..63d2bb0 100644
+--- a/books/model-datastore.js
++++ b/books/model-datastore.js
+@@ -123,7 +123,6 @@ function listBy (userId, limit, token, cb) {
+ // Creates a new book or updates an existing book with new data. The provided
+ // data is automatically translated into Datastore format. The book will be
+ // queued for background processing.
+-// [START update]
+ function update (id, data, queueBook, cb) {
+   let key;
+   if (id) {
+@@ -152,7 +151,6 @@ function update (id, data, queueBook, cb) {
+     }
+   );
+ }
+-// [END update]
+ 
+ function read (id, cb) {
+   const key = ds.key([kind, parseInt(id, 10)]);
+diff --git a/books/model-mongodb.js b/books/model-mongodb.js
+index 240067b..f9fee07 100644
+--- a/books/model-mongodb.js
++++ b/books/model-mongodb.js
+@@ -85,9 +85,10 @@ function listBy (userid, limit, token, cb) {
+   }
+   getCollection((err, collection) => {
+     if (err) {
+-      return err;
++      cb(err);
++      return;
+     }
+-    collection.find({createdById: userid})
++    collection.find({ createdById: userid })
+       .skip(token)
+       .limit(limit)
+       .toArray((err, results) => {
+@@ -102,7 +103,6 @@ function listBy (userid, limit, token, cb) {
+   });
+ }
+ 
+-// [START create]
+ function create (data, queueBook, cb) {
+   getCollection((err, collection) => {
+     if (err) {
+@@ -122,7 +122,6 @@ function create (data, queueBook, cb) {
+     });
+   });
+ }
+-// [END create]
+ 
+ function read (id, cb) {
+   getCollection((err, collection) => {
+@@ -149,7 +148,6 @@ function read (id, cb) {
+   });
+ }
+ 
+-// [START update]
+ function update (id, data, queueBook, cb) {
+   getCollection((err, collection) => {
+     if (err) {
+@@ -168,12 +166,12 @@ function update (id, data, queueBook, cb) {
+         if (queueBook) {
+           background.queueBook(id);
+         }
+-        return read(id, cb);
++        read(id, cb);
++        return;
+       }
+     );
+   });
+ }
+-// [END update]
+ 
+ function _delete (id, cb) {
+   getCollection((err, collection) => {
+diff --git a/gce/deploy.sh b/gce/deploy.sh
+new file mode 100755
+index 0000000..fdf7c84
+--- /dev/null
++++ b/gce/deploy.sh
+@@ -0,0 +1,149 @@
++# Copyright 2015 Google Inc.
++#d
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#! /bin/bash
++
++set -ex
++
++ZONE=us-central1-f
++
++GROUP=frontend-group
++TEMPLATE=$GROUP-tmpl
++MACHINE_TYPE=f1-micro
++IMAGE=debian-8
++STARTUP_SCRIPT=startup-script.sh
++SCOPES="userinfo-email,cloud-platform"
++TAGS=http-server
++
++MIN_INSTANCES=1
++MAX_INSTANCES=10
++TARGET_UTILIZATION=0.6
++
++SERVICE=frontend-web-service
++
++#
++# Instance group setup
++#
++
++# First we have to create an instance template.
++# This template will be used by the instance group
++# to create new instances.
++
++# [START create_template]
++gcloud compute instance-templates create $TEMPLATE \
++  --image $IMAGE \
++  --machine-type $MACHINE_TYPE \
++  --scopes $SCOPES \
++  --metadata-from-file startup-script=$STARTUP_SCRIPT \
++  --tags $TAGS
++# [END create_template]
++
++# Create the managed instance group.
++
++# [START create_group]
++gcloud compute instance-groups managed \
++  create $GROUP \
++  --base-instance-name $GROUP \
++  --size $MIN_INSTANCES \
++  --template $TEMPLATE \
++  --zone $ZONE
++# [END create_group]
++
++# [START create_named_port]
++gcloud compute instance-groups managed set-named-ports \
++    $GROUP \
++    --named-port http:8080 \
++    --zone $ZONE
++# [END create_named_port]
++
++#
++# Load Balancer Setup
++#
++
++# A complete HTTP load balancer is structured as follows:
++#
++# 1) A global forwarding rule directs incoming requests to a target HTTP proxy.
++# 2) The target HTTP proxy checks each request against a URL map to determine the
++#    appropriate backend service for the request.
++# 3) The backend service directs each request to an appropriate backend based on
++#    serving capacity, zone, and instance health of its attached backends. The
++#    health of each backend instance is verified using either a health check.
++#
++# We'll create these resources in reverse order:
++# service, health check, backend service, url map, proxy.
++
++# Create a health check
++# The load balancer will use this check to keep track of which instances to send traffic to.
++# Note that health checks will not cause the load balancer to shutdown any instances.
++
++# [START create_health_check]
++gcloud compute http-health-checks create ah-health-check \
++  --request-path /_ah/health \
++  --port 8080
++# [END create_health_check]
++
++# Create a backend service, associate it with the health check and instance group.
++# The backend service serves as a target for load balancing.
++
++# [START create_backend_service]
++gcloud compute backend-services create $SERVICE \
++  --http-health-check ah-health-check \
++  --port 8080
++# [END create_backend_service]
++
++# [START add_backend_service]
++gcloud compute backend-services add-backend $SERVICE \
++  --instance-group $GROUP \
++  --zone $ZONE
++# [END add_backend_service]
++
++# Create a URL map and web Proxy. The URL map will send all requests to the
++# backend service defined above.
++
++# [START create_url_map]
++gcloud compute url-maps create $SERVICE-map \
++  --default-service $SERVICE
++# [END create_url_map]
++
++# [START create_http_proxy]
++gcloud compute target-http-proxies create $SERVICE-proxy \
++  --url-map $SERVICE-map
++# [END create_http_proxy]
++
++# Create a global forwarding rule to send all traffic to our proxy
++
++# [START create_forwarding_rule]
++gcloud compute forwarding-rules create $SERVICE-http-rule \
++  --global \
++  --target-http-proxy $SERVICE-proxy \
++  --port-range 80
++# [END create_forwarding_rule]
++
++#
++# Autoscaler configuration
++#
++# [START set_autoscaling]
++gcloud compute instance-groups managed set-autoscaling \
++  $GROUP \
++  --max-num-replicas $MAX_INSTANCES \
++  --target-load-balancing-utilization $TARGET_UTILIZATION \
++  --zone $ZONE
++# [END set_autoscaling]
++
++# [START create_firewall]
++gcloud compute firewall-rules create default-allow-http-8080 \
++    --allow tcp:8080 \
++    --source-ranges 0.0.0.0/0 \
++    --target-tags http-server \
++    --description "Allow port 8080 access to http-server"
++# [END create_firewall]
+diff --git a/gce/startup-script.sh b/gce/startup-script.sh
+new file mode 100644
+index 0000000..0d1e11d
+--- /dev/null
++++ b/gce/startup-script.sh
+@@ -0,0 +1,70 @@
++
++#! /bin/bash
++#	Copyright 2015-2016, Google, Inc.
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++# [START startup]
++set -v
++
++# Talk to the metadata server to get the project id
++PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
++
++# Install logging monitor. The monitor will automatically pick up logs sent to
++# syslog.
++# [START logging]
++curl -s "https://storage.googleapis.com/signals-agents/logging/google-fluentd-install.sh" | bash
++service google-fluentd restart &
++# [END logging]
++
++# Install dependencies from apt
++apt-get update
++apt-get install -yq ca-certificates git nodejs build-essential supervisor
++
++# Install nodejs
++mkdir /opt/nodejs
++curl https://nodejs.org/dist/v4.2.2/node-v4.2.2-linux-x64.tar.gz | tar xvzf - -C /opt/nodejs --strip-components=1
++ln -s /opt/nodejs/bin/node /usr/bin/node
++ln -s /opt/nodejs/bin/npm /usr/bin/npm
++
++# Get the application source code from the Google Cloud Repository.
++# git requires $HOME and it's not set during the startup script.
++export HOME=/root
++git config --global credential.helper gcloud.sh
++git clone https://source.developers.google.com/p/$PROJECTID /opt/app
++
++# Install app dependencies
++cd /opt/app/7-gce
++npm install
++
++# Create a nodeapp user. The application will run as this user.
++useradd -m -d /home/nodeapp nodeapp
++chown -R nodeapp:nodeapp /opt/app
++
++# Configure supervisor to run the node app.
++cat >/etc/supervisor/conf.d/node-app.conf << EOF
++[program:nodeapp]
++directory=/opt/app/7-gce
++command=npm start
++autostart=true
++autorestart=true
++user=nodeapp
++environment=HOME="/home/nodeapp",USER="nodeapp",NODE_ENV="production"
++stdout_logfile=syslog
++stderr_logfile=syslog
++EOF
++
++supervisorctl reread
++supervisorctl update
++
++# Application should now be running under supervisor
++# [END startup]
+diff --git a/gce/teardown.sh b/gce/teardown.sh
+new file mode 100755
+index 0000000..7452db1
+--- /dev/null
++++ b/gce/teardown.sh
+@@ -0,0 +1,41 @@
++# Copyright 2015 Google Inc.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#! /bin/bash
++
++set -x
++
++ZONE=us-central1-f
++gcloud config set compute/zone $ZONE
++
++GROUP=frontend-group
++TEMPLATE=$GROUP-tmpl
++SERVICE=frontend-web-service
++
++gcloud compute instance-groups managed stop-autoscaling $GROUP --zone $ZONE
++
++gcloud compute forwarding-rules delete $SERVICE-http-rule --global 
++
++gcloud compute target-http-proxies delete $SERVICE-proxy 
++
++gcloud compute url-maps delete $SERVICE-map 
++
++gcloud compute backend-services delete $SERVICE 
++
++gcloud compute http-health-checks delete ah-health-check
++
++gcloud compute instance-groups managed delete $GROUP  
++
++gcloud compute instance-templates delete $TEMPLATE 
++
++gcloud compute firewall-rules delete default-allow-http-8080
+diff --git a/lib/background.js b/lib/background.js
+index 8a4ab65..2cb58a0 100644
+--- a/lib/background.js
++++ b/lib/background.js
+@@ -29,7 +29,6 @@ const pubsub = Pubsub({
+ // that a least one subscription exists on the topic before
+ // publishing anything to it as topics without subscribers
+ // will essentially drop any messages.
+-// [START topic]
+ function getTopic (cb) {
+   pubsub.createTopic(topicName, (err, topic) => {
+     // topic already exists.
+@@ -38,16 +37,13 @@ function getTopic (cb) {
+       return;
+     }
+     cb(err, topic);
+-    return;
+   });
+ }
+-// [END topic]
+ 
+ // Used by the worker to listen to pubsub messages.
+ // When more than one worker is running they will all share the same
+ // subscription, which means that pub/sub will evenly distribute messages
+ // to each worker.
+-// [START subscribe]
+ function subscribe (cb) {
+   let subscription;
+ 
+@@ -56,7 +52,7 @@ function subscribe (cb) {
+     cb(null, message.data);
+   }
+   function handleError (err) {
+-    logging.error(err);
++    console.error(err);
+   }
+ 
+   getTopic((err, topic) => {
+@@ -94,10 +90,8 @@ function subscribe (cb) {
+     }
+   };
+ }
+-// [END subscribe]
+ 
+ // Adds a book to the queue to be processed by the worker.
+-// [START queue]
+ function queueBook (bookId) {
+   getTopic((err, topic) => {
+     if (err) {
+@@ -119,7 +113,6 @@ function queueBook (bookId) {
+     });
+   });
+ }
+-// [END queue]
+ 
+ module.exports = {
+   subscribe,
+diff --git a/lib/images.js b/lib/images.js
+index 32136a8..8e3ddf8 100644
+--- a/lib/images.js
++++ b/lib/images.js
+@@ -27,7 +27,6 @@ const bucket = storage.bucket(CLOUD_BUCKET);
+ 
+ // Downloads a given image (by URL) and then uploads it to
+ // Google Cloud Storage. Provides the publicly accessable URL to the callback.
+-// [START download_and_upload]
+ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
+   const file = bucket.file(destFileName);
+ 
+@@ -49,7 +48,6 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
+       cb(err);
+     });
+ }
+-// [END download_and_upload]
+ 
+ // Returns the public, anonymously accessable URL to a given Cloud Storage
+ // object.
+diff --git a/lib/logging.js b/lib/logging.js
+index 0c9e385..a2a436d 100644
+--- a/lib/logging.js
++++ b/lib/logging.js
+@@ -13,10 +13,10 @@
+ 
+ 'use strict';
+ 
+-const winston = require(`winston`);
+-const expressWinston = require(`express-winston`);
++const winston = require('winston');
++const expressWinston = require('express-winston');
+ 
+-const colorize = process.env.NODE_ENV !== `production`;
++const colorize = process.env.NODE_ENV !== 'production';
+ 
+ // Logger to capture all requests and output them to the console.
+ const requestLogger = expressWinston.logger({
+diff --git a/lib/oauth2.js b/lib/oauth2.js
+index 9ee3a72..a4620ab 100644
+--- a/lib/oauth2.js
++++ b/lib/oauth2.js
+@@ -21,7 +21,7 @@ const passport = require('passport');
+ const GoogleStrategy = require('passport-google-oauth20').Strategy;
+ 
+ function extractProfile (profile) {
+-  let imageUrl = ``;
++  let imageUrl = '';
+   if (profile.photos && profile.photos.length) {
+     imageUrl = profile.photos[0].value;
+   }
+diff --git a/test/config.js b/test/config.js
+index 5a8a4a3..0847253 100644
+--- a/test/config.js
++++ b/test/config.js
+@@ -14,7 +14,7 @@
+ 'use strict';
+ 
+ const path = require(`path`);
+-const test = `6-pubsub`;
++const test = `7-gce`;
+ 
+ module.exports = {
+   test: test,
+diff --git a/test/config.worker.js b/test/config.worker.js
+index 9d37ec5..c863291 100644
+--- a/test/config.worker.js
++++ b/test/config.worker.js
+@@ -15,7 +15,7 @@
+ 
+ const path = require(`path`);
+ const projectId = process.env.GCLOUD_PROJECT;
+-const test = `6-pubsub`;
++const test = `7-gce`;
+ 
+ module.exports = {
+   test: test,
+diff --git a/test/worker.test.js b/test/worker.test.js
+index 2ad8971..78c5638 100644
+--- a/test/worker.test.js
++++ b/test/worker.test.js
+@@ -13,13 +13,13 @@
+ 
+ 'use strict';
+ 
+-const assert = require(`assert`);
+-const config = require(`./config.worker`);
+-const path = require(`path`);
+-const proxyquire = require(`proxyquire`);
+-const sinon = require(`sinon`);
+-const supertest = require(`supertest`);
+-const utils = require(`nodejs-repo-tools`);
++const assert = require('assert');
++const config = require('./config.worker');
++const path = require('path');
++const proxyquire = require('proxyquire');
++const sinon = require('sinon');
++const supertest = require('supertest');
++const utils = require('nodejs-repo-tools');
+ 
+ const projectId = process.env.GCLOUD_PROJECT;
+ 
+diff --git a/worker.js b/worker.js
+index c6aba97..dd576a1 100644
+--- a/worker.js
++++ b/worker.js
+@@ -32,7 +32,6 @@ const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
+ 
+ // When running on Google App Engine Managed VMs, the worker needs
+ // to respond to HTTP requests and can optionally supply a health check.
+-// [START server]
+ const app = express();
+ 
+ app.use(logging.requestLogger);
+@@ -50,20 +49,11 @@ app.get('/', (req, res) => {
+ 
+ app.use(logging.errorLogger);
+ 
+-if (module === require.main) {
+-  const server = app.listen(config.get('PORT'), () => {
+-    const port = server.address().port;
+-    console.log(`App listening on port ${port}`);
+-  });
+-}
+-// [END server]
+-
+ function subscribe () {
+   // Subscribe to Cloud Pub/Sub and receive messages to process books.
+   // The subscription will continue to listen for messages until the process
+   // is killed.
+-  // [START subscribe]
+-  const unsubscribeFn = background.subscribe((err, message) => {
++  return background.subscribe((err, message) => {
+     // Any errors received are considered fatal.
+     if (err) {
+       throw err;
+@@ -75,17 +65,18 @@ function subscribe () {
+       logging.warn('Unknown request', message);
+     }
+   });
+-  // [END subscribe]
+-  return unsubscribeFn;
+ }
+ 
+ if (module === require.main) {
++  const server = app.listen(config.get('PORT'), () => {
++    const port = server.address().port;
++    console.log(`App listening on port ${port}`);
++  });
+   subscribe();
+ }
+ 
+ // Processes a book by reading its existing data, attempting to find
+ // more information, and updating the database with the new information.
+-// [START process]
+ function processBook (bookId, callback) {
+   if (!callback) {
+     callback = logging.error;
+@@ -112,12 +103,10 @@ function processBook (bookId, callback) {
+     callback();
+   });
+ }
+-// [END process]
+ 
+ // Tries to find additional information about a book and updates
+ // the book's data. Also uploads a cover image to Cloud Storage
+ // if available.
+-// [START find]
+ function findBookInfo (book, cb) {
+   queryBooksApi(book.title, (err, r) => {
+     if (err) {
+@@ -157,11 +146,9 @@ function findBookInfo (book, cb) {
+       });
+   });
+ }
+-// [END find]
+ 
+ // Calls out to the Google Books API to get additional
+ // information about a given book.
+-// [START query]
+ function queryBooksApi (query, cb) {
+   request(
+     `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`,
+@@ -174,10 +161,8 @@ function queryBooksApi (query, cb) {
+     }
+   );
+ }
+-// [END query]
+ 
+ exports.app = app;
+-exports.subscribe = subscribe;
+ exports.processBook = processBook;
+ exports.findBookInfo = findBookInfo;
+ exports.queryBooksApi = queryBooksApi;

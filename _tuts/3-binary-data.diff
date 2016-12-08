@@ -1,0 +1,625 @@
+diff --git a/README.md b/README.md
+index 6288230..4c5d333 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,7 @@
+-# 2 - Structured data
++# 3 - Cloud Storage
+ 
+-This folder contains the sample code for the [Structured data][step-2]
++This folder contains the sample code for the [Cloud Storage][step-3]
+ tutorial. Please refer to the tutorial for instructions on configuring, running,
+ and deploying this sample.
+ 
+-[step-2]: https://cloud.google.com/nodejs/getting-started/using-structured-data
++[step-3]: https://cloud.google.com/nodejs/getting-started/using-cloud-storage
+diff --git a/books/crud.js b/books/crud.js
+index a1ce65b..bb2019e 100644
+--- a/books/crud.js
++++ b/books/crud.js
+@@ -14,8 +14,8 @@
+ 'use strict';
+ 
+ const express = require('express');
+-const bodyParser = require('body-parser');
+ const config = require('../config');
++const images = require('../lib/images');
+ 
+ function getModel () {
+   return require(`./model-${config.get('DATA_BACKEND')}`);
+@@ -23,9 +23,6 @@ function getModel () {
+ 
+ const router = express.Router();
+ 
+-// Automatically parse request body as form data
+-router.use(bodyParser.urlencoded({ extended: false }));
+-
+ // Set Content-Type for all responses for these routes
+ router.use((req, res, next) => {
+   res.set('Content-Type', 'text/html');
+@@ -55,34 +52,43 @@ router.get('/', (req, res, next) => {
+  *
+  * Display a form for creating a book.
+  */
+-// [START add_get]
+ router.get('/add', (req, res) => {
+   res.render('books/form.jade', {
+     book: {},
+     action: 'Add'
+   });
+ });
+-// [END add_get]
+ 
+ /**
+  * POST /books/add
+  *
+  * Create a book.
+  */
+-// [START add_post]
+-router.post('/add', (req, res, next) => {
+-  const data = req.body;
+-
+-  // Save the data to the database.
+-  getModel().create(data, (err, savedData) => {
+-    if (err) {
+-      next(err);
+-      return;
++// [START add]
++router.post(
++  '/add',
++  images.multer.single('image'),
++  images.sendUploadToGCS,
++  (req, res, next) => {
++    let data = req.body;
++
++    // Was an image uploaded? If so, we'll use its public URL
++    // in cloud storage.
++    if (req.file && req.file.cloudStoragePublicUrl) {
++      data.imageUrl = req.file.cloudStoragePublicUrl;
+     }
+-    res.redirect(`${req.baseUrl}/${savedData.id}`);
+-  });
+-});
+-// [END add_post]
++
++    // Save the data to the database.
++    getModel().create(data, (err, savedData) => {
++      if (err) {
++        next(err);
++        return;
++      }
++      res.redirect(`${req.baseUrl}/${savedData.id}`);
++    });
++  }
++);
++// [END add]
+ 
+ /**
+  * GET /books/:id/edit
+@@ -107,17 +113,28 @@ router.get('/:book/edit', (req, res, next) => {
+  *
+  * Update a book.
+  */
+-router.post('/:book/edit', (req, res, next) => {
+-  const data = req.body;
+-
+-  getModel().update(req.params.book, data, (err, savedData) => {
+-    if (err) {
+-      next(err);
+-      return;
++router.post(
++  '/:book/edit',
++  images.multer.single('image'),
++  images.sendUploadToGCS,
++  (req, res, next) => {
++    let data = req.body;
++
++    // Was an image uploaded? If so, we'll use its public URL
++    // in cloud storage.
++    if (req.file && req.file.cloudStoragePublicUrl) {
++      req.body.imageUrl = req.file.cloudStoragePublicUrl;
+     }
+-    res.redirect(`${req.baseUrl}/${savedData.id}`);
+-  });
+-});
++
++    getModel().update(req.params.book, data, (err, savedData) => {
++      if (err) {
++        next(err);
++        return;
++      }
++      res.redirect(`${req.baseUrl}/${savedData.id}`);
++    });
++  }
++);
+ 
+ /**
+  * GET /books/:id
+diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
+index 5501301..d60318f 100644
+--- a/books/model-cloudsql.js
++++ b/books/model-cloudsql.js
+@@ -31,7 +31,6 @@ function getConnection () {
+   return mysql.createConnection(options);
+ }
+ 
+-// [START list]
+ function list (limit, token, cb) {
+   token = token ? parseInt(token, 10) : 0;
+   const connection = getConnection();
+@@ -48,9 +47,7 @@ function list (limit, token, cb) {
+   );
+   connection.end();
+ }
+-// [END list]
+ 
+-// [START create]
+ function create (data, cb) {
+   const connection = getConnection();
+   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
+@@ -62,7 +59,6 @@ function create (data, cb) {
+   });
+   connection.end();
+ }
+-// [END create]
+ 
+ function read (id, cb) {
+   const connection = getConnection();
+@@ -84,7 +80,6 @@ function read (id, cb) {
+   connection.end();
+ }
+ 
+-// [START update]
+ function update (id, data, cb) {
+   const connection = getConnection();
+   connection.query(
+@@ -97,7 +92,6 @@ function update (id, data, cb) {
+     });
+   connection.end();
+ }
+-// [END update]
+ 
+ function _delete (id, cb) {
+   const connection = getConnection();
+diff --git a/books/model-datastore.js b/books/model-datastore.js
+index 89f0891..a8bbacf 100644
+--- a/books/model-datastore.js
++++ b/books/model-datastore.js
+@@ -16,12 +16,10 @@
+ const Datastore = require('@google-cloud/datastore');
+ const config = require('../config');
+ 
+-// [START config]
+ const ds = Datastore({
+   projectId: config.get('GCLOUD_PROJECT')
+ });
+ const kind = 'Book';
+-// [END config]
+ 
+ // Translates from Datastore's entity format to
+ // the format expected by the application.
+@@ -69,7 +67,7 @@ function fromDatastore (obj) {
+ //   ]
+ function toDatastore (obj, nonIndexed) {
+   nonIndexed = nonIndexed || [];
+-  const results = [];
++  let results = [];
+   Object.keys(obj).forEach((k) => {
+     if (obj[k] === undefined) {
+       return;
+@@ -87,7 +85,6 @@ function toDatastore (obj, nonIndexed) {
+ // The ``limit`` argument determines the maximum amount of results to
+ // return per page. The ``token`` argument allows requesting additional
+ // pages. The callback is invoked with ``(err, books, nextPageToken)``.
+-// [START list]
+ function list (limit, token, cb) {
+   const q = ds.createQuery([kind])
+     .limit(limit)
+@@ -103,12 +100,10 @@ function list (limit, token, cb) {
+     cb(null, entities.map(fromDatastore), hasMore);
+   });
+ }
+-// [END list]
+ 
+ // Creates a new book or updates an existing book with new data. The provided
+ // data is automatically translated into Datastore format. The book will be
+ // queued for background processing.
+-// [START update]
+ function update (id, data, cb) {
+   let key;
+   if (id) {
+@@ -130,7 +125,6 @@ function update (id, data, cb) {
+     }
+   );
+ }
+-// [END update]
+ 
+ function create (data, cb) {
+   update(null, data, cb);
+@@ -159,7 +153,6 @@ function _delete (id, cb) {
+   ds.delete(key, cb);
+ }
+ 
+-// [START exports]
+ module.exports = {
+   create,
+   read,
+@@ -167,4 +160,3 @@ module.exports = {
+   delete: _delete,
+   list
+ };
+-// [END exports]
+diff --git a/books/model-mongodb.js b/books/model-mongodb.js
+index 622628c..0c22846 100644
+--- a/books/model-mongodb.js
++++ b/books/model-mongodb.js
+@@ -19,7 +19,6 @@ const config = require('../config');
+ 
+ let collection;
+ 
+-// [START translate]
+ function fromMongo (item) {
+   if (Array.isArray(item) && item.length) {
+     item = item[0];
+@@ -33,7 +32,6 @@ function toMongo (item) {
+   delete item.id;
+   return item;
+ }
+-// [END translate]
+ 
+ function getCollection (cb) {
+   if (collection) {
+@@ -52,7 +50,6 @@ function getCollection (cb) {
+   });
+ }
+ 
+-// [START list]
+ function list (limit, token, cb) {
+   token = token ? parseInt(token, 10) : 0;
+   if (isNaN(token)) {
+@@ -78,9 +75,7 @@ function list (limit, token, cb) {
+       });
+   });
+ }
+-// [END list]
+ 
+-// [START create]
+ function create (data, cb) {
+   getCollection((err, collection) => {
+     if (err) {
+@@ -97,7 +92,6 @@ function create (data, cb) {
+     });
+   });
+ }
+-// [END create]
+ 
+ function read (id, cb) {
+   getCollection((err, collection) => {
+@@ -124,7 +118,6 @@ function read (id, cb) {
+   });
+ }
+ 
+-// [START update]
+ function update (id, data, cb) {
+   getCollection((err, collection) => {
+     if (err) {
+@@ -140,13 +133,11 @@ function update (id, data, cb) {
+           cb(err);
+           return;
+         }
+-        read(id, cb);
+-        return;
++        return read(id, cb);
+       }
+     );
+   });
+ }
+-// [END update]
+ 
+ function _delete (id, cb) {
+   getCollection((err, collection) => {
+@@ -161,9 +152,9 @@ function _delete (id, cb) {
+ }
+ 
+ module.exports = {
+-  create,
+-  read,
+-  update,
++  create: create,
++  read: read,
++  update: update,
+   delete: _delete,
+-  list
++  list: list
+ };
+diff --git a/config.js b/config.js
+index 1d8ac32..44c5a53 100644
+--- a/config.js
++++ b/config.js
+@@ -23,6 +23,7 @@ nconf
+   .argv()
+   // 2. Environment variables
+   .env([
++    'CLOUD_BUCKET',
+     'DATA_BACKEND',
+     'GCLOUD_PROJECT',
+     'MONGO_URL',
+@@ -35,6 +36,9 @@ nconf
+   .file({ file: path.join(__dirname, 'config.json') })
+   // 4. Defaults
+   .defaults({
++    // Typically you will create a bucket with the same name as your project ID.
++    CLOUD_BUCKET: '',
++
+     // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
+     // configure the appropriate settings for each storage engine below.
+     // If you are unsure, use datastore as it requires no additional
+@@ -58,6 +62,7 @@ nconf
+ 
+ // Check for required settings
+ checkConfig('GCLOUD_PROJECT');
++checkConfig('CLOUD_BUCKET');
+ 
+ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
+   checkConfig('MYSQL_USER');
+diff --git a/lib/images.js b/lib/images.js
+new file mode 100644
+index 0000000..d16c00e
+--- /dev/null
++++ b/lib/images.js
+@@ -0,0 +1,86 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const Storage = require('@google-cloud/storage');
++const config = require('../config');
++
++const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
++
++const storage = Storage({
++  projectId: config.get('GCLOUD_PROJECT')
++});
++const bucket = storage.bucket(CLOUD_BUCKET);
++
++// Returns the public, anonymously accessable URL to a given Cloud Storage
++// object.
++// The object's ACL has to be set to public read.
++// [START public_url]
++function getPublicUrl (filename) {
++  return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
++}
++// [END public_url]
++
++// Express middleware that will automatically pass uploads to Cloud Storage.
++// req.file is processed and will have two new properties:
++// * ``cloudStorageObject`` the object name in cloud storage.
++// * ``cloudStoragePublicUrl`` the public url to the object.
++// [START process]
++function sendUploadToGCS (req, res, next) {
++  if (!req.file) {
++    return next();
++  }
++
++  const gcsname = Date.now() + req.file.originalname;
++  const file = bucket.file(gcsname);
++
++  const stream = file.createWriteStream({
++    metadata: {
++      contentType: req.file.mimetype
++    }
++  });
++
++  stream.on('error', (err) => {
++    req.file.cloudStorageError = err;
++    next(err);
++  });
++
++  stream.on('finish', () => {
++    req.file.cloudStorageObject = gcsname;
++    req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
++    next();
++  });
++
++  stream.end(req.file.buffer);
++}
++// [END process]
++
++// Multer handles parsing multipart/form-data requests.
++// This instance is configured to store images in memory.
++// This makes it straightforward to upload to Cloud Storage.
++// [START multer]
++const Multer = require('multer');
++const multer = Multer({
++  storage: Multer.MemoryStorage,
++  limits: {
++    fileSize: 5 * 1024 * 1024 // no larger than 5mb
++  }
++});
++// [END multer]
++
++module.exports = {
++  getPublicUrl,
++  sendUploadToGCS,
++  multer
++};
+diff --git a/package.json b/package.json
+index f48f71f..91f7aa4 100644
+--- a/package.json
++++ b/package.json
+@@ -38,6 +38,7 @@
+     ]
+   },
+   "dependencies": {
++    "@google-cloud/storage": "^0.1.1",
+     "body-parser": "^1.15.2",
+     "express": "^4.14.0",
+     "@google-cloud/datastore": "^0.1.1",
+@@ -45,6 +46,7 @@
+     "kerberos": "^0.0.21",
+     "lodash": "^4.14.2",
+     "mongodb": "^2.2.5",
++    "multer": "^1.2.0",
+     "mysql": "^2.11.1",
+     "nconf": "^0.8.4",
+     "prompt": "^1.0.0"
+diff --git a/test/api.test.js b/test/api.test.js
+index 763cccf..151759d 100644
+--- a/test/api.test.js
++++ b/test/api.test.js
+@@ -70,4 +70,3 @@ module.exports = (DATA_BACKEND) => {
+     });
+   });
+ };
+-
+diff --git a/test/app.test.js b/test/app.test.js
+index e02f024..96956f6 100644
+--- a/test/app.test.js
++++ b/test/app.test.js
+@@ -11,7 +11,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-`use strict`;
++'use strict';
+ 
+ const assert = require(`assert`);
+ const config = require(`./config`);
+@@ -57,7 +57,12 @@ describe(`app.js`, () => {
+       proxyquire(`../config`, { nconf: nconfMock });
+     }, Error, getMsg(`GCLOUD_PROJECT`));
+ 
+-    nconfMock.GCLOUD_PROJECT = `project`;
++    nconfMock.GCLOUD_PROJECT = 'project';
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`CLOUD_BUCKET`));
++
++    nconfMock.CLOUD_BUCKET = `bucket`;
+     assert.doesNotThrow(() => {
+       proxyquire(`../config`, { nconf: nconfMock });
+     });
+diff --git a/test/config.js b/test/config.js
+index c73a303..07a751b 100644
+--- a/test/config.js
++++ b/test/config.js
+@@ -16,7 +16,7 @@
+ const path = require(`path`);
+ 
+ module.exports = {
+-  test: `2-structured-data`,
++  test: `3-binary-data`,
+   cwd: path.resolve(path.join(__dirname, `../`)),
+   cmd: `node`,
+   args: [`app.js`],
+diff --git a/test/crud.test.js b/test/crud.test.js
+index c64fd66..0f07993 100644
+--- a/test/crud.test.js
++++ b/test/crud.test.js
+@@ -85,7 +85,7 @@ module.exports = (DATA_BACKEND) => {
+       it(`should post to add book form`, (done) => {
+         utils.getRequest(config)
+           .post(`/books/add`)
+-          .send(`title=my%20book`)
++          .field(`title`, `my book`)
+           .expect(302)
+           .expect((response) => {
+             const location = response.headers.location;
+@@ -144,7 +144,7 @@ module.exports = (DATA_BACKEND) => {
+         const expected = `Redirecting to /books/${id}`;
+         utils.getRequest(config)
+           .post(`/books/${id}/edit`)
+-          .send(`title=my%20other%20book`)
++          .field(`title`, `my other book`)
+           .expect(302)
+           .expect((response) => {
+             assert.equal(response.text.includes(expected), true);
+@@ -159,8 +159,6 @@ module.exports = (DATA_BACKEND) => {
+           .get(`/books/${id}/edit`)
+           .expect(200)
+           .expect((response) => {
+-            console.log('RT', response.text);
+-            console.log('expected', expected);
+             assert.equal(response.text.includes(expected), true);
+           })
+           .end(done);
+diff --git a/views/books/form.jade b/views/books/form.jade
+index 24fcc7c..36a6308 100644
+--- a/views/books/form.jade
++++ b/views/books/form.jade
+@@ -11,12 +11,12 @@
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-// [START form]
+ extends ../base.jade
+ 
++// [START form]
+ block content
+   h3 #{action} book
+-  form(method="POST")
++  form(method="POST", enctype="multipart/form-data")
+     .form-group
+       label(for="title") Title
+       input.form-control(type="text", name="title", id="title", value=book.title)
+@@ -30,6 +30,10 @@ block content
+       label(for="description") Description
+       input.form-control(type="text", name="description", id="description", value=book.description)
+     .form-group
++      label(for="image") Cover Image
++      input.form-control(type="file", name="image", id="image")
++    .form-group.hidden
++      label(for="imageUrl") Cover Image URL
++      input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
+     button.btn.btn-success(type="submit") Save
+-
+ // [END form]
+diff --git a/views/books/list.jade b/views/books/list.jade
+index 3ecd5b5..dd45338 100644
+--- a/views/books/list.jade
++++ b/views/books/list.jade
+@@ -23,6 +23,8 @@ block content
+   each book in books
+     .media
+       a(href="/books/#{book.id}")
++        .media-left
++            img(src=book.imageUrl || "http://placekitten.com/g/128/192")
+         .media-body
+           h4= book.title
+           p= book.author
+diff --git a/views/books/view.jade b/views/books/view.jade
+index 760730f..55e7a45 100644
+--- a/views/books/view.jade
++++ b/views/books/view.jade
+@@ -11,6 +11,7 @@
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
++// [START view]
+ extends ../base.jade
+ 
+ block content
+@@ -26,9 +27,12 @@ block content
+       span  Delete book
+ 
+   .media
++    .media-left
++      img(src=book.imageUrl || "http://placekitten.com/g/128/192")
+     .media-body
+       h4= book.title
+         | &nbsp;
+         small= book.publishedDate
+       h5 By #{book.author||'unknown'}
+       p= book.description
++// [END view]
