@@ -151,7 +151,7 @@ index bb2019e..22f6439 100644
      // Was an image uploaded? If so, we'll use its public URL
      // in cloud storage.
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
-index d60318f..b47a2e0 100644
+index 001c7f3..228d6ad 100644
 --- a/books/model-cloudsql.js
 +++ b/books/model-cloudsql.js
 @@ -48,6 +48,25 @@ function list (limit, token, cb) {

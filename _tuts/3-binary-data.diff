@@ -136,7 +136,7 @@ index a1ce65b..bb2019e 100644
  /**
   * GET /books/:id
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
-index 5501301..d60318f 100644
+index 8855aa5..001c7f3 100644
 --- a/books/model-cloudsql.js
 +++ b/books/model-cloudsql.js
 @@ -31,7 +31,6 @@ function getConnection () {

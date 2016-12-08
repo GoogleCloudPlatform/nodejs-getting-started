@@ -31,7 +31,7 @@ index 2ef967d..3cc8054 100644
  // it can log errors from the whole application. Any custom error
  // handlers should go after this.
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
-index 0459e67..e22b809 100644
+index e32afe2..547b1ad 100644
 --- a/books/model-cloudsql.js
 +++ b/books/model-cloudsql.js
 @@ -66,7 +66,6 @@ function listBy (userId, limit, token, cb) {

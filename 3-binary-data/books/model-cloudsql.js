@@ -131,8 +131,8 @@ function createSchema (config) {
 
   connection.query(
     `CREATE DATABASE IF NOT EXISTS \`bookshelf\`
-      DEFAULT CHARACTER SET = \'utf8\'
-      DEFAULT COLLATE \'utf8_general_ci\';
+      DEFAULT CHARACTER SET = 'utf8'
+      DEFAULT COLLATE 'utf8_general_ci';
     USE \`bookshelf\`;
     CREATE TABLE IF NOT EXISTS \`bookshelf\`.\`books\` (
       \`id\` INT UNSIGNED NOT NULL AUTO_INCREMENT,

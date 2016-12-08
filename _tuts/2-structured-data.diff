@@ -390,7 +390,7 @@ index 0000000..a1ce65b
 +module.exports = router;
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
 new file mode 100644
-index 0000000..5501301
+index 0000000..8855aa5
 --- /dev/null
 +++ b/books/model-cloudsql.js
 @@ -0,0 +1,161 @@
@@ -533,8 +533,8 @@ index 0000000..5501301
 +
 +  connection.query(
 +    `CREATE DATABASE IF NOT EXISTS \`bookshelf\`
-+      DEFAULT CHARACTER SET = \'utf8\'
-+      DEFAULT COLLATE \'utf8_general_ci\';
++      DEFAULT CHARACTER SET = 'utf8'
++      DEFAULT COLLATE 'utf8_general_ci';
 +    USE \`bookshelf\`;
 +    CREATE TABLE IF NOT EXISTS \`bookshelf\`.\`books\` (
 +      \`id\` INT UNSIGNED NOT NULL AUTO_INCREMENT,

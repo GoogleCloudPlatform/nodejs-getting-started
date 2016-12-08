@@ -102,7 +102,7 @@ index 0e03027..d53889b 100644
          next(err);
          return;
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
-index 76408ee..0459e67 100644
+index 75bbc53..e32afe2 100644
 --- a/books/model-cloudsql.js
 +++ b/books/model-cloudsql.js
 @@ -16,6 +16,7 @@

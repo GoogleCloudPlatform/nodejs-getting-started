@@ -131,7 +131,7 @@ index 22f6439..0e03027 100644
  /**
   * GET /books/add
 diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
-index b47a2e0..76408ee 100644
+index 228d6ad..75bbc53 100644
 --- a/books/model-cloudsql.js
 +++ b/books/model-cloudsql.js
 @@ -48,7 +48,6 @@ function list (limit, token, cb) {
