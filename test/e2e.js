@@ -17,6 +17,7 @@ const async = require(`async`);
 const utils = require(`nodejs-repo-tools`);
 
 const steps = [
+  // Standard steps
   require(`../1-hello-world/test/config`),
   require(`../2-structured-data/test/config`),
   require(`../3-binary-data/test/config`),
@@ -24,9 +25,8 @@ const steps = [
   require(`../5-logging/test/config`),
   require(`../6-pubsub/test/config`),
   require(`../7-gce/test/config`)
-];
 
-const workerSteps = [
+  // Worker steps
   require(`../6-pubsub/test/config.worker`),
   require(`../7-gce/test/config.worker`)
 ];
@@ -64,22 +64,15 @@ function tryToFinish (numTests, steps, done) {
 
 before((done) => {
 
-  // Delete steps
-  async.eachSeries(steps, (config, cb) => {
+  // Delete existing versions
+  async.eachSeries(allSteps, (config, cb) => {
     utils.deleteVersion(config, () => {
-      setTimeout(cb, 500);
-    });
-  }, done);
-
-  // Delete worker steps
-  async.eachSeries(workerSteps, (config, cb) => {
-    utils.deleteVersion(config, () => {
-      setTimeout(cb, 500);
+      cb();
     });
   }, done);
 })
 
-it(`should deploy all app steps`, (done) => {
+it(`should deploy all steps`, (done) => {
   let numTests = steps.length;
   async.eachLimit(steps, 3, (config, cb) => {
 
@@ -96,16 +89,4 @@ it(`should deploy all app steps`, (done) => {
      });
     });
   }, done);
-});
-
-it(`should deploy all worker steps`, (done) => {
-  let numTests = steps.length;
-
-  workerSteps.forEach((config) => {
-    utils.testDeploy(config, (err) => {
-      config.err = err;
-      config.done = true;
-      tryToFinish(numTests, workerSteps, done);
-    });
-  });
 });
