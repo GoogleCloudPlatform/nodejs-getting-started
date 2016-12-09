@@ -13,6 +13,7 @@
 
 'use strict';
 
+const async = require(`async`);
 const utils = require(`nodejs-repo-tools`);
 
 const steps = [
@@ -50,34 +51,57 @@ function tryToFinish (numTests, steps, done) {
   console.log(`${errCount} errors so far...`);
   if (doneCount === numTests) {
     console.log(`All tests complete!`);
-    if (errCount) {
-      done(err || `Unknown failure!`);
-    } else {
-      done();
-    }
   } else {
     console.log(`${(numTests - doneCount)} deployments remaining...`);
   }
+
+  if (errCount) {
+    done(err || `Unknown failure!`);
+  } else {
+    done();
+  }
 }
 
-it(`should deploy all app steps`, (done) => {
-  let numTests = 0;
+before((done) => {
 
-  steps.forEach((config) => {
-    numTests++;
+  // Delete steps
+  async.eachSeries(steps, (config, cb) => {
+    utils.deleteVersion(config, () => {
+      setTimeout(cb, 500);
+    });
+  }, done);
+
+  // Delete worker steps
+  async.eachSeries(workerSteps, (config, cb) => {
+    utils.deleteVersion(config, () => {
+      setTimeout(cb, 500);
+    });
+  }, done);
+})
+
+it(`should deploy all app steps`, (done) => {
+  let numTests = steps.length;
+  async.eachLimit(steps, 3, (config, cb) => {
+
+    // Attempt to deploy version
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
-      tryToFinish(numTests, steps, done);
+      tryToFinish(numTests, steps, () => {
+
+        // Delete version, if possible
+        utils.deleteVersion(config, () => {
+          cb();
+        });
+     });
     });
-  });
+  }, done);
 });
 
 it(`should deploy all worker steps`, (done) => {
-  let numTests = 0;
+  let numTests = steps.length;
 
   workerSteps.forEach((config) => {
-    numTests++;
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
