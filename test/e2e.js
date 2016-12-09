@@ -24,7 +24,7 @@ const steps = [
   require(`../4-auth/test/config`),
   require(`../5-logging/test/config`),
   require(`../6-pubsub/test/config`),
-  require(`../7-gce/test/config`)
+  require(`../7-gce/test/config`),
 
   // Worker steps
   require(`../6-pubsub/test/config.worker`),
@@ -63,30 +63,27 @@ function tryToFinish (numTests, steps, done) {
 }
 
 before((done) => {
-
   // Delete existing versions
-  async.eachSeries(allSteps, (config, cb) => {
+  async.eachSeries(steps, (config, cb) => {
     utils.deleteVersion(config, () => {
       cb();
     });
   }, done);
-})
+});
 
 it(`should deploy all steps`, (done) => {
   let numTests = steps.length;
   async.eachLimit(steps, 3, (config, cb) => {
-
     // Attempt to deploy version
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
       tryToFinish(numTests, steps, () => {
-
         // Delete version, if possible
         utils.deleteVersion(config, () => {
           cb();
         });
-     });
+      });
     });
   }, done);
 });
