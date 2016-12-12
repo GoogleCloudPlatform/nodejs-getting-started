@@ -64,8 +64,10 @@ function tryToFinish (numTests, steps, done) {
 
 before((done) => {
   // Delete existing versions
-  async.eachSeries(steps, (config, cb) => {
-    utils.deleteVersion(config, () => {
+  async.each(steps, (config, cb) => {
+    console.log(`Deletion queued for version ${config.test}...`);
+    utils.deleteVersion(config.test, config.cwd, () => {
+      console.log(`Deleted version ${config.test}!`);
       cb();
     });
   }, done);
@@ -73,14 +75,16 @@ before((done) => {
 
 it(`should deploy all steps`, (done) => {
   let numTests = steps.length;
-  async.eachLimit(steps, 3, (config, cb) => {
+  async.eachLimit(steps, 5, (config, cb) => {
     // Attempt to deploy version
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
       tryToFinish(numTests, steps, () => {
         // Delete version, if possible
-        utils.deleteVersion(config, () => {
+        console.log(`Deletion queued for version ${config.test}...`);
+        utils.deleteVersion(config.test, config.cwd, () => {
+          console.log(`Deleted version ${config.test}!`);
           cb();
         });
       });
