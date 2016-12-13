@@ -60,7 +60,7 @@
     "codecov": "^1.0.1",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
-    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#95bd40a5cdca33c7c17ad7471d04102d85659ad2",
     "proxyquire": "^1.7.10",
     "request": "^2.74.0",
     "semistandard": "^9.1.0",
