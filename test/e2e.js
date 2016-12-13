@@ -76,18 +76,10 @@ before((done) => {
 it(`should deploy all steps`, (done) => {
   let numTests = steps.length;
   async.eachLimit(steps, 5, (config, cb) => {
-    // Attempt to deploy version
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
-      tryToFinish(numTests, steps, () => {
-        // Delete version, if possible
-        console.log(`Deletion queued for version ${config.test}...`);
-        utils.deleteVersion(config.test, config.cwd, () => {
-          console.log(`Deleted version ${config.test}!`);
-          cb();
-        });
-      });
+      tryToFinish(numTests, steps, cb);
     });
   }, done);
 });
