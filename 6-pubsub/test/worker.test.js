@@ -24,7 +24,7 @@ const utils = require(`nodejs-repo-tools`);
 const projectId = process.env.GCLOUD_PROJECT;
 
 function getUrl () {
-  return `http://${config.test}-dot-worker-dot-${projectId}.appspot.com`;
+  return `http://${config.test}-dot-worker-dot-${projectId}.appspot-preview.com`;
 }
 
 function getRequest () {

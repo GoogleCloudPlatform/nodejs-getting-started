@@ -20,7 +20,7 @@ const test = `7-gce`;
 module.exports = {
   test: test,
   url: `http://localhost:8081`,
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
+  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
