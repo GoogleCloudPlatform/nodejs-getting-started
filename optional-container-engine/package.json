@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "mocha": "^2.4.5",
-    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
     "proxyquire": "^1.7.4",
     "semistandard": "^7.0.5",
     "sinon": "^1.17.3",
