@@ -39,10 +39,17 @@
     ]
   },
   "dependencies": {
+    "@google/cloud-debug": "^0.8.3",
+    "@google/cloud-trace": "^0.5.5",
+    "@google-cloud/datastore": "^0.1.1",
+    "@google-cloud/storage": "^0.1.1",
+    "@google-cloud/pubsub": "^0.2.0",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
+    "connect-memcached": "^0.2.0",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "express-winston": "^2.0.0",
     "gcloud": "~0.37.0",
     "jade": "^1.11.0",
@@ -52,6 +59,8 @@
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
     "nconf": "^0.8.4",
+    "passport": "^0.3.2",
+    "passport-google-oauth20": "^1.0.0",
     "prompt": "^1.0.0",
     "request": "^2.74.0",
     "winston": "^2.2.0"
