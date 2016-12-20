@@ -23,7 +23,7 @@ resources:
   properties:
     zone: us-central1-f
     machine-type: n1-standard-1
-    machine-image: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-8-jessie-v20151104
+    machine-image: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-8
     min-instances: 1
     max-instances: 10
     target-utilization: 0.6
