@@ -6,6 +6,5 @@ coverage/
 test/encrypted/nodejs-docs-samples.json
 *.iml
 .idea/
-config.json
 key.json
 yarn.lock
