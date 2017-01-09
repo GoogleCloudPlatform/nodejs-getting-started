@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "mocha": "^3.0.2",
-    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
+    "nodejs-repo-tools": "git+https://github.com/ace-n/nodejs-repo-tools.git",
     "supertest": "^2.0.0"
   },
   "engines": {
