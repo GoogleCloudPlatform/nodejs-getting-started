@@ -7,3 +7,4 @@ test/encrypted/nodejs-docs-samples.json
 *.iml
 .idea/
 key.json
+*/yarn.lock

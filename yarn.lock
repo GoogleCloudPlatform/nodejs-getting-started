@@ -2296,11 +2296,7 @@ mysql@^2.11.1:
     readable-stream "1.1.14"
     sqlstring "2.2.0"
 
-nan@^2.0.0:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.0.9.tgz#d02a770f46778842cceb94e17cab31ffc7234a05"
-
-nan@~2.3:
+nan@^2.0.0, nan@~2.3:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
 
@@ -2355,9 +2351,9 @@ node-uuid@~1.4.7:
   version "1.4.7"
   resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.7.tgz#6da5a17668c4b3dd59623bda11cf7fa4c1f60a6f"
 
-"nodejs-repo-tools@git+https://github.com/ace-n/nodejs-repo-tools.git":
+"nodejs-repo-tools@git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git":
   version "1.0.0"
-  resolved "git+https://github.com/ace-n/nodejs-repo-tools.git#6f3a29782c457976e6ec1551d0b3996db975ee4e"
+  resolved "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git#6f3a29782c457976e6ec1551d0b3996db975ee4e"
   dependencies:
     async "^1.5.2"
     proxyquire "^1.7.4"

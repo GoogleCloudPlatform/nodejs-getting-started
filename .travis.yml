@@ -17,6 +17,7 @@ node_js:
 - "4"
 
 cache:
+  yarn: true
   directories:
   - $HOME/gcloud/
   - node_modules/
