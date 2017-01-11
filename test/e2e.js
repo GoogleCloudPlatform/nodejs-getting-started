@@ -13,19 +13,20 @@
 
 'use strict';
 
+const async = require(`async`);
 const utils = require(`nodejs-repo-tools`);
 
 const steps = [
+  // Standard steps
   require(`../1-hello-world/test/config`),
   require(`../2-structured-data/test/config`),
   require(`../3-binary-data/test/config`),
   require(`../4-auth/test/config`),
   require(`../5-logging/test/config`),
   require(`../6-pubsub/test/config`),
-  require(`../7-gce/test/config`)
-];
+  require(`../7-gce/test/config`),
 
-const workerSteps = [
+  // Worker steps
   require(`../6-pubsub/test/config.worker`),
   require(`../7-gce/test/config.worker`)
 ];
@@ -50,38 +51,35 @@ function tryToFinish (numTests, steps, done) {
   console.log(`${errCount} errors so far...`);
   if (doneCount === numTests) {
     console.log(`All tests complete!`);
-    if (errCount) {
-      done(err || `Unknown failure!`);
-    } else {
-      done();
-    }
   } else {
     console.log(`${(numTests - doneCount)} deployments remaining...`);
   }
+
+  if (errCount) {
+    done(err || `Unknown failure!`);
+  } else {
+    done();
+  }
 }
 
-it(`should deploy all app steps`, (done) => {
-  let numTests = 0;
-
-  steps.forEach((config) => {
-    numTests++;
-    utils.testDeploy(config, (err) => {
-      config.err = err;
-      config.done = true;
-      tryToFinish(numTests, steps, done);
+before((done) => {
+  // Delete existing versions
+  async.each(steps, (config, cb) => {
+    console.log(`Deletion queued for version ${config.test}...`);
+    utils.deleteVersion(config.test, config.cwd, () => {
+      console.log(`Deleted version ${config.test}!`);
+      cb();
     });
-  });
+  }, done);
 });
 
-it(`should deploy all worker steps`, (done) => {
-  let numTests = 0;
-
-  workerSteps.forEach((config) => {
-    numTests++;
+it(`should deploy all steps`, (done) => {
+  let numTests = steps.length;
+  async.eachLimit(steps, 5, (config, cb) => {
     utils.testDeploy(config, (err) => {
       config.err = err;
       config.done = true;
-      tryToFinish(numTests, workerSteps, done);
+      tryToFinish(numTests, steps, cb);
     });
-  });
+  }, done);
 });

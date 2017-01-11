@@ -10,7 +10,8 @@
     "cover": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- test/index.js -t 30000",
     "test": "npm run lint && npm run cover",
     "e2e": "mocha test/e2e.js -t 1800000",
-    "codecov": "cat ./coverage/lcov.info | codecov"
+    "codecov": "cat ./coverage/lcov.info | codecov",
+    "unify": "node scripts/unify"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -39,10 +40,17 @@
     ]
   },
   "dependencies": {
+    "@google-cloud/datastore": "^0.1.1",
+    "@google-cloud/pubsub": "^0.2.0",
+    "@google-cloud/storage": "^0.1.1",
+    "@google/cloud-debug": "^0.8.3",
+    "@google/cloud-trace": "^0.5.5",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
+    "connect-memcached": "^0.2.0",
     "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "express-winston": "^2.0.0",
     "gcloud": "~0.37.0",
     "jade": "^1.11.0",
@@ -52,6 +60,8 @@
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
     "nconf": "^0.8.4",
+    "passport": "^0.3.2",
+    "passport-google-oauth20": "^1.0.0",
     "prompt": "^1.0.0",
     "request": "^2.74.0",
     "winston": "^2.2.0"
@@ -60,7 +70,7 @@
     "codecov": "^1.0.1",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
-    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+    "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
     "proxyquire": "^1.7.10",
     "request": "^2.74.0",
     "semistandard": "^9.1.0",

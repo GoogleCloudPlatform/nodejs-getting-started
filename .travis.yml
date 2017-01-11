@@ -17,8 +17,10 @@ node_js:
 - "4"
 
 cache:
+  yarn: true
   directories:
   - $HOME/gcloud/
+  - node_modules/
   - 1-hello-world/node_modules/
   - 2-structured-data/node_modules/
   - 3-binary-data/node_modules/
@@ -26,6 +28,7 @@ cache:
   - 5-logging/node_modules/
   - 6-pubsub/node_modules/
   - 7-gce/node_modules/
+  - optional-container-engine/node_modules/
 
 env:
   global:
@@ -38,7 +41,7 @@ before_install:
   - npm set progress=false
 
 before_script:
-  - node scripts/install
+  - npm run unify
 
 after_success:
 - npm run codecov

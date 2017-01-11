@@ -22,6 +22,7 @@ module.exports = {
   cmd: `node`,
   args: [`app.js`],
   msg: `Bookshelf`,
+  port: 8086,
   env: {
     SUBSCRIPTION_NAME: `${test}-shared-worker-subscription`,
     TOPIC_NAME: `${test}-book-process-queue`
