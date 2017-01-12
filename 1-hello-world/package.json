@@ -8,7 +8,7 @@
     "start": "node app.js",
     "monitor": "nodemon app.js",
     "deploy": "gcloud app deploy app.yaml",
-    "test": "mocha test/index.js -t 30000"
+    "test": "ava test/index.js -t 30000"
   },
   "author": "Google Inc.",
   "contributors": [

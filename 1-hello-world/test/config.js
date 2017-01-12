@@ -21,5 +21,6 @@ module.exports = {
   cmd: `node`,
   args: [`app.js`],
   port: 8081,
+  url: `http://localhost:8081`,
   msg: `Hello, world!`
 };

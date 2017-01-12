@@ -1,0 +1,13 @@
+{
+	"MYSQL_USER": "user",
+	"MYSQL_PASSWORD": "pass",
+	"MYSQL_HOST": "127.0.0.1",
+	"MONGO_URL": "",
+	"GCLOUD_PROJECT": "nodejs-getting-started-tests",
+	"CLOUD_BUCKET": "nodejs-getting-started-tests",
+	"OAUTH2_CLIENT_ID": "foo",
+	"OAUTH2_CLIENT_SECRET": "bar",
+	"DATA_BACKEND": "datastore",
+	"SUBSCRIPTION_NAME": "shared-worker-subscription-7-gce",
+	"TOPIC_NAME": "book-process-queue-7-gce"
+}
