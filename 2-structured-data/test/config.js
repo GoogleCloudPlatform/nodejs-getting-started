@@ -21,5 +21,6 @@ module.exports = {
   cmd: `node`,
   args: [`app.js`],
   port: 8082,
+  url: `http://localhost:8082`,
   msg: `Bookshelf`
 };

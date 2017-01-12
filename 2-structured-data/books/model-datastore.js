@@ -40,8 +40,8 @@ const kind = 'Book';
 //     property: value
 //   }
 function fromDatastore (obj) {
-  obj.data.id = obj.key.id;
-  return obj.data;
+  obj.id = obj[Datastore.KEY].id;
+  return obj;
 }
 
 // Translates from the application's format to the datastore's
@@ -155,6 +155,7 @@ function read (id, cb) {
 }
 
 function _delete (id, cb) {
+  console.log(kind, id)
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.delete(key, cb);
 }

@@ -15,12 +15,12 @@
 
 const config = require(`./config`);
 const utils = require(`nodejs-repo-tools`);
+const test = require(`ava`);
 
-describe(`${config.test}/`, () => {
+test.cb(`${config.test}/`, (t) => {
   if (!process.env.E2E_TESTS) {
-    it(`should install dependencies`, (done) => {
-      utils.testInstallation(config, done);
-    }).timeout(120 * 1000);
+    utils.testInstallation(config, t.end);
   }
-  require(`./app.test`);
 });
+
+require(`./app.test`);

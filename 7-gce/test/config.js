@@ -23,6 +23,7 @@ module.exports = {
   args: [`app.js`],
   msg: `Bookshelf`,
   port: 8087,
+  url: `http://localhost:8087`,
   env: {
     SUBSCRIPTION_NAME: `${test}-shared-worker-subscription`,
     TOPIC_NAME: `${test}-book-process-queue`

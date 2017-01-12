@@ -13,60 +13,59 @@
 
 'use strict';
 
-const assert = require(`assert`);
+const test = require(`ava`);
 const config = require(`./config`);
 const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
-  describe(`api.js`, () => {
-    let ORIG_DATA_BACKEND;
-    let id;
+  let ORIG_DATA_BACKEND;
+  let id;
 
-    before(() => {
-      const appConfig = require(`../config`);
-      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
-      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
-    });
+  test.before(() => {
+    const appConfig = require(`../config`);
+    ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
+  });
 
-    it(`should create a book`, (done) => {
+  test.serial.cb(`should create a book`, (t) => {
+    utils.getRequest(config)
+      .post(`/api/books`)
+      .send({ title: `beep` })
+      .expect(200)
+      .expect((response) => {
+        id = response.body.id;
+        t.truthy(response.body.id);
+        t.is(response.body.title, `beep`);
+      })
+      .end(t.end);
+  });
+
+  test.serial.cb(`should list books`, (t) => {
+    // Give Datastore time to become consistent
+    setTimeout(() => {
       utils.getRequest(config)
-        .post(`/api/books`)
-        .send({ title: `beep` })
+        .get(`/api/books`)
         .expect(200)
         .expect((response) => {
-          id = response.body.id;
-          assert.ok(response.body.id);
-          assert.equal(response.body.title, `beep`);
+          t.true(Array.isArray(response.body.items));
+          t.true(response.body.items.length >= 1);
         })
-        .end(done);
-    });
+        .end(t.end);
+    }, 1000);
+  });
 
-    it(`should list books`, (done) => {
-      // Give Datastore time to become consistent
-      setTimeout(() => {
-        utils.getRequest(config)
-          .get(`/api/books`)
-          .expect(200)
-          .expect((response) => {
-            assert.ok(Array.isArray(response.body.items));
-            assert.ok(response.body.items.length >= 1);
-          })
-          .end(done);
-      }, 1000);
-    });
+  test.serial.cb(`should delete a book`, (t) => {
+    utils.getRequest(config)
+      .delete(`/api/books/${id}/`)
+      //.expect(200)
+      .expect((response) => {
+        t.is(response.text, `OK`);
+      })
+      .end(t.end);
+  });
 
-    it(`should delete a book`, (done) => {
-      utils.getRequest(config)
-        .delete(`/api/books/${id}`)
-        .expect(200)
-        .expect((response) => {
-          assert.equal(response.text, `OK`);
-        })
-        .end(done);
-    });
-
-    after(() => {
-      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
-    });
+  test.always.after(() => {
+    require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
   });
 };
+
