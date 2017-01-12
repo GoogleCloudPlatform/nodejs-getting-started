@@ -26,6 +26,32 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
+"@google-cloud/common@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-0.11.0.tgz#5c94674a1ea9a4939865e342f0c1b909ca04e980"
+  dependencies:
+    array-uniq "^1.0.2"
+    arrify "^1.0.0"
+    concat-stream "^1.5.0"
+    create-error-class "^3.0.2"
+    dot-prop "^2.4.0"
+    duplexify "^3.2.0"
+    ent "^2.2.0"
+    extend "^3.0.0"
+    google-auto-auth "^0.5.0"
+    google-proto-files "^0.8.0"
+    grpc "^1.0.0"
+    is "^3.0.1"
+    log-driver "^1.2.5"
+    methmeth "^1.0.0"
+    modelo "^4.2.0"
+    request "^2.70.0"
+    retry-request "^1.3.0"
+    split-array-stream "^1.0.0"
+    stream-events "^1.0.1"
+    string-format-obj "^1.0.0"
+    through2 "^2.0.0"
+
 "@google-cloud/common@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-0.4.0.tgz#2742140c5130e10571578148ee0c035383a7f2c7"
@@ -51,14 +77,14 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
-"@google-cloud/datastore@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/datastore/-/datastore-0.1.1.tgz#fbff4a2694bff5f802ee872ebe8837deff8cf681"
+"@google-cloud/datastore@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@google-cloud/datastore/-/datastore-0.6.1.tgz#4e34b55e0c8ad20b58040e3ee958660e12276de9"
   dependencies:
-    "@google-cloud/common" "^0.1.0"
+    "@google-cloud/common" "^0.11.0"
     arrify "^1.0.0"
     concat-stream "^1.5.0"
-    create-error-class "^2.0.1"
+    create-error-class "^3.0.2"
     extend "^3.0.0"
     is "^3.0.1"
     lodash.flatten "^4.2.0"
@@ -357,7 +383,7 @@ async@1.x, async@^1.4.0, async@^1.4.2, async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.1:
+async@^2.0.1, async@^2.1.2:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/async/-/async-2.1.4.tgz#2d2160c7788032e4dd6cbe2502f1f9a2c8f6cde4"
   dependencies:
@@ -1190,9 +1216,9 @@ browser-stdout@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/browser-stdout/-/browser-stdout-1.3.0.tgz#f351d32969d32fa5d7a5567154263d928ae3bd1f"
 
-bson@~1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/bson/-/bson-1.0.3.tgz#a3b66f724b1673067efc32249e1151205d3ba854"
+bson@~1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-1.0.4.tgz#93c10d39eaa5b58415cbc4052f3e53e562b0b72c"
 
 buf-compare@^1.0.0:
   version "1.0.1"
@@ -1390,7 +1416,7 @@ cli-spinners@^0.1.2:
 
 cli-truncate@^0.2.0:
   version "0.2.1"
-  resolved "http://registry.npmjs.org/cli-truncate/-/cli-truncate-0.2.1.tgz#9f15cfbb0705005369216c626ac7d05ab90dd574"
+  resolved "https://registry.yarnpkg.com/cli-truncate/-/cli-truncate-0.2.1.tgz#9f15cfbb0705005369216c626ac7d05ab90dd574"
   dependencies:
     slice-ansi "0.0.4"
     string-width "^1.0.1"
@@ -1631,7 +1657,7 @@ create-error-class@^2.0.0, create-error-class@^2.0.1:
     capture-stack-trace "^1.0.0"
     inherits "^2.0.1"
 
-create-error-class@^3.0.1:
+create-error-class@^3.0.1, create-error-class@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/create-error-class/-/create-error-class-3.0.2.tgz#06be7abef947a3f14a30fd610671d401bca8b7b6"
   dependencies:
@@ -2304,13 +2330,21 @@ form-data@1.0.0-rc3:
     combined-stream "^1.0.5"
     mime-types "^2.1.3"
 
-form-data@1.0.0-rc4, form-data@~1.0.0-rc4:
+form-data@1.0.0-rc4:
   version "1.0.0-rc4"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.0-rc4.tgz#05ac6bc22227b43e4461f488161554699d4f8b5e"
   dependencies:
     async "^1.5.2"
     combined-stream "^1.0.5"
     mime-types "^2.1.10"
+
+form-data@~1.0.0-rc4:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.1.tgz#ae315db9a4907fa065502304a66d7733475ee37c"
+  dependencies:
+    async "^2.0.1"
+    combined-stream "^1.0.5"
+    mime-types "^2.1.11"
 
 form-data@~2.1.1:
   version "2.1.2"
@@ -2484,7 +2518,7 @@ glob-parent@^2.0.0:
   dependencies:
     is-glob "^2.0.0"
 
-glob@7.0.5, glob@^7.0.0, glob@^7.0.3, glob@^7.0.5:
+glob@7.0.5:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.0.5.tgz#b4202a69099bbb4d292a7c1b95b6682b67ebdc95"
   dependencies:
@@ -2502,6 +2536,17 @@ glob@^5.0.10, glob@^5.0.15:
     inflight "^1.0.4"
     inherits "2"
     minimatch "2 || 3"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
+glob@^7.0.0, glob@^7.0.3, glob@^7.0.5:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.1.tgz#805211df04faaf1c63a3600306cdf5ade50b2ec8"
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.2"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
@@ -2530,7 +2575,7 @@ globby@^6.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-google-auth-library@^0.9.5, google-auth-library@^0.9.6, google-auth-library@^0.9.9:
+google-auth-library@^0.9.10, google-auth-library@^0.9.5, google-auth-library@^0.9.6, google-auth-library@^0.9.9:
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/google-auth-library/-/google-auth-library-0.9.10.tgz#4993dc07bb4834b8ca0350213a6873a32c6051b9"
   dependencies:
@@ -2566,6 +2611,15 @@ google-auto-auth@^0.2.1, google-auto-auth@^0.2.4, google-auto-auth@~0.2.4:
     google-auth-library "^0.9.6"
     object-assign "^3.0.0"
 
+google-auto-auth@^0.5.0:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/google-auto-auth/-/google-auto-auth-0.5.2.tgz#4c9f38574e69fb55a3c516ab0415e9fa33e67602"
+  dependencies:
+    async "^2.1.2"
+    google-auth-library "^0.9.10"
+    object-assign "^3.0.0"
+    request "^2.79.0"
+
 google-gax@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-0.6.0.tgz#c7a7bc7f2acf23ce685888dd81485b7924841b73"
@@ -2590,6 +2644,10 @@ google-proto-files@^0.2.1:
 google-proto-files@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/google-proto-files/-/google-proto-files-0.7.0.tgz#8fac0c23ace78e6bf4aab63ad2209c506569d710"
+
+google-proto-files@^0.8.0:
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/google-proto-files/-/google-proto-files-0.8.6.tgz#a7c8ddccd2179690d270b0ebfc42994d56da0ee6"
 
 got@^4.1.1:
   version "4.2.0"
@@ -2999,7 +3057,7 @@ is-plain-obj@^1.0.0:
 
 is-posix-bracket@^0.1.0:
   version "0.1.1"
-  resolved "https://registry.yarnpkg.com/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
+  resolved "http://registry.npmjs.org/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
 
 is-primitive@^2.0.0:
   version "2.0.0"
@@ -3358,6 +3416,10 @@ lodash@~4.11.1:
   version "4.11.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.11.2.tgz#d6b4338b110a58e21dae5cebcfdbbfd2bc4cdb3b"
 
+log-driver@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/log-driver/-/log-driver-1.2.5.tgz#7ae4ec257302fd790d557cb10c97100d857b0056"
+
 lolex@1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/lolex/-/lolex-1.3.2.tgz#7c3da62ffcb30f0f5a80a2566ca24e45d8a01f31"
@@ -3491,7 +3553,7 @@ mime-db@~1.25.0:
   version "1.25.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.25.0.tgz#c18dbd7c73a5dbf6f44a024dc0d165a1e7b1c392"
 
-mime-types@^2.0.8, mime-types@^2.1.10, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
+mime-types@^2.0.8, mime-types@^2.1.10, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.13.tgz#e07aaa9c6c6b9a7ca3012c69003ad25a39e92a88"
   dependencies:
@@ -3549,19 +3611,19 @@ moment@^2.15.0:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
 
-mongodb-core@2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.1.4.tgz#97f84cb126606c72585e66066ea3a05e9c20dc9b"
+mongodb-core@2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.1.5.tgz#bad12e90d5e1a895214e9bc3375ea3a1cd539ec0"
   dependencies:
-    bson "~1.0.3"
+    bson "~1.0.4"
     require_optional "~1.0.0"
 
 mongodb@^2.2.5:
-  version "2.2.19"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.19.tgz#9d84745f9369ff301df5a1790cf485375f1df7d7"
+  version "2.2.20"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.20.tgz#a6a00d33222874e0efe9eb598ebe8dbfeccf01d4"
   dependencies:
     es6-promise "3.2.1"
-    mongodb-core "2.1.4"
+    mongodb-core "2.1.5"
     readable-stream "2.1.5"
 
 ms@0.7.1:
@@ -3643,7 +3705,7 @@ node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
 
-node-pre-gyp@^0.6.0, node-pre-gyp@^0.6.29:
+node-pre-gyp@*, node-pre-gyp@^0.6.0, node-pre-gyp@^0.6.29:
   version "0.6.32"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.32.tgz#fc452b376e7319b3d255f5f34853ef6fd8fe1fd5"
   dependencies:
