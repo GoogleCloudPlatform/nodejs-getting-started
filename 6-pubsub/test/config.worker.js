@@ -19,7 +19,7 @@ const test = `6-pubsub`;
 
 module.exports = {
   test: test,
-  url: `http://localhost:8081`,
+  url: `http://localhost:8096`,
   demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
@@ -27,7 +27,7 @@ module.exports = {
   args: [`worker.js`],
   msg: `This worker has processed`,
   env: {
-    PORT: 8081,
+    PORT: 8096,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
     TOPIC_NAME: `book-process-queue-${test}`
   }

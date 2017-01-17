@@ -8,7 +8,7 @@
     "start": "node ${SCRIPT:-app.js}",
     "monitor": "nodemon ${SCRIPT:-app.js}",
     "deploy": "gcloud app deploy app.yaml worker.yaml",
-    "test": "mocha test/index.js -t 30000",
+    "test": "ava test/index.js -t 30s",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
   "author": "Google Inc.",
@@ -63,7 +63,7 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "mocha": "^3.0.2",
+    "ava": "^0.17.0",
     "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
     "proxyquire": "^1.7.10",
     "sinon": "^1.17.5",

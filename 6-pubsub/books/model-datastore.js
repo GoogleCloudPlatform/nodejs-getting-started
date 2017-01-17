@@ -39,8 +39,8 @@ const kind = 'Book';
 //     property: value
 //   }
 function fromDatastore (obj) {
-  obj.data.id = obj.key.id;
-  return obj.data;
+  obj.id = obj[Datastore.KEY].id;
+  return obj;
 }
 
 // Translates from the application's format to the datastore's

@@ -21,11 +21,9 @@ module.exports = (DATA_BACKEND) => {
   let ORIG_DATA_BACKEND;
   let id;
 
-  test.before(() => {
-    const appConfig = require(`../config`);
-    ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
-    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
-  });
+  const appConfig = require(`../config`);
+  ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+  appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
 
   test.serial.cb(`should create a book`, (t) => {
     utils.getRequest(config)

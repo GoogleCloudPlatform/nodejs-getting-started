@@ -17,11 +17,11 @@ const config = require(`./config`);
 const utils = require(`nodejs-repo-tools`);
 const test = require(`ava`);
 
-test.cb(`${config.test}/`, (t) => {
-  if (!process.env.E2E_TESTS) {
+if (!process.env.E2E_TESTS) {
+  test.cb(`${config.test}/`, (t) => {
     utils.testInstallation(config, t.end);
-  }
-});
+  });
+}
 
 require(`./app.test`);
 
