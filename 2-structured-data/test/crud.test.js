@@ -52,7 +52,7 @@ module.exports = (DATA_BACKEND) => {
         .expect((response) => {
           t.regex(response.text, expected);
         })
-        .end(done);
+        .end(t.end);
     }, 2000);
   });
 
@@ -65,7 +65,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   // delete the book
-  test.serial.cb(() => {
+  test.serial.cb((t) => {
     if (id) {
       utils.getRequest(config)
         .delete(`/api/books/${id}`)
@@ -107,7 +107,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   // delete the book
-  test.serial.cb(() => {
+  test.serial.cb((t) => {
     if (id) {
       utils.getRequest(config)
         .delete(`/api/books/${id}`)
@@ -133,7 +133,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should update a book`, (t) => {
-    const expected = /Redirecting to \/books/ + id  + /\//;
+    const expected = new RegExp(`Redirecting to /books/${id}`);
     utils.getRequest(config)
       .post(`/books/${id}/edit`)
       .send(`title=my%20other%20book`)
@@ -157,7 +157,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should show a book`, (t) => {
-    const expected = `<h4>my other book&nbsp;<small></small></h4>`;
+    const expected = /<h4>my other book&nbsp;<small><\/small><\/h4>/;
     utils.getRequest(config)
       .get(`/books/${id}`)
       .expect(200)
@@ -168,7 +168,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should delete a book`, (t) => {
-    const expected = `Redirecting to /books`;
+    const expected = /Redirecting to \/books/;
     utils.getRequest(config)
       .get(`/books/${id}/delete`)
       .expect(302)
@@ -176,7 +176,7 @@ module.exports = (DATA_BACKEND) => {
         id = undefined;
         t.regex(response.text, expected);
       })
-      .end(done);
+      .end(t.end);
   });
 
   // clean up

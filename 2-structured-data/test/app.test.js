@@ -20,12 +20,12 @@ const test = require(`ava`);
 const utils = require(`nodejs-repo-tools`);
 
 if (!process.env.E2E_TESTS) {
-  test.cb(`should run`, t => {
+  test.cb(`should run`, (t) => {
     utils.testLocalApp(config, t.end);
   });
 }
 
-test.cb(`should redirect / to /books`, t => {
+test.cb(`should redirect / to /books`, (t) => {
   utils.getRequest(config)
     .get(`/`)
     .expect(302)
@@ -35,7 +35,7 @@ test.cb(`should redirect / to /books`, t => {
     .end(t.end);
 });
 
-test(`should check config`, t => {
+test(`should check config`, (t) => {
   const nconfMock = {
     argv: sinon.stub().returnsThis(),
     env: sinon.stub().returnsThis(),

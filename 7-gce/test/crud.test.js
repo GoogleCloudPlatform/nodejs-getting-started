@@ -13,195 +13,183 @@
 
 'use strict';
 
-const assert = require(`assert`);
+const test = require(`ava`);
 const config = require(`./config`);
 const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
-  describe(`crud.js`, () => {
-    let ORIG_DATA_BACKEND;
+  let ORIG_DATA_BACKEND;
 
-    before(() => {
-      const appConfig = require(`../config`);
-      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
-      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
-    });
+  test.before(() => {
+    const appConfig = require(`../config`);
+    ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
+  });
 
-    describe(`/books`, () => {
-      let id;
+  let id;
 
-      // setup a book
-      before((done) => {
-        utils.getRequest(config)
-          .post(`/api/books`)
-          .send({ title: `my book` })
-          .expect(200)
-          .expect((response) => {
-            id = response.body.id;
-            assert.ok(response.body.id);
-            assert.equal(response.body.title, `my book`);
-          })
-          .end(done);
-      });
+  // setup a book
+  test.serial.cb(`should create a book`, (t) => {
+    utils.getRequest(config)
+      .post(`/api/books`)
+      .send({ title: `my book` })
+      .expect(200)
+      .expect((response) => {
+        id = response.body.id;
+        t.truthy(response.body.id);
+        t.is(response.body.title, `my book`);
+      })
+      .end(t.end);
+  });
 
-      it(`should show a list of books`, (done) => {
-        // Give Datastore time to become consistent
-        setTimeout(() => {
-          const expected = `<div class="media-body">`;
-          utils.getRequest(config)
-            .get(`/books`)
-            .expect(200)
-            .expect((response) => {
-              assert.equal(response.text.includes(expected), true);
-            })
-            .end(done);
-        }, 2000);
-      });
+  test.serial.cb(`should show a list of books`, (t) => {
+    // Give Datastore time to become consistent
+    setTimeout(() => {
+      const expected = /<div class="media-body">/;
+      utils.getRequest(config)
+        .get(`/books`)
+        .expect(200)
+        .expect((response) => {
+          t.regex(response.text, expected);
+        })
+        .end(t.end);
+    }, 2000);
+  });
 
-      it(`should handle error`, (done) => {
-        utils.getRequest(config)
-          .get(`/books`)
-          .query({ pageToken: `badrequest` })
-          .expect(500)
-          .end(done);
-      });
+  test.serial.cb(`should handle error`, (t) => {
+    utils.getRequest(config)
+      .get(`/books`)
+      .query({ pageToken: `badrequest` })
+      .expect(500)
+      .end(t.end);
+  });
 
-      // delete the book
-      after((done) => {
-        if (id) {
-          utils.getRequest(config)
-            .delete(`/api/books/${id}`)
-            .expect(200)
-            .end(done);
+  // delete the book
+  test.serial.cb((t) => {
+    if (id) {
+      utils.getRequest(config)
+        .delete(`/api/books/${id}`)
+        .expect(200)
+        .end(t.end);
+    } else {
+      t.end();
+    }
+  });
+
+  test.serial.cb(`should post to add book form`, (t) => {
+    const expected = /Redirecting to \/books\//;
+    utils.getRequest(config)
+      .post(`/books/add`)
+      .field(`title`, `my book`)
+      .expect(302)
+      .expect((response) => {
+        const location = response.headers.location;
+        const idPart = location.replace(`/books/`, ``);
+        if (require(`../config`).get(`DATA_BACKEND`) !== `mongodb`) {
+          id = parseInt(idPart, 10);
         } else {
-          done();
+          id = idPart;
         }
-      });
-    });
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-    describe(`/books/add`, () => {
-      let id;
+  test.serial.cb(`should show add book form`, (t) => {
+    const expected = /Add book/;
+    utils.getRequest(config)
+      .get(`/books/add`)
+      .expect(200)
+      .expect((response) => {
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-      it(`should post to add book form`, (done) => {
-        utils.getRequest(config)
-          .post(`/books/add`)
-          .field(`title`, `my book`)
-          .expect(302)
-          .expect((response) => {
-            const location = response.headers.location;
-            const idPart = location.replace(`/books/`, ``);
-            if (require(`../config`).get(`DATA_BACKEND`) !== `mongodb`) {
-              id = parseInt(idPart, 10);
-            } else {
-              id = idPart;
-            }
-            assert.equal(response.text.includes(`Redirecting to /books/`), true);
-          })
-          .end(done);
-      });
+  // delete the book
+  test.serial.cb((t) => {
+    if (id) {
+      utils.getRequest(config)
+        .delete(`/api/books/${id}`)
+        .expect(200)
+        .end(t.end);
+    } else {
+      t.end();
+    }
+  });
 
-      it(`should show add book form`, (done) => {
-        utils.getRequest(config)
-          .get(`/books/add`)
-          .expect(200)
-          .expect((response) => {
-            assert.equal(response.text.includes(`Add book`), true);
-          })
-          .end(done);
-      });
+  // setup a book
+  test.serial.cb((t) => {
+    utils.getRequest(config)
+      .post(`/api/books`)
+      .send({ title: `my book` })
+      .expect(200)
+      .expect((response) => {
+        id = response.body.id;
+        t.truthy(response.body.id);
+        t.is(response.body.title, `my book`);
+      })
+      .end(t.end);
+  });
 
-      // delete the book
-      after((done) => {
-        if (id) {
-          utils.getRequest(config)
-            .delete(`/api/books/${id}`)
-            .expect(200)
-            .end(done);
-        } else {
-          done();
-        }
-      });
-    });
+  test.serial.cb(`should update a book`, (t) => {
+    const expected = new RegExp(`Redirecting to /books/${id}`);
+    utils.getRequest(config)
+      .post(`/books/${id}/edit`)
+      .field(`title`, `my other book`)
+      .expect(302)
+      .expect((response) => {
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-    describe(`/books/:book/edit & /books/:book`, () => {
-      let id;
+  test.serial.cb(`should show edit book form`, (t) => {
+    const expected =
+      /<input type="text" name="title" id="title" value="my other book" class="form-control">/;
+    utils.getRequest(config)
+      .get(`/books/${id}/edit`)
+      .expect(200)
+      .expect((response) => {
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-      // setup a book
-      before((done) => {
-        utils.getRequest(config)
-          .post(`/api/books`)
-          .send({ title: `my book` })
-          .expect(200)
-          .expect((response) => {
-            id = response.body.id;
-            assert.ok(response.body.id);
-            assert.equal(response.body.title, `my book`);
-          })
-          .end(done);
-      });
+  test.serial.cb(`should show a book`, (t) => {
+    const expected = /<h4>my other book&nbsp;<small><\/small><\/h4>/;
+    utils.getRequest(config)
+      .get(`/books/${id}`)
+      .expect(200)
+      .expect((response) => {
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-      it(`should update a book`, (done) => {
-        const expected = `Redirecting to /books/${id}`;
-        utils.getRequest(config)
-          .post(`/books/${id}/edit`)
-          .field(`title`, `my other book`)
-          .expect(302)
-          .expect((response) => {
-            assert.equal(response.text.includes(expected), true);
-          })
-          .end(done);
-      });
+  test.serial.cb(`should delete a book`, (t) => {
+    const expected = /Redirecting to \/books/;
+    utils.getRequest(config)
+      .get(`/books/${id}/delete`)
+      .expect(302)
+      .expect((response) => {
+        id = undefined;
+        t.regex(response.text, expected);
+      })
+      .end(t.end);
+  });
 
-      it(`should show edit book form`, (done) => {
-        const expected =
-          `<input type="text" name="title" id="title" value="my other book" class="form-control">`;
-        utils.getRequest(config)
-          .get(`/books/${id}/edit`)
-          .expect(200)
-          .expect((response) => {
-            assert.equal(response.text.includes(expected), true);
-          })
-          .end(done);
-      });
+  // clean up
+  test.always.after.cb((t) => {
+    require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
 
-      it(`should show a book`, (done) => {
-        const expected = `<h4>my other book&nbsp;<small></small></h4>`;
-        utils.getRequest(config)
-          .get(`/books/${id}`)
-          .expect(200)
-          .expect((response) => {
-            assert.equal(response.text.includes(expected), true);
-          })
-          .end(done);
-      });
-
-      it(`should delete a book`, (done) => {
-        const expected = `Redirecting to /books`;
-        utils.getRequest(config)
-          .get(`/books/${id}/delete`)
-          .expect(302)
-          .expect((response) => {
-            id = undefined;
-            assert.equal(response.text.includes(expected), true);
-          })
-          .end(done);
-      });
-
-      // clean up if necessary
-      after((done) => {
-        if (id) {
-          utils.getRequest(config)
-            .delete(`/api/books/${id}`)
-            .expect(200)
-            .end(done);
-        } else {
-          done();
-        }
-      });
-    });
-
-    after(() => {
-      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
-    });
+    if (id) {
+      utils.getRequest(config)
+        .delete(`/api/books/${id}`)
+        .expect(200)
+        .end(t.end);
+    } else {
+      t.end();
+    }
   });
 };
