@@ -39,6 +39,8 @@ env:
 before_install:
   - openssl aes-256-cbc -K $encrypted_06352980ac5c_key -iv $encrypted_06352980ac5c_iv -in key.json.enc -out key.json -d
   - npm set progress=false
+  - npm install @google-cloud/datastore # Yarn breaks this package, so use NPM
+  - npm install grpc # Yarn also breaks gRPC
 
 before_script:
   - npm run unify
