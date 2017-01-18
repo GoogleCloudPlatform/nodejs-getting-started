@@ -31,6 +31,6 @@ directories.forEach((dir) => {
   Object.assign(pkgSet, pkgJson.dependencies);
 });
 
-// Update root-level package.json (by shelling to npm)
+// Update root-level package.json (by shelling to yarn)
 const spawn = require('child_process').spawn;
-spawn(`npm`, [`install`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`)));
+spawn(`yarn`, [`add`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`)));
