@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
-    "mocha": "mocha test/index.js -t 30000",
-    "test": "nyc ava */test/index.js --timeout=10s",
+    "ava": "ava -s -t 30s --tap 1-hello-world/test/*.test.js 2-structured-data/test/*.test.js 3-binary-data/test/*.test.js | tap-dot",
+    "test": "nyc ava */test/index.js --timeout=10s | tap-dot",
     "e2e": "mocha test/e2e.js -t 1800000",
     "codecov": "cat ./coverage/lcov.info | codecov",
     "unify": "node scripts/unify"
@@ -38,48 +38,35 @@
       "it"
     ]
   },
+  "ava": {
+    "files": [
+      "1-hello-world/test/*.test.js",
+      "2-structured-data/test/*.test.js",
+      "3-binary-data/test/*.test.js"
+    ]
+  },
   "dependencies": {
-    "@google-cloud/datastore": "^0.6.1",
-    "@google-cloud/pubsub": "^0.2.0",
-    "@google-cloud/storage": "^0.1.1",
-    "@google/cloud-debug": "^0.8.3",
-    "@google/cloud-trace": "^0.5.5",
-    "async": "^2.0.1",
-    "body-parser": "^1.15.2",
-    "connect-memcached": "^0.2.0",
-    "cookie-session": "^2.0.0-alpha.1",
-    "express": "^4.14.0",
-    "express-session": "^1.14.0",
-    "express-winston": "^2.0.0",
-    "gcloud": "~0.37.0",
-    "jade": "^1.11.0",
-    "kerberos": "^0.0.21",
-    "lodash": "^4.14.2",
-    "mongodb": "^2.2.5",
-    "multer": "^1.2.0",
-    "mysql": "^2.11.1",
-    "nconf": "^0.8.4",
-    "passport": "^0.3.2",
-    "passport-google-oauth20": "^1.0.0",
-    "prompt": "^1.0.0",
-    "request": "^2.74.0",
-    "winston": "^2.2.0"
+    "@google-cloud/datastore": "0.6.1",
+    "@google-cloud/storage": "0.6.1",
+    "body-parser": "1.16.0",
+    "express": "4.14.0",
+    "jade": "1.11.0",
+    "lodash": "4.17.4",
+    "mongodb": "2.2.21",
+    "multer": "1.2.1",
+    "mysql": "2.12.0",
+    "nconf": "0.8.4",
+    "prompt": "1.0.0"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
-    "codecov": "^1.0.1",
-    "istanbul": "^0.4.4",
-    "mocha": "^3.0.2",
+    "ava": "0.17.0",
     "nodejs-repo-tools": "git+https://git@github.com/ace-n/nodejs-repo-tools.git",
-    "nyc": "^10.1.0",
-    "proxyquire": "^1.7.10",
-    "request": "^2.74.0",
-    "semistandard": "^9.1.0",
-    "shelljs": "^0.7.3",
-    "sinon": "^1.17.5",
-    "supertest": "^2.0.0"
+    "proxyquire": "1.7.10",
+    "shelljs": "0.7.3",
+    "sinon": "1.17.7",
+    "tap-dot": "1.0.5"
   },
   "engines": {
-    "node": ">=0.12.7"
+    "node": ">=4.3.2"
   }
 }

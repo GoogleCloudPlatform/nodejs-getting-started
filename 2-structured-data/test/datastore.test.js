@@ -13,14 +13,11 @@
 
 'use strict';
 
-const config = require(`./config`);
-const utils = require(`nodejs-repo-tools`);
 const test = require(`ava`);
 
-if (!process.env.E2E_TESTS) {
-  test.cb(`${config.test}/`, (t) => {
-    utils.testInstallation(config, t.end);
-  });
+if (require(`../config`).get(`DATA_BACKEND`) === `datastore` || process.env.TEST_DATASTORE) {
+  require(`./_api-tests`)(`datastore`);
+  require(`./_crud-tests`)(`datastore`);
+} else {
+  test(`Skipping Cloud Datastore tests...`, (t) => t.pass());
 }
-
-require(`./app.test`);

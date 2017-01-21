@@ -1,4 +1,4 @@
-'use strict';
+#!/usr/bin/env node
 
 // Copyright 2016, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+'use strict';
+
 const fs = require(`fs`);
 const path = require(`path`);
+const spawn = require('child_process').spawn;
 
 const PROJECT_ROOT = path.join(__dirname, `..`);
 
@@ -25,12 +28,25 @@ const directories = fs.readdirSync(PROJECT_ROOT)
 // Dedupe package.json dependencies
 // WARNING: This will fail if two different versions of the same package are required.
 let pkgSet = {};
-let pkgJson;
+let pkgDevSet = {};
 directories.forEach((dir) => {
-  pkgJson = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, dir, `package.json`)));
+  const pkgJson = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, dir, `package.json`)));
   Object.assign(pkgSet, pkgJson.dependencies);
+  Object.assign(pkgDevSet, pkgJson.devDependencies);
 });
 
 // Update root-level package.json (by shelling to yarn)
-const spawn = require('child_process').spawn;
-spawn(`yarn`, [`add`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`)));
+spawn(
+  `npm`,
+  [`install`, `--save`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`)),
+  {
+    cwd: PROJECT_ROOT
+  }
+);
+spawn(
+  `npm`,
+  [`install`, `--save-dev`].concat(Object.keys(pkgDevSet).map(pkg => `${pkg}@${pkgDevSet[pkg]}`)),
+  {
+    cwd: PROJECT_ROOT
+  }
+);

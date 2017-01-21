@@ -13,7 +13,7 @@
 
 `use strict`;
 
-const config = require(`./config`);
+const testConfig = require(`./_test-config`);
 const proxyquire = require(`proxyquire`).noPreserveCache();
 const sinon = require(`sinon`);
 const test = require(`ava`);
@@ -21,12 +21,12 @@ const utils = require(`nodejs-repo-tools`);
 
 if (!process.env.E2E_TESTS) {
   test.cb(`should run`, (t) => {
-    utils.testLocalApp(config, t.end);
+    utils.testLocalApp(testConfig, t.end);
   });
 }
 
 test.cb(`should redirect / to /books`, (t) => {
-  utils.getRequest(config)
+  utils.getRequest(testConfig)
     .get(`/`)
     .expect(302)
     .expect((response) => {

@@ -15,10 +15,9 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const config = require('../config');
 
 function getModel () {
-  return require(`./model-${config.get('DATA_BACKEND')}`);
+  return require(`./model-${require('../config').get('DATA_BACKEND')}`);
 }
 
 const router = express.Router();

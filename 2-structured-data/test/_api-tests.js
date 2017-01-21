@@ -13,20 +13,21 @@
 
 'use strict';
 
+const getRequest = require(`nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
-const config = require(`./config`);
-const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
-  let ORIG_DATA_BACKEND;
-  let id;
+  let originalDataBackend, id, testConfig, appConfig;
 
-  const appConfig = require(`../config`);
-  ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
-  appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
+  test.before(() => {
+    testConfig = require(`./_test-config`);
+    appConfig = require(`../config`);
+    originalDataBackend = appConfig.get(`DATA_BACKEND`);
+    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
+  });
 
   test.serial.cb(`should create a book`, (t) => {
-    utils.getRequest(config)
+    getRequest(testConfig)
       .post(`/api/books`)
       .send({ title: `beep` })
       .expect(200)
@@ -41,7 +42,7 @@ module.exports = (DATA_BACKEND) => {
   test.serial.cb(`should list books`, (t) => {
     // Give Datastore time to become consistent
     setTimeout(() => {
-      utils.getRequest(config)
+      getRequest(testConfig)
         .get(`/api/books`)
         .expect(200)
         .expect((response) => {
@@ -53,7 +54,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should delete a book`, (t) => {
-    utils.getRequest(config)
+    getRequest(testConfig)
       .delete(`/api/books/${id}/`)
       //.expect(200)
       .expect((response) => {
@@ -63,7 +64,6 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.always.after(() => {
-    require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
+    appConfig.set(`DATA_BACKEND`, originalDataBackend);
   });
 };
-

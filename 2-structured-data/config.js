@@ -25,10 +25,12 @@ nconf
   .env([
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
+    'INSTANCE_CONNECTION_NAME',
     'MONGO_URL',
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
+    'NODE_ENV',
     'PORT'
   ])
   // 3. Config file

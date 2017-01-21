@@ -8,7 +8,7 @@
     "start": "node app.js",
     "monitor": "nodemon app.js",
     "deploy": "gcloud app deploy app.yaml",
-    "test": "ava test/index.js -t 30s"
+    "test": "ava -t 30s test/*.test.js | tap-dot"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -37,12 +37,13 @@
     ]
   },
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "4.14.0"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
+    "ava": "0.17.0",
     "nodejs-repo-tools": "git+https://git@github.com/ace-n/nodejs-repo-tools.git",
-    "supertest": "^2.0.0"
+    "supertest": "2.0.1",
+    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"
