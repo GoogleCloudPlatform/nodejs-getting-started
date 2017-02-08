@@ -14,18 +14,23 @@
 'use strict';
 
 const path = require(`path`);
+const projectId = process.env.GCLOUD_PROJECT;
+const test = `optional`;
 
-const PORT = 8082;
+const PORT = 8098;
 
 module.exports = {
-  test: `2-structured-data`,
+  test: test,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
-  args: [`app.js`],
-  port: PORT,
-  env: {
-    PORT: PORT
-  },
+  args: [`worker.js`],
+  msg: `This worker has processed`,
   url: `http://localhost:${PORT}`,
-  msg: `Bookshelf`
+  env: {
+    PORT: PORT,
+    SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
+    TOPIC_NAME: `book-process-queue-${test}`
+  },
+  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
+  yaml: `worker.yaml`
 };

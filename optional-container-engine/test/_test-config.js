@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,20 +14,20 @@
 'use strict';
 
 const path = require(`path`);
-const projectId = process.env.GCLOUD_PROJECT;
-const test = `6-pubsub`;
+const test = `optional`;
+
+const PORT = 8088;
 
 module.exports = {
   test: test,
-  url: `http://localhost:8096`,
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
-  yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
-  args: [`worker.js`],
-  msg: `This worker has processed`,
+  args: [`app.js`],
+  msg: `Bookshelf`,
+  port: PORT,
+  url: `http://localhost:${PORT}`,
   env: {
-    PORT: 8096,
+    PORT: PORT,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
     TOPIC_NAME: `book-process-queue-${test}`
   }

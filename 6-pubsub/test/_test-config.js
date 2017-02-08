@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,13 +14,21 @@
 'use strict';
 
 const path = require(`path`);
+const test = `6-pubsub`;
+
+const PORT = 8086;
 
 module.exports = {
-  test: `4-auth`,
+  test: test,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
   args: [`app.js`],
-  port: 8084,
-  url: `http://localhost:8084`,
-  msg: `Bookshelf`
+  msg: `Bookshelf`,
+  port: PORT,
+  url: `http://localhost:${PORT}`,
+  env: {
+    PORT: PORT,
+    SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
+    TOPIC_NAME: `book-process-queue-${test}`
+  }
 };

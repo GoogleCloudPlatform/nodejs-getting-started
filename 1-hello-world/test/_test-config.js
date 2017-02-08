@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,12 +15,17 @@
 
 const path = require(`path`);
 
+const PORT = 8081;
+
 module.exports = {
   test: `1-hello-world`,
   cwd: path.resolve(path.join(__dirname, '../')),
   cmd: `node`,
   args: [`app.js`],
-  port: 8081,
-  url: `http://localhost:8081`,
+  port: PORT,
+  env: {
+    PORT: PORT
+  },
+  url: `http://localhost:${PORT}`,
   msg: `Hello, world!`
 };

@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,14 +13,11 @@
 
 'use strict';
 
-const path = require(`path`);
+const test = require(`ava`);
 
-module.exports = {
-  test: `5-logging`,
-  cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
-  port: 8085,
-  url: `http://localhost:8085`,
-  msg: `Bookshelf`
-};
+if (require(`../config`).get(`DATA_BACKEND`) === `datastore` || process.env.TEST_DATASTORE) {
+  require(`./_api-tests`)(`datastore`);
+  require(`./_crud-tests`)(`datastore`);
+} else {
+  test(`Skipping Cloud Datastore tests...`, (t) => t.pass());
+}

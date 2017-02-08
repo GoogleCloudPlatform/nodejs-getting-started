@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,7 +38,7 @@ const sessionConfig = {
 
 // In production use the App Engine Memcache instance to store session data,
 // otherwise fallback to the default MemoryStore in development.
-if (config.get('NODE_ENV') === 'production') {
+if (config.get('NODE_ENV') === 'production' && config.get('MEMCACHE_URL')) {
   sessionConfig.store = new MemcachedStore({
     hosts: [config.get('MEMCACHE_URL')]
   });

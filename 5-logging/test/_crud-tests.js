@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,24 +13,22 @@
 
 'use strict';
 
+const getRequest = require(`nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
-const config = require(`./config`);
-const utils = require(`nodejs-repo-tools`);
 
 module.exports = (DATA_BACKEND) => {
-  let ORIG_DATA_BACKEND;
+  let originalDataBackend, id, testConfig, appConfig;
 
   test.before(() => {
-    const appConfig = require(`../config`);
-    ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
+    testConfig = require(`./_test-config`);
+    appConfig = require(`../config`);
+    originalDataBackend = appConfig.get(`DATA_BACKEND`);
     appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
   });
 
-  let id;
-
   // setup a book
   test.serial.cb(`should create a book`, (t) => {
-    utils.getRequest(config)
+    getRequest(testConfig)
       .post(`/api/books`)
       .send({ title: `my book` })
       .expect(200)
@@ -46,7 +44,7 @@ module.exports = (DATA_BACKEND) => {
     // Give Datastore time to become consistent
     setTimeout(() => {
       const expected = /<div class="media-body">/;
-      utils.getRequest(config)
+      getRequest(testConfig)
         .get(`/books`)
         .expect(200)
         .expect((response) => {
@@ -57,7 +55,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should handle error`, (t) => {
-    utils.getRequest(config)
+    getRequest(testConfig)
       .get(`/books`)
       .query({ pageToken: `badrequest` })
       .expect(500)
@@ -65,9 +63,9 @@ module.exports = (DATA_BACKEND) => {
   });
 
   // delete the book
-  test.serial.cb((t) => {
+  test.serial.cb(`should delete a book`, (t) => {
     if (id) {
-      utils.getRequest(config)
+      getRequest(testConfig)
         .delete(`/api/books/${id}`)
         .expect(200)
         .end(t.end);
@@ -78,14 +76,14 @@ module.exports = (DATA_BACKEND) => {
 
   test.serial.cb(`should post to add book form`, (t) => {
     const expected = /Redirecting to \/books\//;
-    utils.getRequest(config)
+    getRequest(testConfig)
       .post(`/books/add`)
       .field(`title`, `my book`)
       .expect(302)
       .expect((response) => {
         const location = response.headers.location;
         const idPart = location.replace(`/books/`, ``);
-        if (require(`../config`).get(`DATA_BACKEND`) !== `mongodb`) {
+        if (DATA_BACKEND !== `mongodb`) {
           id = parseInt(idPart, 10);
         } else {
           id = idPart;
@@ -97,7 +95,7 @@ module.exports = (DATA_BACKEND) => {
 
   test.serial.cb(`should show add book form`, (t) => {
     const expected = /Add book/;
-    utils.getRequest(config)
+    getRequest(testConfig)
       .get(`/books/add`)
       .expect(200)
       .expect((response) => {
@@ -109,7 +107,7 @@ module.exports = (DATA_BACKEND) => {
   // delete the book
   test.serial.cb((t) => {
     if (id) {
-      utils.getRequest(config)
+      getRequest(testConfig)
         .delete(`/api/books/${id}`)
         .expect(200)
         .end(t.end);
@@ -120,7 +118,7 @@ module.exports = (DATA_BACKEND) => {
 
   // setup a book
   test.serial.cb((t) => {
-    utils.getRequest(config)
+    getRequest(testConfig)
       .post(`/api/books`)
       .send({ title: `my book` })
       .expect(200)
@@ -134,7 +132,7 @@ module.exports = (DATA_BACKEND) => {
 
   test.serial.cb(`should update a book`, (t) => {
     const expected = new RegExp(`Redirecting to /books/${id}`);
-    utils.getRequest(config)
+    getRequest(testConfig)
       .post(`/books/${id}/edit`)
       .field(`title`, `my other book`)
       .expect(302)
@@ -147,7 +145,7 @@ module.exports = (DATA_BACKEND) => {
   test.serial.cb(`should show edit book form`, (t) => {
     const expected =
       /<input type="text" name="title" id="title" value="my other book" class="form-control">/;
-    utils.getRequest(config)
+    getRequest(testConfig)
       .get(`/books/${id}/edit`)
       .expect(200)
       .expect((response) => {
@@ -158,7 +156,7 @@ module.exports = (DATA_BACKEND) => {
 
   test.serial.cb(`should show a book`, (t) => {
     const expected = /<h4>my other book&nbsp;<small><\/small><\/h4>/;
-    utils.getRequest(config)
+    getRequest(testConfig)
       .get(`/books/${id}`)
       .expect(200)
       .expect((response) => {
@@ -169,7 +167,7 @@ module.exports = (DATA_BACKEND) => {
 
   test.serial.cb(`should delete a book`, (t) => {
     const expected = /Redirecting to \/books/;
-    utils.getRequest(config)
+    getRequest(testConfig)
       .get(`/books/${id}/delete`)
       .expect(302)
       .expect((response) => {
@@ -181,10 +179,10 @@ module.exports = (DATA_BACKEND) => {
 
   // clean up
   test.always.after.cb((t) => {
-    require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
+    appConfig.set(`DATA_BACKEND`, originalDataBackend);
 
     if (id) {
-      utils.getRequest(config)
+      getRequest(testConfig)
         .delete(`/api/books/${id}`)
         .expect(200)
         .end(t.end);
