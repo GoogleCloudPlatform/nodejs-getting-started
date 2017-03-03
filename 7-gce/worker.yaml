@@ -12,9 +12,9 @@
 # limitations under the License.
 #
 # [START yaml]
-module: worker
+service: worker
 runtime: nodejs
-vm: true
+env: flex
 
 env_variables:
   SCRIPT: worker.js
