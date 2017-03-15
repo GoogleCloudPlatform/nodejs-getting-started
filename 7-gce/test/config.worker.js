@@ -27,7 +27,7 @@ module.exports = {
   args: [`worker.js`],
   msg: `This worker has processed`,
   env: {
-    PORT: 8081,
+    PORT: 8092,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
     TOPIC_NAME: `book-process-queue-${test}`
   }
