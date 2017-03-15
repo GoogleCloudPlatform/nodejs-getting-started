@@ -15,19 +15,20 @@
 
 const path = require(`path`);
 const projectId = process.env.GCLOUD_PROJECT;
-const test = `7-gce`;
+const test = `optional-container-engine-worker`;
+const port = 8093;
 
 module.exports = {
   test: test,
-  url: `http://localhost:8081`,
+  url: `http://localhost:${port}`,
   demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
   args: [`worker.js`],
   msg: `This worker has processed`,
+  port: port,
   env: {
-    PORT: 8081,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
     TOPIC_NAME: `book-process-queue-${test}`
   }
