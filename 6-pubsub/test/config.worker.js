@@ -15,7 +15,7 @@
 
 const path = require(`path`);
 const projectId = process.env.GCLOUD_PROJECT;
-const test = `6-pubsub`;
+const test = `6-pubsub-worker`;
 
 module.exports = {
   test: test,

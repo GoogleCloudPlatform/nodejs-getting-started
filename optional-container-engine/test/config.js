@@ -14,7 +14,7 @@
 'use strict';
 
 const path = require(`path`);
-const test = `7-gce`;
+const test = `optional-container-engine`;
 
 module.exports = {
   test: test,

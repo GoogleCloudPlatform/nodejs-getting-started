@@ -15,7 +15,7 @@
 
 const path = require(`path`);
 const projectId = process.env.GCLOUD_PROJECT;
-const test = `7-gce`;
+const test = `optional-container-engine-worker`;
 
 module.exports = {
   test: test,
