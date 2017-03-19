@@ -29,7 +29,8 @@ nconf
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
-    'PORT'
+    'PORT',
+    'NODE_ENV'
   ])
   // 3. Config file
   .file({ file: path.join(__dirname, 'config.json') })
