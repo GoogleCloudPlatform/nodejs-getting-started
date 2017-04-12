@@ -40,13 +40,13 @@
     ]
   },
   "dependencies": {
-    "express": "4.14.1"
+    "express": "~4.15.2"
   },
   "devDependencies": {
-    "ava": "0.18.1",
-    "nodejs-repo-tools": "git+https://git@github.com/ace-n/nodejs-repo-tools.git",
-    "supertest": "3.0.0",
-    "tap-dot": "1.0.5"
+    "ava": "~0.19.1",
+    "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
+    "supertest": "~3.0.0",
+    "tap-dot": "~1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"
