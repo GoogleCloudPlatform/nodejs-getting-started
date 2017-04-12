@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,7 +13,7 @@
 
 `use strict`;
 
-const config = require(`./config`);
+const testConfig = require(`./_test-config`);
 const proxyquire = require(`proxyquire`).noPreserveCache();
 const sinon = require(`sinon`);
 const test = require(`ava`);
@@ -21,12 +21,12 @@ const utils = require(`nodejs-repo-tools`);
 
 if (!process.env.E2E_TESTS) {
   test.cb(`should run`, (t) => {
-    utils.testLocalApp(config, t.end);
+    utils.testLocalApp(testConfig, t.end);
   });
 }
 
 test.cb(`should redirect / to /books`, (t) => {
-  utils.getRequest(config)
+  utils.getRequest(testConfig)
     .get(`/`)
     .expect(302)
     .expect((response) => {
@@ -59,7 +59,7 @@ test(`should check config`, (t) => {
   t.throws(testFunc, Error, getMsg(`GCLOUD_PROJECT`));
   nconfMock.GCLOUD_PROJECT = `project`;
 
-    t.throws(testFunc, Error, getMsg(`CLOUD_BUCKET`));
+  t.throws(testFunc, Error, getMsg(`CLOUD_BUCKET`));
   nconfMock.CLOUD_BUCKET = `bucket`;
 
   t.notThrows(testFunc);

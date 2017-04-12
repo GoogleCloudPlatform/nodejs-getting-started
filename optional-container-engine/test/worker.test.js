@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,7 +13,7 @@
 
 'use strict';
 
-const config = require(`./config.worker`);
+const testConfig = require(`./_test-config.worker`);
 const path = require(`path`);
 const proxyquire = require(`proxyquire`);
 const sinon = require(`sinon`);
@@ -24,7 +24,7 @@ const utils = require(`nodejs-repo-tools`);
 const projectId = process.env.GCLOUD_PROJECT;
 
 function getUrl () {
-  return `http://${config.test}-dot-worker-dot-${projectId}.appspot-preview.com`;
+  return `http://${testConfig.test}-dot-worker-dot-${projectId}.appspot-preview.com`;
 }
 
 function getRequest () {
@@ -36,12 +36,12 @@ function getRequest () {
 
 if (!process.env.E2E_TESTS) {
   test.serial.cb(`should run`, (t) => {
-    utils.testLocalApp(config, t.end);
+    utils.testLocalApp(testConfig, t.end);
   });
 }
 
 test.serial.cb(`should return number of processed books`, (t) => {
-  getRequest(config)
+  getRequest(testConfig)
     .get(`/`)
     .expect(200)
     .expect((response) => {
@@ -51,7 +51,7 @@ test.serial.cb(`should return number of processed books`, (t) => {
 });
 
 test.serial.cb(`should do a health check`, (t) => {
-  getRequest(config)
+  getRequest(testConfig)
     .get(`/_ah/health`)
     .expect(200)
     .expect((response) => {

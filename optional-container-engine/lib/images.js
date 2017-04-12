@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -67,7 +67,11 @@ function sendUploadToGCS (req, res, next) {
 
   const gcsname = Date.now() + req.file.originalname;
   const file = bucket.file(gcsname);
-  const stream = file.createWriteStream();
+  const stream = file.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype
+    }
+  });
 
   stream.on('error', (err) => {
     req.file.cloudStorageError = err;
@@ -84,15 +88,13 @@ function sendUploadToGCS (req, res, next) {
 }
 
 // Multer handles parsing multipart/form-data requests.
-// This instance is configured to store images in memory and re-name to avoid
-// conflicting with existing objects. This makes it straightforward to upload
-// to Cloud Storage.
-const multer = require('multer')({
-  inMemory: true,
-  fileSize: 5 * 1024 * 1024, // no larger than 5mb
-  rename: (fieldname, filename) => {
-    // generate a unique filename
-    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
+// This instance is configured to store images in memory.
+// This makes it straightforward to upload to Cloud Storage.
+const Multer = require('multer');
+const multer = Multer({
+  storage: Multer.MemoryStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // no larger than 5mb
   }
 });
 
