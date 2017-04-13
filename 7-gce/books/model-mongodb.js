@@ -167,7 +167,6 @@ function update (id, data, queueBook, cb) {
           background.queueBook(id);
         }
         read(id, cb);
-        return;
       }
     );
   });

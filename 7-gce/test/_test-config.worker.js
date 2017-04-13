@@ -31,7 +31,5 @@ module.exports = {
   env: {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
     TOPIC_NAME: `book-process-queue-${test}`
-  },
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
-  yaml: `worker.yaml`
+  }
 };

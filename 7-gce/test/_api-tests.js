@@ -67,4 +67,3 @@ module.exports = (DATA_BACKEND) => {
     appConfig.set(`DATA_BACKEND`, originalDataBackend);
   });
 };
-

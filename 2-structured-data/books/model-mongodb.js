@@ -141,7 +141,6 @@ function update (id, data, cb) {
           return;
         }
         read(id, cb);
-        return;
       }
     );
   });

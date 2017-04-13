@@ -363,7 +363,6 @@ test.serial(`should log error if cannot get topic`, (t) => {
     mocks.logging.error.calledOnce,
     `logging.error() should have been called`
   );
-  t
 });
 
 test.serial(`should log error if cannot publish message`, (t) => {
@@ -394,5 +393,4 @@ test.serial(`should log error if cannot publish message`, (t) => {
     mocks.topic.publish,
     `topic.publish() should have been called once`
   );
-  t
 });
