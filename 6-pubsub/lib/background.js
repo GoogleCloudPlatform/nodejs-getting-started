@@ -35,6 +35,7 @@ function getTopic (cb) {
     // topic already exists.
     if (err && err.code === 409) {
       cb(null, pubsub.topic(topicName));
+      return;
     }
     cb(err, topic);
   });
