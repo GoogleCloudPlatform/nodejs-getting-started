@@ -6,9 +6,11 @@
   "private": true,
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
-    "test": "ava -s -t 30s --tap **/*.test.js | tap-dot",
+    "ava": "ava -s -t 30s --tap **/*.test.js | tap-dot",
+    "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
-    "e2e": "mocha test/e2e.js -t 1800000"
+    "e2e": "mocha test/e2e.js -t 1800000",
+    "unify": "node scripts/unify"
   },
   "author": "Google Inc.",
   "contributors": [
