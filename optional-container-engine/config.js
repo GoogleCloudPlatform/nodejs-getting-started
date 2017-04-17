@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,6 +26,7 @@ nconf
     'CLOUD_BUCKET',
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
+    'MEMCACHE_URL',
     'MONGO_URL',
     'MONGO_COLLECTION',
     'MYSQL_USER',
@@ -70,9 +71,9 @@ nconf
     OAUTH2_CLIENT_SECRET: 'your-client-secret',
     OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
 
-    // Port the HTTP server
     PORT: 8080,
 
+    // Set this a secret string of your choosing
     SECRET: 'keyboardcat',
 
     SUBSCRIPTION_NAME: 'shared-worker-subscription',

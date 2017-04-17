@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,7 +38,6 @@ function getTopic (cb) {
       return;
     }
     cb(err, topic);
-    return;
   });
 }
 // [END topic]
@@ -66,8 +65,7 @@ function subscribe (cb) {
     }
 
     topic.subscribe(subscriptionName, {
-      autoAck: true,
-      reuseExisting: true
+      autoAck: true
     }, (err, sub) => {
       if (err) {
         cb(err);

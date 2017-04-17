@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,23 +17,20 @@ const extend = require('lodash').assign;
 const mysql = require('mysql');
 const config = require('../config');
 
-function getConnection () {
-  const options = {
-    user: config.get('MYSQL_USER'),
-    password: config.get('MYSQL_PASSWORD'),
-    database: 'bookshelf'
-  };
+const options = {
+  user: config.get('MYSQL_USER'),
+  password: config.get('MYSQL_PASSWORD'),
+  database: 'bookshelf'
+};
 
-  if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
-    options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
-  }
-
-  return mysql.createConnection(options);
+if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
+  options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
 }
+
+const connection = mysql.createConnection(options);
 
 function list (limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
-  const connection = getConnection();
   connection.query(
     'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
     (err, results) => {
@@ -45,13 +42,11 @@ function list (limit, token, cb) {
       cb(null, results, hasMore);
     }
   );
-  connection.end();
 }
 
 // [START listby]
 function listBy (userId, limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
-  const connection = getConnection();
   connection.query(
     'SELECT * FROM `books` WHERE `createdById` = ? LIMIT ? OFFSET ?',
     [userId, limit, token],
@@ -63,12 +58,10 @@ function listBy (userId, limit, token, cb) {
       const hasMore = results.length === limit ? token + results.length : false;
       cb(null, results, hasMore);
     });
-  connection.end();
 }
 // [END listby]
 
 function create (data, cb) {
-  const connection = getConnection();
   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
     if (err) {
       cb(err);
@@ -76,11 +69,9 @@ function create (data, cb) {
     }
     read(res.insertId, cb);
   });
-  connection.end();
 }
 
 function read (id, cb) {
-  const connection = getConnection();
   connection.query(
     'SELECT * FROM `books` WHERE `id` = ?', id, (err, results) => {
       if (err) {
@@ -96,11 +87,9 @@ function read (id, cb) {
       }
       cb(null, results[0]);
     });
-  connection.end();
 }
 
 function update (id, data, cb) {
-  const connection = getConnection();
   connection.query(
     'UPDATE `books` SET ? WHERE `id` = ?', [data, id], (err) => {
       if (err) {
@@ -109,13 +98,10 @@ function update (id, data, cb) {
       }
       read(id, cb);
     });
-  connection.end();
 }
 
 function _delete (id, cb) {
-  const connection = getConnection();
   connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
-  connection.end();
 }
 
 module.exports = {

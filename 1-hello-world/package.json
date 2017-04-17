@@ -1,14 +1,13 @@
 {
   "name": "nodejs-getting-started",
   "version": "1.0.0",
-  "description": "End to end sample for running Node.JS applications on Google Cloud Platform",
+  "description": "End to end sample for running Node.js applications on Google Cloud Platform",
   "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "monitor": "nodemon app.js",
-    "deploy": "gcloud app deploy app.yaml",
-    "test": "mocha test/index.js -t 30000"
+    "test": "ava -t 30s test/*.test.js | tap-dot",
+    "cover": "nyc --cache npm test; nyc report --reporter=html"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -23,9 +22,13 @@
     {
       "name": "Jason Dobry",
       "email": "jdobry@google.com"
+    },
+    {
+      "name": "Ace Nassri",
+      "email": "anassri@google.com"
     }
   ],
-  "license": "Apache Version 2.0",
+  "license": "Apache-2.0",
   "semistandard": {
     "globals": [
       "after",
@@ -37,12 +40,13 @@
     ]
   },
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "~4.15.2"
   },
   "devDependencies": {
-    "mocha": "^3.0.2",
+    "ava": "~0.19.1",
     "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
-    "supertest": "^2.0.0"
+    "supertest": "~3.0.0",
+    "tap-dot": "~1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"

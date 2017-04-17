@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,12 +14,11 @@
 'use strict';
 
 const express = require('express');
-const config = require('../config');
 const images = require('../lib/images');
 const oauth2 = require('../lib/oauth2');
 
 function getModel () {
-  return require(`./model-${config.get('DATA_BACKEND')}`);
+  return require(`./model-${require('../config').get('DATA_BACKEND')}`);
 }
 
 const router = express.Router();

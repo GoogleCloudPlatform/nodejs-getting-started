@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -77,7 +77,7 @@ function list (limit, token, cb) {
   });
 }
 
-function listBy (userid, limit, token, cb) {
+function listBy (userId, limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   if (isNaN(token)) {
     cb(new Error('invalid token'));
@@ -85,9 +85,10 @@ function listBy (userid, limit, token, cb) {
   }
   getCollection((err, collection) => {
     if (err) {
-      return err;
+      cb(err);
+      return;
     }
-    collection.find({createdById: userid})
+    collection.find({ createdById: userId })
       .skip(token)
       .limit(limit)
       .toArray((err, results) => {
@@ -168,7 +169,7 @@ function update (id, data, queueBook, cb) {
         if (queueBook) {
           background.queueBook(id);
         }
-        return read(id, cb);
+        read(id, cb);
       }
     );
   });

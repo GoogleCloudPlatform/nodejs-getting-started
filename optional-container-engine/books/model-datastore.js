@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,8 +39,8 @@ const kind = 'Book';
 //     property: value
 //   }
 function fromDatastore (obj) {
-  obj.data.id = obj.key.id;
-  return obj.data;
+  obj.id = obj[Datastore.KEY].id;
+  return obj;
 }
 
 // Translates from the application's format to the datastore's
@@ -97,7 +97,7 @@ function list (limit, token, cb) {
       cb(err);
       return;
     }
-    const hasMore = entities.length === limit ? nextQuery.startVal : false;
+    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }
@@ -115,7 +115,7 @@ function listBy (userId, limit, token, cb) {
       cb(err);
       return;
     }
-    const hasMore = entities.length === limit ? nextQuery.startVal : false;
+    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
     cb(null, entities.map(fromDatastore), hasMore);
   });
 }

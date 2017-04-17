@@ -1,4 +1,4 @@
-// Copyright 2015-2016, Google, Inc.
+// Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,10 +25,12 @@ nconf
   .env([
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
+    'INSTANCE_CONNECTION_NAME',
     'MONGO_URL',
     'MONGO_COLLECTION',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
+    'NODE_ENV',
     'PORT'
   ])
   // 3. Config file
@@ -52,7 +54,6 @@ nconf
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
-    // Port the HTTP server
     PORT: 8080
   });
 
