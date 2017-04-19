@@ -54,8 +54,10 @@ function sendUploadToGCS (req, res, next) {
 
   stream.on('finish', () => {
     req.file.cloudStorageObject = gcsname;
-    req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
-    next();
+    file.makePublic().then(() => {
+      req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
+      next();
+    });
   });
 
   stream.end(req.file.buffer);
