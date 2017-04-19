@@ -32,7 +32,7 @@ router.use((req, res, next) => {
 });
 
 /**
- * GET /books/add
+ * GET /books
  *
  * Display a page of books (up to ten at a time).
  */
