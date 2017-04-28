@@ -69,11 +69,11 @@ test.serial.cb(`should process a book`, (t) => {
   };
   const stubs = {
     './lib/logging': loggingStub,
-    '@google/cloud-trace': {
+    '@google-cloud/trace-agent': {
       start: sinon.stub(),
       '@noCallThru': true
     },
-    '@google/cloud-debug': {
+    '@google-cloud/debug-agent': {
       '@noCallThru': true
     }
   };
