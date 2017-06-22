@@ -17,13 +17,7 @@ const testConfig = require(`./_test-config`);
 const proxyquire = require(`proxyquire`).noPreserveCache();
 const sinon = require(`sinon`);
 const test = require(`ava`);
-const utils = require(`nodejs-repo-tools`);
-
-if (!process.env.E2E_TESTS) {
-  test.cb(`should run`, (t) => {
-    utils.testLocalApp(testConfig, t.end);
-  });
-}
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 test.cb(`should redirect / to /books`, (t) => {
   utils.getRequest(testConfig)

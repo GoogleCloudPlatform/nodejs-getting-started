@@ -13,7 +13,7 @@
 
 'use strict';
 
-const getRequest = require(`nodejs-repo-tools`).getRequest;
+const getRequest = require(`@google-cloud/nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
 
 module.exports = (DATA_BACKEND) => {
