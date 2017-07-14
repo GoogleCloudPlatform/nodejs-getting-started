@@ -15,12 +15,14 @@
 
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const stackdriverTransport = require('@google-cloud/logging-winston');
 
 const colorize = process.env.NODE_ENV !== 'production';
 
 // Logger to capture all requests and output them to the console.
 const requestLogger = expressWinston.logger({
   transports: [
+    new stackdriverTransport(),
     new winston.transports.Console({
       json: false,
       colorize: colorize
@@ -33,6 +35,7 @@ const requestLogger = expressWinston.logger({
 // Logger to capture any top-level errors and output json diagnostic info.
 const errorLogger = expressWinston.errorLogger({
   transports: [
+    new stackdriverTransport(),
     new winston.transports.Console({
       json: true,
       colorize: colorize
