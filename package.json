@@ -70,8 +70,8 @@
     "winston": "~2.3.1"
   },
   "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "^1.4.15",
     "ava": "~0.19.1",
-    "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
     "proxyquire": "~1.8.0",
     "sinon": "~2.3.4",
     "supertest": "~3.0.0",
