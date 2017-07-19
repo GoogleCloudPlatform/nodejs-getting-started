@@ -19,7 +19,7 @@ const proxyquire = require(`proxyquire`);
 const sinon = require(`sinon`);
 const supertest = require(`supertest`);
 const test = require(`ava`);
-const utils = require(`nodejs-repo-tools`);
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 const projectId = process.env.GCLOUD_PROJECT;
 
@@ -32,12 +32,6 @@ function getRequest () {
     return supertest(getUrl());
   }
   return supertest(proxyquire(path.join(__dirname, `../worker`), {}).app);
-}
-
-if (!process.env.E2E_TESTS) {
-  test.serial.cb(`should run`, (t) => {
-    utils.testLocalApp(testConfig, t.end);
-  });
 }
 
 test.serial.cb(`should return number of processed books`, (t) => {
