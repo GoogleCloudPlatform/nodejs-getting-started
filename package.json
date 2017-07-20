@@ -10,7 +10,8 @@
     "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "e2e": "mocha test/e2e.js -t 1800000",
-    "unify": "node scripts/unify"
+    "unify": "node scripts/unify",
+    "update-dependencies": "./scripts/update-dependencies.sh"
   },
   "author": "Google Inc.",
   "contributors": [
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^1.4.15",
     "ava": "~0.19.1",
+    "npm-check-updates": "^2.12.1",
     "proxyquire": "~1.8.0",
     "sinon": "~2.3.4",
     "supertest": "~3.0.0",
