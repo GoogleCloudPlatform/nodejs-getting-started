@@ -120,12 +120,11 @@ function processBook (bookId, callback) {
 // [START find]
 function findBookInfo (book, cb) {
   queryBooksApi(book.title, (err, r) => {
+    if (!err && !r.items) {
+      err = 'Not found';
+    }
     if (err) {
       cb(err);
-      return;
-    }
-    if (!r.items) {
-      cb('Not found');
       return;
     }
     const top = r.items[0];

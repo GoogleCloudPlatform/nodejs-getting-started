@@ -139,15 +139,14 @@ function create (data, cb) {
 function read (id, cb) {
   const key = ds.key([kind, parseInt(id, 10)]);
   ds.get(key, (err, entity) => {
-    if (err) {
-      cb(err);
-      return;
-    }
-    if (!entity) {
-      cb({
+    if (!err && !entity) {
+      err = {
         code: 404,
         message: 'Not found'
-      });
+      };
+    }
+    if (err) {
+      cb(err);
       return;
     }
     cb(null, fromDatastore(entity));
