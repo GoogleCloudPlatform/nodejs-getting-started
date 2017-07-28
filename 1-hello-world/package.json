@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "ava -t 30s test/*.test.js | tap-dot",
+    "e2e": "rm -rf node_modules/ &&  samples test build --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
+    "test": "samples test app",
     "cover": "nyc --cache npm test; nyc report --reporter=html"
   },
   "author": "Google Inc.",
@@ -28,6 +29,16 @@
       "email": "anassri@google.com"
     }
   ],
+  "cloud-repo-tools": {
+    "requiresKeyFile": true,
+    "requiresProjectId": true,
+    "test": {
+      "app": {
+        "args": ["app.js"],
+        "msg": "Hello, world!"
+      }
+    }
+  },
   "license": "Apache-2.0",
   "semistandard": {
     "globals": [
@@ -44,7 +55,7 @@
   },
   "devDependencies": {
     "ava": "~0.19.1",
-    "nodejs-repo-tools": "git+https://git@github.com/GoogleCloudPlatform/nodejs-repo-tools.git",
+    "@google-cloud/nodejs-repo-tools": "1.4.15",
     "supertest": "~3.0.0",
     "tap-dot": "~1.0.5"
   },
