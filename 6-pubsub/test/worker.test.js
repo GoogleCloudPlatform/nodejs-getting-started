@@ -19,22 +19,12 @@ const proxyquire = require(`proxyquire`);
 const sinon = require(`sinon`);
 const supertest = require(`supertest`);
 const test = require(`ava`);
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 const projectId = process.env.GCLOUD_PROJECT;
 
-function getUrl () {
-  return `http://${testConfig.test}-dot-worker-dot-${projectId}.appspot-preview.com`;
-}
-
-function getRequest () {
-  if (process.env.E2E_TESTS) {
-    return supertest(getUrl());
-  }
-  return supertest(proxyquire(path.join(__dirname, `../worker`), {}).app);
-}
-
 test.serial.cb(`should return number of processed books`, (t) => {
-  getRequest(testConfig)
+  utils.getRequest(testConfig)
     .get(`/`)
     .expect(200)
     .expect((response) => {
@@ -44,7 +34,7 @@ test.serial.cb(`should return number of processed books`, (t) => {
 });
 
 test.serial.cb(`should do a health check`, (t) => {
-  getRequest(testConfig)
+  utils.getRequest(testConfig)
     .get(`/_ah/health`)
     .expect(200)
     .expect((response) => {

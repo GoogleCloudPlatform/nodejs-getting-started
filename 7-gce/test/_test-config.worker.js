@@ -21,7 +21,7 @@ const port = 8092;
 module.exports = {
   test: test,
   url: `http://localhost:${port}`,
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot-preview.com`,
+  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `node`,
