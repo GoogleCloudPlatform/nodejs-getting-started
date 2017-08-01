@@ -72,15 +72,14 @@ function create (data, cb) {
 function read (id, cb) {
   connection.query(
     'SELECT * FROM `books` WHERE `id` = ?', id, (err, results) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-      if (!results.length) {
-        cb({
+      if (!err && !results.length) {
+        err = {
           code: 404,
           message: 'Not found'
-        });
+        };
+      }
+      if (err) {
+        cb(err);
         return;
       }
       cb(null, results[0]);
