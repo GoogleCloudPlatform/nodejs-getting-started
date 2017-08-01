@@ -8,3 +8,4 @@ test/encrypted/nodejs-docs-samples.json
 .idea/
 key.json
 .nyc_output
+repo-tools-cloudbuild.yaml

@@ -108,15 +108,15 @@ function read (id, cb) {
     collection.findOne({
       _id: new ObjectID(id)
     }, (err, result) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-      if (!result) {
-        cb({
+      if (!err && !result) {
+        err = {
           code: 404,
           message: 'Not found'
-        });
+        };
+        return;
+      }
+      if (err) {
+        cb(err);
         return;
       }
       cb(null, fromMongo(result));

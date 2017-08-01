@@ -32,6 +32,7 @@ function getDeps (directory) {
   const directories = fs.readdirSync(directory)
     .filter((dir) => fs.existsSync(path.join(directory, dir, `package.json`)));
 
+  // Get dependency versions
   let pkgJson;
   directories.forEach((dir) => {
     pkgJson = JSON.parse(fs.readFileSync(path.join(directory, dir, `package.json`)));

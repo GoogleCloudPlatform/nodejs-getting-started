@@ -54,7 +54,7 @@
     "express": "~4.15.2"
   },
   "devDependencies": {
-    "ava": "~0.19.1",
+    "ava": "~0.21.0",
     "@google-cloud/nodejs-repo-tools": "1.4.15",
     "supertest": "~3.0.0",
     "tap-dot": "~1.0.5"
