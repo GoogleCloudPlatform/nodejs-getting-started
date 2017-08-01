@@ -65,7 +65,7 @@ test.serial.cb(`should process a book`, (t) => {
       cb();
     }
   };
-  const worker = proxyquire(path.join(__dirname, `../worker`), stubs);
+  const worker = proxyquire(path.join(__dirname, `../worker`), stubs).mocks;
   const processBook = worker.processBook;
 
   processBook(1, (err, bookId) => {

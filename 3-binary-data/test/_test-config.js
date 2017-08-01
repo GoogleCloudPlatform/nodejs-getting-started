@@ -20,8 +20,7 @@ const PORT = 8083;
 module.exports = {
   test: `3-binary-data`,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
+  cmd: `app`,
   port: PORT,
   env: {
     PORT: PORT

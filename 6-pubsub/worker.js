@@ -175,8 +175,12 @@ function queryBooksApi (query, cb) {
 }
 // [END query]
 
-exports.app = app;
-exports.subscribe = subscribe;
-exports.processBook = processBook;
-exports.findBookInfo = findBookInfo;
-exports.queryBooksApi = queryBooksApi;
+app.mocks = {
+  subscribe: subscribe,
+  processBook: processBook,
+  findBookInfo: findBookInfo,
+  queryBooksApi: queryBooksApi
+}
+
+// Proxyquire requires this *exact* line, hence the "app.mocks" above
+module.exports = app

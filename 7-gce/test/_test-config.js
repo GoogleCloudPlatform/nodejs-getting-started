@@ -21,8 +21,7 @@ const PORT = 8087;
 module.exports = {
   test: test,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
+  cmd: `app`,
   msg: `Bookshelf`,
   port: PORT,
   url: `http://localhost:${PORT}`,

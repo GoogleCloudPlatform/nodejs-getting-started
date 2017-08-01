@@ -20,8 +20,7 @@ const PORT = 8084;
 module.exports = {
   test: `4-auth`,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
+  cmd: `app`,
   port: PORT,
   env: {
     PORT: PORT

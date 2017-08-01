@@ -24,8 +24,7 @@ module.exports = {
   demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`worker.js`],
+  cmd: `worker`,
   msg: `This worker has processed`,
   port: port,
   env: {
