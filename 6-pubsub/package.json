@@ -42,31 +42,6 @@
       }
     }
   },
-  "cloud-repo-tools-worker": {
-    "requiresKeyFile": true,
-    "requiresProjectId": true,
-    "test": {
-      "app": {
-        "args": [
-          "worker.js"
-        ],
-        "msg": "This worker has processed"
-      }
-    }
-  },
-  "cloud-repo-tools-health-check": {
-    "requiresKeyFile": true,
-    "requiresProjectId": true,
-    "test": {
-      "app": {
-        "args": [
-          "worker.js"
-        ],
-        "url": "/_ah/health/",
-        "msg": "ok"
-      }
-    }
-  },
   "license": "Apache-2.0",
   "semistandard": {
     "globals": [
