@@ -20,8 +20,7 @@ const PORT = 8085;
 module.exports = {
   test: `5-logging`,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
+  cmd: `app`,
   port: PORT,
   env: {
     PORT: PORT

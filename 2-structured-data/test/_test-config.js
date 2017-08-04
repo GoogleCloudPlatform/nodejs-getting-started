@@ -20,8 +20,7 @@ const PORT = 8082;
 module.exports = {
   test: `2-structured-data`,
   cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `node`,
-  args: [`app.js`],
+  cmd: `app`,
   port: PORT,
   env: {
     PORT: PORT
