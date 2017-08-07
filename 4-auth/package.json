@@ -54,7 +54,7 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/datastore": "~1.0.0",
+    "@google-cloud/datastore": "~1.1.0",
     "@google-cloud/storage": "~1.2.1",
     "body-parser": "~1.17.1",
     "connect-memcached": "~0.2.0",
@@ -69,13 +69,13 @@
     "passport": "~0.3.2",
     "passport-google-oauth20": "~1.0.0",
     "prompt": "~1.0.0",
-    "uglify-js": "3.0.26"
+    "uglify-js": "3.0.27"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "1.4.15",
+    "@google-cloud/nodejs-repo-tools": "1.4.16",
     "ava": "~0.21.0",
     "proxyquire": "~1.8.0",
-    "sinon": "~2.4.1",
+    "sinon": "~3.0.0",
     "tap-dot": "~1.0.5"
   },
   "engines": {
