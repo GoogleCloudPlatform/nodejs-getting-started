@@ -54,7 +54,7 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/datastore": "~1.0.0",
+    "@google-cloud/datastore": "~1.1.0",
     "@google-cloud/debug-agent": "~2.1.1",
     "@google-cloud/logging-winston": "^0.5.0",
     "@google-cloud/pubsub": "~0.13.0",
@@ -76,14 +76,14 @@
     "passport-google-oauth20": "~1.0.0",
     "prompt": "~1.0.0",
     "request": "~2.81.0",
-    "uglify-js": "3.0.26",
+    "uglify-js": "3.0.27",
     "winston": "~2.3.1"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "1.4.15",
+    "@google-cloud/nodejs-repo-tools": "1.4.16",
     "ava": "~0.21.0",
     "proxyquire": "~1.8.0",
-    "sinon": "~2.4.1",
+    "sinon": "~3.0.0",
     "supertest": "~3.0.0",
     "tap-dot": "~1.0.5"
   },

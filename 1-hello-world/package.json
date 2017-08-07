@@ -34,7 +34,9 @@
     "requiresProjectId": true,
     "test": {
       "app": {
-        "args": ["app.js"],
+        "args": [
+          "app.js"
+        ],
         "msg": "Hello, world!"
       }
     }
@@ -54,8 +56,8 @@
     "express": "~4.15.2"
   },
   "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "1.4.16",
     "ava": "~0.21.0",
-    "@google-cloud/nodejs-repo-tools": "1.4.15",
     "supertest": "~3.0.0",
     "tap-dot": "~1.0.5"
   },
