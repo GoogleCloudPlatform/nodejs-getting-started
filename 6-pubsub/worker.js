@@ -68,9 +68,9 @@ function subscribe () {
     if (err) {
       throw err;
     }
-    if (message.action === 'processBook') {
-      logging.info(`Received request to process book ${message.bookId}`);
-      processBook(message.bookId);
+    if (message.data.action === 'processBook') {
+      logging.info(`Received request to process book ${message.data.bookId}`);
+      processBook(message.data.bookId);
     } else {
       logging.warn('Unknown request', message);
     }
@@ -87,9 +87,6 @@ if (module === require.main) {
 // more information, and updating the database with the new information.
 // [START process]
 function processBook (bookId, callback) {
-  if (!callback) {
-    callback = logging.error;
-  }
   waterfall([
     // Load the current data
     (cb) => {
@@ -104,12 +101,16 @@ function processBook (bookId, callback) {
   ], (err) => {
     if (err) {
       logging.error('Error occurred', err);
-      callback(err);
+      if (callback) {
+        callback(err);
+      }
       return;
     }
     logging.info(`Updated book ${bookId}`);
     bookCount += 1;
-    callback();
+    if (callback) {
+      callback();
+    }
   });
 }
 // [END process]
@@ -180,7 +181,7 @@ app.mocks = {
   processBook: processBook,
   findBookInfo: findBookInfo,
   queryBooksApi: queryBooksApi
-}
+};
 
 // Proxyquire requires this *exact* line, hence the "app.mocks" above
-module.exports = app
+module.exports = app;
