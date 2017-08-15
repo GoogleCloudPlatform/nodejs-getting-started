@@ -11,7 +11,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-extends ../base.jade
+extends ../base.pug
 
 block content
   h3 Books
@@ -22,7 +22,7 @@ block content
 
   each book in books
     .media
-      a(href="/books/#{book.id}")
+      a(href=`/books/${book.id}`)
         .media-left
             img(src=book.imageUrl || "http://placekitten.com/g/128/192")
         .media-body
@@ -36,4 +36,4 @@ block content
     nav
       ul.pager
         li
-          a(href="?pageToken=#{encodeURIComponent(nextPageToken)}") More
+          a(href=`?pageToken=${encodeURIComponent(nextPageToken)}`) More

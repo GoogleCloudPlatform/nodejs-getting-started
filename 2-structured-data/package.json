@@ -57,7 +57,7 @@
     "@google-cloud/datastore": "~1.1.0",
     "body-parser": "~1.17.1",
     "express": "~4.15.2",
-    "jade": "~1.11.0",
+    "pug": "2.0.0-rc.3",
     "lodash": "~4.17.4",
     "mongodb": "~2.2.25",
     "mysql": "~2.14.0",

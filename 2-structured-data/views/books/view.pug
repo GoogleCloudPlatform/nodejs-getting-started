@@ -11,27 +11,24 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-extends ../base.jade
+extends ../base.pug
 
 block content
   h3 Book
     small
 
   .btn-group
-    a(href="/books/#{book.id}/edit", class='btn btn-primary btn-sm')
+    a(href=`/books/${book.id}/edit`, class='btn btn-primary btn-sm')
       i.glyphicon.glyphicon-edit
       span  Edit book
-    a(href="/books/#{book.id}/delete", class='btn btn-danger btn-sm')
+    a(href=`/books/${book.id}/delete`, class='btn btn-danger btn-sm')
       i.glyphicon.glyphicon-trash
       span  Delete book
 
   .media
-    .media-left
-      img(src=book.imageUrl || "http://placekitten.com/g/128/192")
     .media-body
       h4= book.title
         | &nbsp;
         small= book.publishedDate
       h5 By #{book.author||'unknown'}
       p= book.description
-      small Added by #{book.createdBy}

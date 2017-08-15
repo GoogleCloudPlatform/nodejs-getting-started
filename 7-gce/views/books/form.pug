@@ -11,12 +11,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-// [START form]
-extends ../base.jade
+extends ../base.pug
 
 block content
   h3 #{action} book
-  form(method="POST")
+  form(method="POST", enctype="multipart/form-data")
     .form-group
       label(for="title") Title
       input.form-control(type="text", name="title", id="title", value=book.title)
@@ -30,6 +29,15 @@ block content
       label(for="description") Description
       input.form-control(type="text", name="description", id="description", value=book.description)
     .form-group
+      label(for="image") Cover Image
+      input.form-control(type="file", name="image", id="image")
+    .form-group.hidden
+      label(for="imageUrl") Cover Image URL
+      input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
+    .form-group.hidden
+      label(for="createdBy") Created by
+      input.form-control(type="text", name="createdBy", id="createdBy", value=book.createdBy)
+    .form-group.hidden
+      label(for="createdById") Created by ID
+      input.form-control(type="text", name="createdById", id="createdById", value=book.createdById)
     button.btn.btn-success(type="submit") Save
-
-// [END form]

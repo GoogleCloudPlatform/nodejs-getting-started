@@ -11,7 +11,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-extends ../base.jade
+extends ../base.pug
 
 block content
   h3 #{action} book
@@ -34,10 +34,4 @@ block content
     .form-group.hidden
       label(for="imageUrl") Cover Image URL
       input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
-    .form-group.hidden
-      label(for="createdBy") Created by
-      input.form-control(type="text", name="createdBy", id="createdBy", value=book.createdBy)
-    .form-group.hidden
-      label(for="createdById") Created by ID
-      input.form-control(type="text", name="createdById", id="createdById", value=book.createdById)
     button.btn.btn-success(type="submit") Save
