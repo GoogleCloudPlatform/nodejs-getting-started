@@ -42,7 +42,7 @@ router.get('/', (req, res, next) => {
       next(err);
       return;
     }
-    res.render('books/list.jade', {
+    res.render('books/list.pug', {
       books: entities,
       nextPageToken: cursor
     });
@@ -56,7 +56,7 @@ router.get('/', (req, res, next) => {
  */
 // [START add_get]
 router.get('/add', (req, res) => {
-  res.render('books/form.jade', {
+  res.render('books/form.pug', {
     book: {},
     action: 'Add'
   });
@@ -94,7 +94,7 @@ router.get('/:book/edit', (req, res, next) => {
       next(err);
       return;
     }
-    res.render('books/form.jade', {
+    res.render('books/form.pug', {
       book: entity,
       action: 'Edit'
     });
@@ -129,7 +129,7 @@ router.get('/:book', (req, res, next) => {
       next(err);
       return;
     }
-    res.render('books/view.jade', {
+    res.render('books/view.pug', {
       book: entity
     });
   });

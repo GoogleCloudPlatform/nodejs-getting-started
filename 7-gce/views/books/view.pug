@@ -11,17 +11,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-extends ../base.jade
+extends ../base.pug
 
 block content
   h3 Book
     small
 
   .btn-group
-    a(href="/books/#{book.id}/edit", class='btn btn-primary btn-sm')
+    a(href=`/books/${book.id}/edit`, class='btn btn-primary btn-sm')
       i.glyphicon.glyphicon-edit
       span  Edit book
-    a(href="/books/#{book.id}/delete", class='btn btn-danger btn-sm')
+    a(href=`/books/${book.id}/delete`, class='btn btn-danger btn-sm')
       i.glyphicon.glyphicon-trash
       span  Delete book
 
