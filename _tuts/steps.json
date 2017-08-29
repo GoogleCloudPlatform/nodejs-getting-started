@@ -1,0 +1,50 @@
+{
+    "steps": [
+        {
+            "id": "start",
+            "name": "start",
+            "description": null
+        },
+        {
+            "id": "1-hello-world",
+            "name": "1-hello-world",
+            "description": null
+        },
+        {
+            "id": "2-structured-data",
+            "name": "2-structured-data",
+            "description": null
+        },
+        {
+            "id": "3-binary-data",
+            "name": "3-binary-data",
+            "description": null
+        },
+        {
+            "id": "4-auth",
+            "name": "4-auth",
+            "description": null
+        },
+        {
+            "id": "5-logging",
+            "name": "5-logging",
+            "description": null
+        },
+        {
+            "id": "6-pubsub",
+            "name": "6-pubsub",
+            "description": null
+        },
+        {
+            "id": "7-gce",
+            "name": "7-gce",
+            "description": null
+        },
+        {
+            "id": "optional-container-engine",
+            "name": "optional-container-engine",
+            "description": null
+        }
+    ],
+    "sha": false
+}

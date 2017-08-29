@@ -1,0 +1,253 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..62140ee
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,3 @@
++node_modules
++*.log
++config.json
+\ No newline at end of file
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..5c1f533
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,7 @@
++# 1 - Hello world
++
++This folder contains the sample code for the [Hello world][step-1]
++tutorial. Please refer to the tutorial for instructions on configuring, running,
++and deploying this sample.
++
++[step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
+diff --git a/app.js b/app.js
+new file mode 100644
+index 0000000..be60b7e
+--- /dev/null
++++ b/app.js
+@@ -0,0 +1,37 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const express = require('express');
++
++const app = express();
++
++// [START hello_world]
++// Say hello!
++app.get('/', (req, res) => {
++  res.status(200).send('Hello, world!');
++});
++// [END hello_world]
++
++if (module === require.main) {
++  // [START server]
++  // Start the server
++  const server = app.listen(process.env.PORT || 8080, () => {
++    const port = server.address().port;
++    console.log(`App listening on port ${port}`);
++  });
++  // [END server]
++}
++
++module.exports = app;
+diff --git a/app.yaml b/app.yaml
+new file mode 100644
+index 0000000..6cfa224
+--- /dev/null
++++ b/app.yaml
+@@ -0,0 +1,21 @@
++#	Copyright 2015-2016, Google, Inc.
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++# [START runtime]
++runtime: nodejs
++env: flex
++# [END runtime]
++
++# Temporary setting to keep gcloud from uploading node_modules
++skip_files:
++ - ^node_modules$
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000..a7f058f
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,50 @@
++{
++  "name": "nodejs-getting-started",
++  "version": "1.0.0",
++  "description": "End to end sample for running Node.JS applications on Google Cloud Platform",
++  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
++  "private": true,
++  "scripts": {
++    "start": "node app.js",
++    "monitor": "nodemon app.js",
++    "deploy": "gcloud app deploy app.yaml",
++    "test": "mocha test/index.js -t 30000"
++  },
++  "author": "Google Inc.",
++  "contributors": [
++    {
++      "name": "Jon Wayne Parrott",
++      "email": "jonwayne@google.com"
++    },
++    {
++      "name": "Jonathan Simon",
++      "email": "jbsimon@google.com"
++    },
++    {
++      "name": "Jason Dobry",
++      "email": "jdobry@google.com"
++    }
++  ],
++  "license": "Apache Version 2.0",
++  "semistandard": {
++    "globals": [
++      "after",
++      "afterEach",
++      "before",
++      "beforeEach",
++      "describe",
++      "it"
++    ]
++  },
++  "dependencies": {
++    "express": "^4.14.0"
++  },
++  "devDependencies": {
++    "mocha": "^3.0.2",
++    "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
++    "supertest": "^2.0.0"
++  },
++  "engines": {
++    "node": ">=4.3.2"
++  }
++}
+diff --git a/test/app.test.js b/test/app.test.js
+new file mode 100644
+index 0000000..0df0601
+--- /dev/null
++++ b/test/app.test.js
+@@ -0,0 +1,36 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const assert = require(`assert`);
++const config = require(`./config`);
++const utils = require(`nodejs-repo-tools`);
++
++describe(`app.js`, () => {
++  if (!process.env.E2E_TESTS) {
++    it(`should run`, (done) => {
++      utils.testLocalApp(config, done);
++    });
++  }
++
++  it(`should create an express app`, (done) => {
++    utils.getRequest(config)
++      .get(`/`)
++      .expect(200)
++      .expect((response) => {
++        assert.equal(response.text, config.msg);
++      })
++      .end(done);
++  });
++});
+diff --git a/test/config.js b/test/config.js
+new file mode 100644
+index 0000000..6c6afd8
+--- /dev/null
++++ b/test/config.js
+@@ -0,0 +1,24 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const path = require(`path`);
++
++module.exports = {
++  test: `1-hello-world`,
++  cwd: path.resolve(path.join(__dirname, '../')),
++  cmd: `node`,
++  args: [`app.js`],
++  msg: `Hello, world!`
++};
+diff --git a/test/index.js b/test/index.js
+new file mode 100644
+index 0000000..92884d9
+--- /dev/null
++++ b/test/index.js
+@@ -0,0 +1,26 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const config = require(`./config`);
++const utils = require(`nodejs-repo-tools`);
++
++describe(`${config.test}/`, () => {
++  if (!process.env.E2E_TESTS) {
++    it(`should install dependencies`, (done) => {
++      utils.testInstallation(config, done);
++    }).timeout(120 * 1000);
++  }
++  require(`./app.test`);
++});

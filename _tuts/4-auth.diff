@@ -1,0 +1,932 @@
+diff --git a/README.md b/README.md
+index 4c5d333..4346802 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,7 @@
+-# 3 - Cloud Storage
++# 4 - Authenticating users
+ 
+-This folder contains the sample code for the [Cloud Storage][step-3]
++This folder contains the sample code for the [Authenticating users][step-4]
+ tutorial. Please refer to the tutorial for instructions on configuring, running,
+ and deploying this sample.
+ 
+-[step-3]: https://cloud.google.com/nodejs/getting-started/using-cloud-storage
++[step-4]: https://cloud.google.com/nodejs/getting-started/authenticate-users
+diff --git a/app.js b/app.js
+index 0865e03..8a5b4be 100644
+--- a/app.js
++++ b/app.js
+@@ -15,6 +15,9 @@
+ 
+ const path = require('path');
+ const express = require('express');
++const session = require('express-session');
++const MemcachedStore = require('connect-memcached')(session);
++const passport = require('passport');
+ const config = require('./config');
+ 
+ const app = express();
+@@ -24,6 +27,31 @@ app.set('views', path.join(__dirname, 'views'));
+ app.set('view engine', 'jade');
+ app.set('trust proxy', true);
+ 
++// [START session]
++// Configure the session and session storage.
++const sessionConfig = {
++  resave: false,
++  saveUninitialized: false,
++  secret: config.get('SECRET'),
++  signed: true
++};
++
++// In production use the App Engine Memcache instance to store session data,
++// otherwise fallback to the default MemoryStore in development.
++if (config.get('NODE_ENV') === 'production') {
++  sessionConfig.store = new MemcachedStore({
++    hosts: [config.get('MEMCACHE_URL')]
++  });
++}
++
++app.use(session(sessionConfig));
++// [END session]
++
++// OAuth2
++app.use(passport.initialize());
++app.use(passport.session());
++app.use(require('./lib/oauth2').router);
++
+ // Books
+ app.use('/books', require('./books/crud'));
+ app.use('/api/books', require('./books/api'));
+diff --git a/books/api.js b/books/api.js
+index a5afadb..f23ad7f 100644
+--- a/books/api.js
++++ b/books/api.js
+@@ -107,7 +107,7 @@ router.delete('/:book', (req, res, next) => {
+ /**
+  * Errors on "/api/books/*" routes.
+  */
+-router.use((err, req, res, next) => {
++router.use(() => (err, req, res, next) => {
+   // Format error and forward to generic error handler for logging and
+   // responding to the request
+   err.response = {
+diff --git a/books/crud.js b/books/crud.js
+index bb2019e..22f6439 100644
+--- a/books/crud.js
++++ b/books/crud.js
+@@ -16,6 +16,7 @@
+ const express = require('express');
+ const config = require('../config');
+ const images = require('../lib/images');
++const oauth2 = require('../lib/oauth2');
+ 
+ function getModel () {
+   return require(`./model-${config.get('DATA_BACKEND')}`);
+@@ -23,6 +24,10 @@ function getModel () {
+ 
+ const router = express.Router();
+ 
++// Use the oauth middleware to automatically get the user's profile
++// information and expose login/logout URLs to templates.
++router.use(oauth2.template);
++
+ // Set Content-Type for all responses for these routes
+ router.use((req, res, next) => {
+   res.set('Content-Type', 'text/html');
+@@ -47,6 +52,28 @@ router.get('/', (req, res, next) => {
+   });
+ });
+ 
++// [START mine]
++// Use the oauth2.required middleware to ensure that only logged-in users
++// can access this handler.
++router.get('/mine', oauth2.required, (req, res, next) => {
++  getModel().listBy(
++    req.user.id,
++    10,
++    req.query.pageToken,
++    (err, entities, cursor, apiResponse) => {
++      if (err) {
++        next(err);
++        return;
++      }
++      res.render('books/list.jade', {
++        books: entities,
++        nextPageToken: cursor
++      });
++    }
++  );
++});
++// [END mine]
++
+ /**
+  * GET /books/add
+  *
+@@ -70,7 +97,15 @@ router.post(
+   images.multer.single('image'),
+   images.sendUploadToGCS,
+   (req, res, next) => {
+-    let data = req.body;
++    const data = req.body;
++
++    // If the user is logged in, set them as the creator of the book.
++    if (req.user) {
++      data.createdBy = req.user.displayName;
++      data.createdById = req.user.id;
++    } else {
++      data.createdBy = 'Anonymous';
++    }
+ 
+     // Was an image uploaded? If so, we'll use its public URL
+     // in cloud storage.
+@@ -118,7 +153,7 @@ router.post(
+   images.multer.single('image'),
+   images.sendUploadToGCS,
+   (req, res, next) => {
+-    let data = req.body;
++    const data = req.body;
+ 
+     // Was an image uploaded? If so, we'll use its public URL
+     // in cloud storage.
+diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
+index 001c7f3..228d6ad 100644
+--- a/books/model-cloudsql.js
++++ b/books/model-cloudsql.js
+@@ -48,6 +48,25 @@ function list (limit, token, cb) {
+   connection.end();
+ }
+ 
++// [START listby]
++function listBy (userId, limit, token, cb) {
++  token = token ? parseInt(token, 10) : 0;
++  const connection = getConnection();
++  connection.query(
++    'SELECT * FROM `books` WHERE `createdById` = ? LIMIT ? OFFSET ?',
++    [userId, limit, token],
++    (err, results) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      const hasMore = results.length === limit ? token + results.length : false;
++      cb(null, results, hasMore);
++    });
++  connection.end();
++}
++// [END listby]
++
+ function create (data, cb) {
+   const connection = getConnection();
+   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
+@@ -102,6 +121,7 @@ function _delete (id, cb) {
+ module.exports = {
+   createSchema: createSchema,
+   list: list,
++  listBy: listBy,
+   create: create,
+   read: read,
+   update: update,
+@@ -113,8 +133,8 @@ if (module === require.main) {
+   prompt.start();
+ 
+   console.log(
+-    `Running this script directly will allow you to initialize your mysql database.
+-    This script will not modify any existing tables.`);
++    `Running this script directly will allow you to initialize your mysql
++    database.\n This script will not modify any existing tables.\n`);
+ 
+   prompt.get(['user', 'password'], (err, result) => {
+     if (err) {
+diff --git a/books/model-datastore.js b/books/model-datastore.js
+index a8bbacf..f49cb5c 100644
+--- a/books/model-datastore.js
++++ b/books/model-datastore.js
+@@ -101,6 +101,26 @@ function list (limit, token, cb) {
+   });
+ }
+ 
++// Similar to ``list``, but only lists the books created by the specified
++// user.
++// [START listby]
++function listBy (userId, limit, token, cb) {
++  const q = ds.createQuery([kind])
++    .filter('createdById', '=', userId)
++    .limit(limit)
++    .start(token);
++
++  ds.runQuery(q, (err, entities, nextQuery) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
++    cb(null, entities.map(fromDatastore), hasMore);
++  });
++}
++// [END listby]
++
+ // Creates a new book or updates an existing book with new data. The provided
+ // data is automatically translated into Datastore format. The book will be
+ // queued for background processing.
+@@ -126,10 +146,6 @@ function update (id, data, cb) {
+   );
+ }
+ 
+-function create (data, cb) {
+-  update(null, data, cb);
+-}
+-
+ function read (id, cb) {
+   const key = ds.key([kind, parseInt(id, 10)]);
+   ds.get(key, (err, entity) => {
+@@ -154,9 +170,12 @@ function _delete (id, cb) {
+ }
+ 
+ module.exports = {
+-  create,
+-  read,
+-  update,
++  create: (data, cb) => {
++    update(null, data, cb);
++  },
++  read: read,
++  update: update,
+   delete: _delete,
+-  list
++  list: list,
++  listBy: listBy
+ };
+diff --git a/books/model-mongodb.js b/books/model-mongodb.js
+index 0c22846..c1a83c8 100644
+--- a/books/model-mongodb.js
++++ b/books/model-mongodb.js
+@@ -42,6 +42,7 @@ function getCollection (cb) {
+   }
+   MongoClient.connect(config.get('MONGO_URL'), (err, db) => {
+     if (err) {
++      console.log(err);
+       cb(err);
+       return;
+     }
+@@ -76,6 +77,34 @@ function list (limit, token, cb) {
+   });
+ }
+ 
++// [START listby]
++function listBy (userid, limit, token, cb) {
++  token = token ? parseInt(token, 10) : 0;
++  if (isNaN(token)) {
++    cb(new Error('invalid token'));
++    return;
++  }
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.find({createdById: userid})
++      .skip(token)
++      .limit(limit)
++      .toArray((err, results) => {
++        if (err) {
++          cb(err);
++          return;
++        }
++        const hasMore =
++          results.length === limit ? token + results.length : false;
++        cb(null, results.map(fromMongo), hasMore);
++      });
++  });
++}
++// [END listby]
++
+ function create (data, cb) {
+   getCollection((err, collection) => {
+     if (err) {
+@@ -156,5 +185,6 @@ module.exports = {
+   read: read,
+   update: update,
+   delete: _delete,
+-  list: list
++  list: list,
++  listBy: listBy
+ };
+diff --git a/config.js b/config.js
+index 44c5a53..558e389 100644
+--- a/config.js
++++ b/config.js
+@@ -30,7 +30,12 @@ nconf
+     'MONGO_COLLECTION',
+     'MYSQL_USER',
+     'MYSQL_PASSWORD',
+-    'PORT'
++    'NODE_ENV',
++    'OAUTH2_CLIENT_ID',
++    'OAUTH2_CLIENT_SECRET',
++    'OAUTH2_CALLBACK',
++    'PORT',
++    'SECRET'
+   ])
+   // 3. Config file
+   .file({ file: path.join(__dirname, 'config.json') })
+@@ -48,6 +53,9 @@ nconf
+     // This is the id of your project in the Google Cloud Developers Console.
+     GCLOUD_PROJECT: '',
+ 
++    // Connection url for the Memcache instance used to store session data
++    MEMCACHE_URL: 'localhost:11211',
++
+     // MongoDB connection string
+     // https://docs.mongodb.org/manual/reference/connection-string/
+     MONGO_URL: 'mongodb://localhost:27017',
+@@ -56,13 +64,21 @@ nconf
+     MYSQL_USER: '',
+     MYSQL_PASSWORD: '',
+ 
++    OAUTH2_CLIENT_ID: '',
++    OAUTH2_CLIENT_SECRET: '',
++    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
++
+     // Port the HTTP server
+-    PORT: 8080
++    PORT: 8080,
++
++    SECRET: 'keyboardcat'
+   });
+ 
+ // Check for required settings
+ checkConfig('GCLOUD_PROJECT');
+ checkConfig('CLOUD_BUCKET');
++checkConfig('OAUTH2_CLIENT_ID');
++checkConfig('OAUTH2_CLIENT_SECRET');
+ 
+ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
+   checkConfig('MYSQL_USER');
+diff --git a/lib/images.js b/lib/images.js
+index d16c00e..8207b41 100644
+--- a/lib/images.js
++++ b/lib/images.js
+@@ -26,17 +26,14 @@ const bucket = storage.bucket(CLOUD_BUCKET);
+ // Returns the public, anonymously accessable URL to a given Cloud Storage
+ // object.
+ // The object's ACL has to be set to public read.
+-// [START public_url]
+ function getPublicUrl (filename) {
+   return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
+ }
+-// [END public_url]
+ 
+ // Express middleware that will automatically pass uploads to Cloud Storage.
+ // req.file is processed and will have two new properties:
+ // * ``cloudStorageObject`` the object name in cloud storage.
+ // * ``cloudStoragePublicUrl`` the public url to the object.
+-// [START process]
+ function sendUploadToGCS (req, res, next) {
+   if (!req.file) {
+     return next();
+@@ -44,7 +41,6 @@ function sendUploadToGCS (req, res, next) {
+ 
+   const gcsname = Date.now() + req.file.originalname;
+   const file = bucket.file(gcsname);
+-
+   const stream = file.createWriteStream({
+     metadata: {
+       contentType: req.file.mimetype
+@@ -64,12 +60,10 @@ function sendUploadToGCS (req, res, next) {
+ 
+   stream.end(req.file.buffer);
+ }
+-// [END process]
+ 
+ // Multer handles parsing multipart/form-data requests.
+ // This instance is configured to store images in memory.
+ // This makes it straightforward to upload to Cloud Storage.
+-// [START multer]
+ const Multer = require('multer');
+ const multer = Multer({
+   storage: Multer.MemoryStorage,
+@@ -77,7 +71,6 @@ const multer = Multer({
+     fileSize: 5 * 1024 * 1024 // no larger than 5mb
+   }
+ });
+-// [END multer]
+ 
+ module.exports = {
+   getPublicUrl,
+diff --git a/lib/oauth2.js b/lib/oauth2.js
+new file mode 100644
+index 0000000..a4620ab
+--- /dev/null
++++ b/lib/oauth2.js
+@@ -0,0 +1,139 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const express = require('express');
++const config = require('../config');
++
++// [START setup]
++const passport = require('passport');
++const GoogleStrategy = require('passport-google-oauth20').Strategy;
++
++function extractProfile (profile) {
++  let imageUrl = '';
++  if (profile.photos && profile.photos.length) {
++    imageUrl = profile.photos[0].value;
++  }
++  return {
++    id: profile.id,
++    displayName: profile.displayName,
++    image: imageUrl
++  };
++}
++
++// Configure the Google strategy for use by Passport.js.
++//
++// OAuth 2-based strategies require a `verify` function which receives the
++// credential (`accessToken`) for accessing the Google API on the user's behalf,
++// along with the user's profile. The function must invoke `cb` with a user
++// object, which will be set at `req.user` in route handlers after
++// authentication.
++passport.use(new GoogleStrategy({
++  clientID: config.get('OAUTH2_CLIENT_ID'),
++  clientSecret: config.get('OAUTH2_CLIENT_SECRET'),
++  callbackURL: config.get('OAUTH2_CALLBACK'),
++  accessType: 'offline'
++}, (accessToken, refreshToken, profile, cb) => {
++  // Extract the minimal profile information we need from the profile object
++  // provided by Google
++  cb(null, extractProfile(profile));
++}));
++
++passport.serializeUser((user, cb) => {
++  cb(null, user);
++});
++passport.deserializeUser((obj, cb) => {
++  cb(null, obj);
++});
++// [END setup]
++
++const router = express.Router();
++
++// [START middleware]
++// Middleware that requires the user to be logged in. If the user is not logged
++// in, it will redirect the user to authorize the application and then return
++// them to the original URL they requested.
++function authRequired (req, res, next) {
++  if (!req.user) {
++    req.session.oauth2return = req.originalUrl;
++    return res.redirect('/auth/login');
++  }
++  next();
++}
++
++// Middleware that exposes the user's profile as well as login/logout URLs to
++// any templates. These are available as `profile`, `login`, and `logout`.
++function addTemplateVariables (req, res, next) {
++  res.locals.profile = req.user;
++  res.locals.login = `/auth/login?return=${encodeURIComponent(req.originalUrl)}`;
++  res.locals.logout = `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`;
++  next();
++}
++// [END middleware]
++
++// Begins the authorization flow. The user will be redirected to Google where
++// they can authorize the application to have access to their basic profile
++// information. Upon approval the user is redirected to `/auth/google/callback`.
++// If the `return` query parameter is specified when sending a user to this URL
++// then they will be redirected to that URL when the flow is finished.
++// [START authorize]
++router.get(
++  // Login url
++  '/auth/login',
++
++  // Save the url of the user's current page so the app can redirect back to
++  // it after authorization
++  (req, res, next) => {
++    if (req.query.return) {
++      req.session.oauth2return = req.query.return;
++    }
++    next();
++  },
++
++  // Start OAuth 2 flow using Passport.js
++  passport.authenticate('google', { scope: ['email', 'profile'] })
++);
++// [END authorize]
++
++// [START callback]
++router.get(
++  // OAuth 2 callback url. Use this url to configure your OAuth client in the
++  // Google Developers console
++  '/auth/google/callback',
++
++  // Finish OAuth 2 flow using Passport.js
++  passport.authenticate('google'),
++
++  // Redirect back to the original page, if any
++  (req, res) => {
++    const redirect = req.session.oauth2return || '/';
++    delete req.session.oauth2return;
++    res.redirect(redirect);
++  }
++);
++// [END callback]
++
++// Deletes the user's credentials and profile from the session.
++// This does not revoke any active tokens.
++router.get('/auth/logout', (req, res) => {
++  req.logout();
++  res.redirect('/');
++});
++
++module.exports = {
++  extractProfile: extractProfile,
++  router: router,
++  required: authRequired,
++  template: addTemplateVariables
++};
+diff --git a/package.json b/package.json
+index 91f7aa4..3ea0ac4 100644
+--- a/package.json
++++ b/package.json
+@@ -40,7 +40,9 @@
+   "dependencies": {
+     "@google-cloud/storage": "^0.1.1",
+     "body-parser": "^1.15.2",
++    "connect-memcached": "^0.2.0",
+     "express": "^4.14.0",
++    "express-session": "^1.14.0",
+     "@google-cloud/datastore": "^0.1.1",
+     "jade": "^1.11.0",
+     "kerberos": "^0.0.21",
+@@ -49,13 +51,16 @@
+     "multer": "^1.2.0",
+     "mysql": "^2.11.1",
+     "nconf": "^0.8.4",
++    "passport": "^0.3.2",
++    "passport-google-oauth20": "^1.0.0",
+     "prompt": "^1.0.0"
+   },
+   "devDependencies": {
+     "mocha": "^3.0.2",
+     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+     "proxyquire": "^1.7.10",
+-    "sinon": "^1.17.5"
++    "sinon": "^1.17.5",
++    "supertest": "^2.0.0"
+   },
+   "engines": {
+     "node": ">=4.3.2"
+diff --git a/test/app.test.js b/test/app.test.js
+index 96956f6..3178f25 100644
+--- a/test/app.test.js
++++ b/test/app.test.js
+@@ -57,12 +57,22 @@ describe(`app.js`, () => {
+       proxyquire(`../config`, { nconf: nconfMock });
+     }, Error, getMsg(`GCLOUD_PROJECT`));
+ 
+-    nconfMock.GCLOUD_PROJECT = 'project';
++    nconfMock.GCLOUD_PROJECT = `project`;
+     assert.throws(() => {
+       proxyquire(`../config`, { nconf: nconfMock });
+     }, Error, getMsg(`CLOUD_BUCKET`));
+ 
+     nconfMock.CLOUD_BUCKET = `bucket`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`OAUTH2_CLIENT_ID`));
++
++    nconfMock.OAUTH2_CLIENT_ID = `foo`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`OAUTH2_CLIENT_SECRET`));
++
++    nconfMock.OAUTH2_CLIENT_SECRET = `bar`;
+     assert.doesNotThrow(() => {
+       proxyquire(`../config`, { nconf: nconfMock });
+     });
+diff --git a/test/config.js b/test/config.js
+index 07a751b..09d5973 100644
+--- a/test/config.js
++++ b/test/config.js
+@@ -16,7 +16,7 @@
+ const path = require(`path`);
+ 
+ module.exports = {
+-  test: `3-binary-data`,
++  test: `4-auth`,
+   cwd: path.resolve(path.join(__dirname, `../`)),
+   cmd: `node`,
+   args: [`app.js`],
+diff --git a/test/index.js b/test/index.js
+index 7c479e2..ff0ceb4 100644
+--- a/test/index.js
++++ b/test/index.js
+@@ -39,4 +39,9 @@ describe(`${config.test}/`, () => {
+       require(`./crud.test`)(`mongodb`);
+     }
+   });
++  if (!process.env.E2E_TESTS) {
++    describe(`lib/`, () => {
++      require(`./oauth2.test`);
++    });
++  }
+ });
+diff --git a/test/oauth2.test.js b/test/oauth2.test.js
+new file mode 100644
+index 0000000..5d710c6
+--- /dev/null
++++ b/test/oauth2.test.js
+@@ -0,0 +1,211 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const assert = require(`assert`);
++const sinon = require(`sinon`);
++const request = require(`supertest`);
++const proxyquire = require(`proxyquire`).noPreserveCache();
++
++describe(`oauth2.js`, () => {
++  let passportMock;
++
++  beforeEach(() => {
++    passportMock = {
++      initialize: sinon.stub().returns((req, res, next) => {
++        next();
++      }),
++      session: sinon.stub().returns((req, res, next) => {
++        next();
++      }),
++      use: sinon.stub(),
++      serializeUser: sinon.stub(),
++      deserializeUser: sinon.stub(),
++      authenticate: sinon.stub().returns((req, res, next) => {
++        req.session.oauth2return = `/another/path`;
++        next();
++      })
++    };
++  });
++
++  it(`should start authorization`, (done) => {
++    passportMock.authenticate = sinon.stub().returns((req, res, next) => {
++      assert.equal(req.session.oauth2return, `/some/path`);
++      res.redirect(`/auth/google/callback?code=foo`);
++    });
++    const app = proxyquire(`../app`, {
++      passport: passportMock,
++      './lib/oauth2': proxyquire(`../lib/oauth2`, {
++        passport: passportMock
++      })
++    });
++    request(app)
++      .get(`/auth/login?return=%2Fsome%2Fpath`)
++      .expect(302)
++      .expect((response) => {
++        const text = response.text;
++        assert.equal(text.includes(`Redirecting to /auth/google/callback?code=foo`), true);
++        assert(passportMock.initialize.calledOnce);
++        assert(passportMock.session.calledOnce);
++        assert(passportMock.use.calledOnce);
++        assert(passportMock.serializeUser.calledOnce);
++        assert(passportMock.deserializeUser.calledOnce);
++        assert(passportMock.authenticate.calledTwice);
++        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
++        assert.deepEqual(
++          passportMock.authenticate.firstCall.args[1],
++          { scope: [`email`, `profile`] }
++        );
++        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
++        assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
++      })
++      .end(done);
++  });
++
++  it(`should finish authorization`, (done) => {
++    const oauth2 = proxyquire(`../lib/oauth2`, {
++      passport: passportMock
++    });
++    const app = proxyquire(`../app`, {
++      passport: passportMock,
++      './lib/oauth2': oauth2
++    });
++    request(app)
++      .get(`/auth/google/callback?code=foo`)
++      .expect(302)
++      .expect((response) => {
++        const text = response.text;
++        assert.equal(text.includes(`Redirecting to /another/path`), true);
++        assert(passportMock.initialize.calledOnce);
++        assert(passportMock.session.calledOnce);
++        assert(passportMock.use.calledOnce);
++        assert(passportMock.serializeUser.calledOnce);
++        assert(passportMock.deserializeUser.calledOnce);
++        assert(passportMock.authenticate.calledTwice);
++        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
++        assert.deepEqual(
++          passportMock.authenticate.firstCall.args[1],
++          { scope: [`email`, `profile`] }
++        );
++        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
++        assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
++        assert.deepEqual(
++          oauth2.extractProfile({
++            photos: [{ value: `image.jpg` }],
++            id: 1,
++            displayName: `Joe Developer`
++          }),
++          {
++            id: 1,
++            displayName: `Joe Developer`,
++            image: `image.jpg`
++          }
++        );
++        const serializeUser = passportMock.serializeUser.firstCall.args[0];
++        const deserializeUser = passportMock.deserializeUser.firstCall.args[0];
++        const user = {};
++        const obj = {};
++        serializeUser(user, (err, _user) => {
++          assert.equal(err, null);
++          assert.strictEqual(_user, user);
++        });
++        deserializeUser(obj, (err, _obj) => {
++          assert.equal(err, null);
++          assert.strictEqual(_obj, obj);
++        });
++      })
++      .end(done);
++  });
++
++  it(`should logout`, (done) => {
++    const app = proxyquire(`../app`, {
++      passport: passportMock,
++      './lib/oauth2': proxyquire(`../lib/oauth2`, {
++        passport: passportMock
++      })
++    });
++    request(app)
++      .get(`/auth/logout`)
++      .expect(302)
++      .expect((response) => {
++        const text = response.text;
++        assert.equal(text.includes(`Redirecting to /`), true);
++        assert(passportMock.initialize.calledOnce);
++        assert(passportMock.session.calledOnce);
++        assert(passportMock.use.calledOnce);
++        assert(passportMock.serializeUser.calledOnce);
++        assert(passportMock.deserializeUser.calledOnce);
++        assert(passportMock.authenticate.calledTwice);
++        assert.equal(passportMock.authenticate.firstCall.args[0], `google`);
++        assert.deepEqual(
++          passportMock.authenticate.firstCall.args[1],
++          { scope: [`email`, `profile`] }
++        );
++        assert.equal(passportMock.authenticate.secondCall.args[0], `google`);
++        assert.equal(passportMock.authenticate.secondCall.args[1], undefined);
++      })
++      .end(done);
++  });
++
++  it(`should require authentication`, () => {
++    const oauth2 = proxyquire(`../lib/oauth2`, {
++      passport: passportMock
++    });
++    const req = {
++      originalUrl: `/some/path`,
++      user: {},
++      session: {}
++    };
++    const res = {
++      redirect: sinon.stub()
++    };
++    const next = sinon.stub();
++    oauth2.required(req, res, next);
++    assert(next.calledOnce);
++
++    req.user = undefined;
++    oauth2.required(req, res, next);
++    assert(next.calledOnce);
++    assert.equal(req.session.oauth2return, req.originalUrl);
++    assert(res.redirect.calledOnce);
++    assert.equal(res.redirect.firstCall.args[0], `/auth/login`);
++  });
++
++  it(`should add template variables`, () => {
++    const oauth2 = proxyquire(`../lib/oauth2`, {
++      passport: passportMock
++    });
++    const req = {
++      originalUrl: `/some/path`,
++      user: {
++        id: 1,
++        displayName: `Joe Developer`,
++        image: `image.jpg`
++      }
++    };
++    const res = {
++      locals: {}
++    };
++    const next = sinon.stub();
++    oauth2.template(req, res, next);
++    assert(next.calledOnce);
++    assert.strictEqual(res.locals.profile, req.user);
++    assert.equal(
++      res.locals.login, `/auth/login?return=${encodeURIComponent(req.originalUrl)}`
++    );
++    assert.equal(
++      res.locals.logout, `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`
++    );
++  });
++});
+diff --git a/views/base.jade b/views/base.jade
+index 7a93bf7..e080fb4 100644
+--- a/views/base.jade
++++ b/views/base.jade
+@@ -27,6 +27,19 @@ html(lang="en")
+         ul.nav.navbar-nav
+           li
+             a(href="/books") Books
++          li
++            a(href="/books/mine") My Books
++
++        p.navbar-text.navbar-right
++          // [START profile]
++          if profile
++            if profile.image
++              img.img-circle(src=profile.image, width=24)
++            span #{profile.displayName} &nbsp;
++              a(href=logout) (logout)
++          else
++            a(href=login) Login
++          // [END profile]
+ 
+     .container
+       block content
+diff --git a/views/books/form.jade b/views/books/form.jade
+index 36a6308..8368619 100644
+--- a/views/books/form.jade
++++ b/views/books/form.jade
+@@ -13,7 +13,6 @@
+ 
+ extends ../base.jade
+ 
+-// [START form]
+ block content
+   h3 #{action} book
+   form(method="POST", enctype="multipart/form-data")
+@@ -35,5 +34,10 @@ block content
+     .form-group.hidden
+       label(for="imageUrl") Cover Image URL
+       input.form-control(type="text", name="imageUrl", id="imageUrl", value=book.imageUrl)
++    .form-group.hidden
++      label(for="createdBy") Created by
++      input.form-control(type="text", name="createdBy", id="createdBy", value=book.createdBy)
++    .form-group.hidden
++      label(for="createdById") Created by ID
++      input.form-control(type="text", name="createdById", id="createdById", value=book.createdById)
+     button.btn.btn-success(type="submit") Save
+-// [END form]
+diff --git a/views/books/view.jade b/views/books/view.jade
+index 55e7a45..fb0123b 100644
+--- a/views/books/view.jade
++++ b/views/books/view.jade
+@@ -11,7 +11,6 @@
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-// [START view]
+ extends ../base.jade
+ 
+ block content
+@@ -35,4 +34,4 @@ block content
+         small= book.publishedDate
+       h5 By #{book.author||'unknown'}
+       p= book.description
+-// [END view]
++      small Added by #{book.createdBy}

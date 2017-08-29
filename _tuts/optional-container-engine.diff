@@ -1,0 +1,860 @@
+diff --git a/app.yaml b/.dockerignore
+similarity index 77%
+rename from app.yaml
+rename to .dockerignore
+index 0e6e6db..38fd8d5 100644
+--- a/app.yaml
++++ b/.dockerignore
+@@ -1,4 +1,5 @@
+-#	Copyright 2015-2016, Google, Inc.
++# Copyright 2015 Google Inc. All Rights Reserved.
++#
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+@@ -10,10 +11,11 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+-#
+-runtime: nodejs
+-env: flex
+ 
+-# Temporary setting to keep gcloud from uploading node_modules
+-skip_files:
+- - ^node_modules$
++node_modules
++.dockerignore
++Dockerfile
++npm-debug.log
++.git
++.hg
++.svn
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..b2fbb74
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,20 @@
++# Dockerfile extending the generic Node image with application files for a
++# single application.
++FROM gcr.io/google_appengine/nodejs
++# Check to see if the the version included in the base runtime satisfies
++# '>=0.12.7', if not then do an npm install of the latest available
++# version that satisfies it.
++RUN /usr/local/bin/install_node '>=0.12.7'
++COPY . /app/
++# You have to specify "--unsafe-perm" with npm install
++# when running as root.  Failing to do this can cause
++# install to appear to succeed even if a preinstall
++# script fails, and may have other adverse consequences
++# as well.
++# This command will also cat the npm-debug.log file after the
++# build, if it exists.
++RUN npm install --unsafe-perm || \
++  ((if [ -f npm-debug.log ]; then \
++      cat npm-debug.log; \
++    fi) && false)
++CMD npm start
+diff --git a/Makefile b/Makefile
+new file mode 100644
+index 0000000..e16a240
+--- /dev/null
++++ b/Makefile
+@@ -0,0 +1,50 @@
++GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
++
++.PHONY: all
++all: deploy
++
++.PHONY: create-cluster
++create-cluster:
++	gcloud container clusters create bookshelf \
++		--scope "cloud-platform" \
++		--num-nodes 2
++	gcloud container clusters get-credentials bookshelf
++
++.PHONY: create-bucket
++create-bucket:
++	gsutil mb gs://$(GCLOUD_PROJECT)
++    gsutil defacl set public-read gs://$(GCLOUD_PROJECT)
++
++.PHONY: build
++build:
++	docker build -t gcr.io/$(GCLOUD_PROJECT)/bookshelf .
++
++.PHONY: push
++push: build
++	gcloud docker push gcr.io/$(GCLOUD_PROJECT)/bookshelf
++
++.PHONY: template
++template:
++	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-frontend.yaml
++	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-worker.yaml
++
++.PHONY: create-service
++create-service:
++	kubectl create -f bookshelf-service.yaml
++
++.PHONY: deploy-frontend
++deploy-frontend: push template
++	kubectl create -f bookshelf-frontend.yaml
++
++.PHONY: deploy-worker
++deploy-worker: push template
++	kubectl create -f bookshelf-worker.yaml
++
++.PHONY: deploy
++deploy: deploy-frontend deploy-worker create-service
++
++.PHONY: delete
++delete:
++	-kubectl delete -f bookshelf-frontend.yaml
++	-kubectl delete -f bookshelf-worker.yaml
++	-kubectl delete -f bookshelf-frontend.yaml
+diff --git a/README.md b/README.md
+index 3db900b..9a04e5d 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,5 @@
+-# 7 - Deploying to Google Compute Engine
++# Deploy Bookshelf to Container Engine/Kubernetes
+ 
+-This folder contains the sample code for the [Deploying to Google Compute Engine][step-7]
+-tutorial. Please refer to the tutorial for instructions on configuring, running,
+-and deploying this sample.
++This optional tutorial will walk you through how to deploy the Bookshelf sample application to [Google Container Engine](https://cloud.google.com/container-engine/). This tutorial is also applicable to [Kubernetes](http://kubernetes.io/) outside of Container Engine, but may require additional steps for external load balancing.
+ 
+-[step-7]: https://cloud.google.com/nodejs/getting-started/run-on-compute-engine
++Please refer to the [Tutorial](https://cloud.google.com/nodejs/tutorials/bookshelf-on-container-engine) for instructions on how to deploy this sample.
+diff --git a/books/model-datastore.js b/books/model-datastore.js
+index 63d2bb0..7ae8836 100644
+--- a/books/model-datastore.js
++++ b/books/model-datastore.js
+@@ -97,7 +97,7 @@ function list (limit, token, cb) {
+       cb(err);
+       return;
+     }
+-    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
++    const hasMore = entities.length === limit ? nextQuery.startVal : false;
+     cb(null, entities.map(fromDatastore), hasMore);
+   });
+ }
+@@ -115,7 +115,7 @@ function listBy (userId, limit, token, cb) {
+       cb(err);
+       return;
+     }
+-    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
++    const hasMore = entities.length === limit ? nextQuery.startVal : false;
+     cb(null, entities.map(fromDatastore), hasMore);
+   });
+ }
+diff --git a/books/model-mongodb.js b/books/model-mongodb.js
+index f9fee07..53699b5 100644
+--- a/books/model-mongodb.js
++++ b/books/model-mongodb.js
+@@ -166,8 +166,7 @@ function update (id, data, queueBook, cb) {
+         if (queueBook) {
+           background.queueBook(id);
+         }
+-        read(id, cb);
+-        return;
++        return read(id, cb);
+       }
+     );
+   });
+diff --git a/bookshelf-frontend.yaml b/bookshelf-frontend.yaml
+new file mode 100644
+index 0000000..af780ea
+--- /dev/null
++++ b/bookshelf-frontend.yaml
+@@ -0,0 +1,47 @@
++# Copyright 2016 Google Inc.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License
++
++# This file configures the bookshelf application frontend. The frontend serves
++# public web traffic.
++
++apiVersion: extensions/v1beta1
++kind: Deployment
++metadata:
++  name: bookshelf-frontend
++  labels:
++    app: bookshelf
++# The bookshelf frontend replica set ensures that at least 3
++# instances of the bookshelf app are running on the cluster.
++# For more info about Pods see:
++#   https://cloud.google.com/container-engine/docs/pods/
++spec:
++  replicas: 3
++  template:
++    metadata:
++      labels:
++        app: bookshelf
++        tier: frontend
++    spec:
++      containers:
++      - name: bookshelf-app
++        # Replace [GCLOUD_PROJECT] with your project ID or use `make template`.
++        image: gcr.io/[GCLOUD_PROJECT]/bookshelf
++        # This setting makes nodes pull the docker image every time before
++        # starting the pod. This is useful when debugging, but should be turned
++        # off in production.
++        imagePullPolicy: Always
++        # The bookshelf process listens on port 8080 for web traffic by default.
++        ports:
++        - name: http-server
++          containerPort: 8080
+diff --git a/bookshelf-service.yaml b/bookshelf-service.yaml
+new file mode 100644
+index 0000000..d6df813
+--- /dev/null
++++ b/bookshelf-service.yaml
+@@ -0,0 +1,36 @@
++# Copyright 2016 Google Inc.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License
++
++# The bookshelf service provides a load-balancing proxy over the bookshelf
++# frontend pods. By specifying the type as a 'LoadBalancer', Container Engine
++# will create an external HTTP load balancer.
++# For more information about Services see:
++#   https://cloud.google.com/container-engine/docs/services/
++# For more information about external HTTP load balancing see:
++#   https://cloud.google.com/container-engine/docs/load-balancer
++apiVersion: v1
++kind: Service
++metadata:
++  name: bookshelf-frontend
++  labels:
++    app: bookshelf
++    tier: frontend
++spec:
++  type: LoadBalancer
++  ports:
++  - port: 80
++    targetPort: http-server
++  selector:
++    app: bookshelf
++    tier: frontend
+diff --git a/bookshelf-worker.yaml b/bookshelf-worker.yaml
+new file mode 100644
+index 0000000..ab7f08d
+--- /dev/null
++++ b/bookshelf-worker.yaml
+@@ -0,0 +1,49 @@
++# Copyright 2016 Google Inc.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License
++
++# This file configures the bookshelf task worker. The worker is responsible
++# for processing book requests and updating book information.
++
++apiVersion: extensions/v1beta1
++kind: Deployment
++metadata:
++  name: bookshelf-worker
++  labels:
++    app: bookshelf
++# The bookshelf worker replica set ensures that at least 2 instances of the
++# bookshelf worker pod are running on the cluster.
++# For more info about Pods see:
++#   https://cloud.google.com/container-engine/docs/pods/
++spec:
++  replicas: 2
++  template:
++    metadata:
++      labels:
++        app: bookshelf
++        tier: worker
++    spec:
++      containers:
++      - name: bookshelf-app
++        # Replace [GCLOUD_PROJECT] with your project ID or use `make template`.
++        image: gcr.io/[GCLOUD_PROJECT]/bookshelf
++        # This setting makes nodes pull the docker image every time before
++        # starting the pod. This is useful when debugging, but should be turned
++        # off in production.
++        imagePullPolicy: Always
++        # The SCRIPT environment variable is used by `npm start` to control
++        # which script is executed. This tells npm start to use `worker.js`
++        # instead of the default `app.js`.
++        env:
++        - name: SCRIPT
++          value: worker.js
+diff --git a/config.js b/config.js
+index 6250ddf..05dd453 100644
+--- a/config.js
++++ b/config.js
+@@ -66,8 +66,8 @@ nconf
+     MYSQL_USER: '',
+     MYSQL_PASSWORD: '',
+ 
+-    OAUTH2_CLIENT_ID: '',
+-    OAUTH2_CLIENT_SECRET: '',
++    OAUTH2_CLIENT_ID: 'your-client-id',
++    OAUTH2_CLIENT_SECRET: 'your-client-secret',
+     OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
+ 
+     // Port the HTTP server
+diff --git a/gce/deploy.sh b/gce/deploy.sh
+deleted file mode 100755
+index fdf7c84..0000000
+--- a/gce/deploy.sh
++++ /dev/null
+@@ -1,149 +0,0 @@
+-# Copyright 2015 Google Inc.
+-#d
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#! /bin/bash
+-
+-set -ex
+-
+-ZONE=us-central1-f
+-
+-GROUP=frontend-group
+-TEMPLATE=$GROUP-tmpl
+-MACHINE_TYPE=f1-micro
+-IMAGE=debian-8
+-STARTUP_SCRIPT=startup-script.sh
+-SCOPES="userinfo-email,cloud-platform"
+-TAGS=http-server
+-
+-MIN_INSTANCES=1
+-MAX_INSTANCES=10
+-TARGET_UTILIZATION=0.6
+-
+-SERVICE=frontend-web-service
+-
+-#
+-# Instance group setup
+-#
+-
+-# First we have to create an instance template.
+-# This template will be used by the instance group
+-# to create new instances.
+-
+-# [START create_template]
+-gcloud compute instance-templates create $TEMPLATE \
+-  --image $IMAGE \
+-  --machine-type $MACHINE_TYPE \
+-  --scopes $SCOPES \
+-  --metadata-from-file startup-script=$STARTUP_SCRIPT \
+-  --tags $TAGS
+-# [END create_template]
+-
+-# Create the managed instance group.
+-
+-# [START create_group]
+-gcloud compute instance-groups managed \
+-  create $GROUP \
+-  --base-instance-name $GROUP \
+-  --size $MIN_INSTANCES \
+-  --template $TEMPLATE \
+-  --zone $ZONE
+-# [END create_group]
+-
+-# [START create_named_port]
+-gcloud compute instance-groups managed set-named-ports \
+-    $GROUP \
+-    --named-port http:8080 \
+-    --zone $ZONE
+-# [END create_named_port]
+-
+-#
+-# Load Balancer Setup
+-#
+-
+-# A complete HTTP load balancer is structured as follows:
+-#
+-# 1) A global forwarding rule directs incoming requests to a target HTTP proxy.
+-# 2) The target HTTP proxy checks each request against a URL map to determine the
+-#    appropriate backend service for the request.
+-# 3) The backend service directs each request to an appropriate backend based on
+-#    serving capacity, zone, and instance health of its attached backends. The
+-#    health of each backend instance is verified using either a health check.
+-#
+-# We'll create these resources in reverse order:
+-# service, health check, backend service, url map, proxy.
+-
+-# Create a health check
+-# The load balancer will use this check to keep track of which instances to send traffic to.
+-# Note that health checks will not cause the load balancer to shutdown any instances.
+-
+-# [START create_health_check]
+-gcloud compute http-health-checks create ah-health-check \
+-  --request-path /_ah/health \
+-  --port 8080
+-# [END create_health_check]
+-
+-# Create a backend service, associate it with the health check and instance group.
+-# The backend service serves as a target for load balancing.
+-
+-# [START create_backend_service]
+-gcloud compute backend-services create $SERVICE \
+-  --http-health-check ah-health-check \
+-  --port 8080
+-# [END create_backend_service]
+-
+-# [START add_backend_service]
+-gcloud compute backend-services add-backend $SERVICE \
+-  --instance-group $GROUP \
+-  --zone $ZONE
+-# [END add_backend_service]
+-
+-# Create a URL map and web Proxy. The URL map will send all requests to the
+-# backend service defined above.
+-
+-# [START create_url_map]
+-gcloud compute url-maps create $SERVICE-map \
+-  --default-service $SERVICE
+-# [END create_url_map]
+-
+-# [START create_http_proxy]
+-gcloud compute target-http-proxies create $SERVICE-proxy \
+-  --url-map $SERVICE-map
+-# [END create_http_proxy]
+-
+-# Create a global forwarding rule to send all traffic to our proxy
+-
+-# [START create_forwarding_rule]
+-gcloud compute forwarding-rules create $SERVICE-http-rule \
+-  --global \
+-  --target-http-proxy $SERVICE-proxy \
+-  --port-range 80
+-# [END create_forwarding_rule]
+-
+-#
+-# Autoscaler configuration
+-#
+-# [START set_autoscaling]
+-gcloud compute instance-groups managed set-autoscaling \
+-  $GROUP \
+-  --max-num-replicas $MAX_INSTANCES \
+-  --target-load-balancing-utilization $TARGET_UTILIZATION \
+-  --zone $ZONE
+-# [END set_autoscaling]
+-
+-# [START create_firewall]
+-gcloud compute firewall-rules create default-allow-http-8080 \
+-    --allow tcp:8080 \
+-    --source-ranges 0.0.0.0/0 \
+-    --target-tags http-server \
+-    --description "Allow port 8080 access to http-server"
+-# [END create_firewall]
+diff --git a/gce/startup-script.sh b/gce/startup-script.sh
+deleted file mode 100644
+index 0d1e11d..0000000
+--- a/gce/startup-script.sh
++++ /dev/null
+@@ -1,70 +0,0 @@
+-
+-#! /bin/bash
+-#	Copyright 2015-2016, Google, Inc.
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-# [START startup]
+-set -v
+-
+-# Talk to the metadata server to get the project id
+-PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
+-
+-# Install logging monitor. The monitor will automatically pick up logs sent to
+-# syslog.
+-# [START logging]
+-curl -s "https://storage.googleapis.com/signals-agents/logging/google-fluentd-install.sh" | bash
+-service google-fluentd restart &
+-# [END logging]
+-
+-# Install dependencies from apt
+-apt-get update
+-apt-get install -yq ca-certificates git nodejs build-essential supervisor
+-
+-# Install nodejs
+-mkdir /opt/nodejs
+-curl https://nodejs.org/dist/v4.2.2/node-v4.2.2-linux-x64.tar.gz | tar xvzf - -C /opt/nodejs --strip-components=1
+-ln -s /opt/nodejs/bin/node /usr/bin/node
+-ln -s /opt/nodejs/bin/npm /usr/bin/npm
+-
+-# Get the application source code from the Google Cloud Repository.
+-# git requires $HOME and it's not set during the startup script.
+-export HOME=/root
+-git config --global credential.helper gcloud.sh
+-git clone https://source.developers.google.com/p/$PROJECTID /opt/app
+-
+-# Install app dependencies
+-cd /opt/app/7-gce
+-npm install
+-
+-# Create a nodeapp user. The application will run as this user.
+-useradd -m -d /home/nodeapp nodeapp
+-chown -R nodeapp:nodeapp /opt/app
+-
+-# Configure supervisor to run the node app.
+-cat >/etc/supervisor/conf.d/node-app.conf << EOF
+-[program:nodeapp]
+-directory=/opt/app/7-gce
+-command=npm start
+-autostart=true
+-autorestart=true
+-user=nodeapp
+-environment=HOME="/home/nodeapp",USER="nodeapp",NODE_ENV="production"
+-stdout_logfile=syslog
+-stderr_logfile=syslog
+-EOF
+-
+-supervisorctl reread
+-supervisorctl update
+-
+-# Application should now be running under supervisor
+-# [END startup]
+diff --git a/gce/teardown.sh b/gce/teardown.sh
+deleted file mode 100755
+index 7452db1..0000000
+--- a/gce/teardown.sh
++++ /dev/null
+@@ -1,41 +0,0 @@
+-# Copyright 2015 Google Inc.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#! /bin/bash
+-
+-set -x
+-
+-ZONE=us-central1-f
+-gcloud config set compute/zone $ZONE
+-
+-GROUP=frontend-group
+-TEMPLATE=$GROUP-tmpl
+-SERVICE=frontend-web-service
+-
+-gcloud compute instance-groups managed stop-autoscaling $GROUP --zone $ZONE
+-
+-gcloud compute forwarding-rules delete $SERVICE-http-rule --global 
+-
+-gcloud compute target-http-proxies delete $SERVICE-proxy 
+-
+-gcloud compute url-maps delete $SERVICE-map 
+-
+-gcloud compute backend-services delete $SERVICE 
+-
+-gcloud compute http-health-checks delete ah-health-check
+-
+-gcloud compute instance-groups managed delete $GROUP  
+-
+-gcloud compute instance-templates delete $TEMPLATE 
+-
+-gcloud compute firewall-rules delete default-allow-http-8080
+diff --git a/lib/images.js b/lib/images.js
+index 8e3ddf8..6c8b8fe 100644
+--- a/lib/images.js
++++ b/lib/images.js
+@@ -67,11 +67,7 @@ function sendUploadToGCS (req, res, next) {
+ 
+   const gcsname = Date.now() + req.file.originalname;
+   const file = bucket.file(gcsname);
+-  const stream = file.createWriteStream({
+-    metadata: {
+-      contentType: req.file.mimetype
+-    }
+-  });
++  const stream = file.createWriteStream();
+ 
+   stream.on('error', (err) => {
+     req.file.cloudStorageError = err;
+@@ -88,13 +84,15 @@ function sendUploadToGCS (req, res, next) {
+ }
+ 
+ // Multer handles parsing multipart/form-data requests.
+-// This instance is configured to store images in memory.
+-// This makes it straightforward to upload to Cloud Storage.
+-const Multer = require('multer');
+-const multer = Multer({
+-  storage: Multer.MemoryStorage,
+-  limits: {
+-    fileSize: 5 * 1024 * 1024 // no larger than 5mb
++// This instance is configured to store images in memory and re-name to avoid
++// conflicting with existing objects. This makes it straightforward to upload
++// to Cloud Storage.
++const multer = require('multer')({
++  inMemory: true,
++  fileSize: 5 * 1024 * 1024, // no larger than 5mb
++  rename: (fieldname, filename) => {
++    // generate a unique filename
++    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
+   }
+ });
+ 
+diff --git a/lib/oauth2.js b/lib/oauth2.js
+index a4620ab..9ee3a72 100644
+--- a/lib/oauth2.js
++++ b/lib/oauth2.js
+@@ -21,7 +21,7 @@ const passport = require('passport');
+ const GoogleStrategy = require('passport-google-oauth20').Strategy;
+ 
+ function extractProfile (profile) {
+-  let imageUrl = '';
++  let imageUrl = ``;
+   if (profile.photos && profile.photos.length) {
+     imageUrl = profile.photos[0].value;
+   }
+diff --git a/package.json b/package.json
+index 1af7fef..2c00d90 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,9 @@
+     "start": "node ${SCRIPT:-app.js}",
+     "monitor": "nodemon ${SCRIPT:-app.js}",
+     "deploy": "gcloud app deploy app.yaml worker.yaml",
+-    "test": "mocha test/index.js -t 30000",
++    "mocha": "mocha test/index.js -t 30000",
++    "lint": "semistandard \"**/*.js\"",
++    "test": "npm run lint && npm run mocha",
+     "init-cloudsql": "node books/model-cloudsql.js"
+   },
+   "author": "Google Inc.",
+@@ -38,36 +40,37 @@
+     ]
+   },
+   "dependencies": {
+-    "@google/cloud-debug": "^0.8.3",
+-    "@google/cloud-trace": "^0.5.5",
++    "@google/cloud-debug": "^0.8.1",
++    "@google/cloud-trace": "^0.5.1",
+     "@google-cloud/datastore": "^0.1.1",
+     "@google-cloud/storage": "^0.1.1",
+     "@google-cloud/pubsub": "^0.2.0",
+-    "async": "^2.0.1",
+-    "body-parser": "^1.15.2",
++    "async": "^1.5.2",
++    "body-parser": "^1.15.0",
+     "connect-memcached": "^0.2.0",
+-    "express": "^4.14.0",
+-    "express-session": "^1.14.0",
+-    "express-winston": "^2.0.0",
++    "express": "^4.13.4",
++    "express-session": "^1.13.0",
++    "express-winston": "^1.3.1",
+     "jade": "^1.11.0",
+-    "kerberos": "^0.0.21",
+-    "lodash": "^4.14.2",
+-    "mongodb": "^2.2.5",
+-    "multer": "^1.2.0",
+-    "mysql": "^2.11.1",
++    "kerberos": "^0.0.19",
++    "lodash": "^4.11.1",
++    "mongodb": "^2.1.16",
++    "multer": "^1.1.0",
++    "mysql": "^2.10.2",
+     "nconf": "^0.8.4",
+     "passport": "^0.3.2",
+     "passport-google-oauth20": "^1.0.0",
+     "prompt": "^1.0.0",
+-    "request": "^2.74.0",
++    "request": "^2.72.0",
+     "winston": "^2.2.0"
+   },
+   "devDependencies": {
+-    "mocha": "^3.0.2",
++    "mocha": "^2.4.5",
+     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+-    "proxyquire": "^1.7.10",
+-    "sinon": "^1.17.5",
+-    "supertest": "^2.0.0"
++    "proxyquire": "^1.7.4",
++    "semistandard": "^7.0.5",
++    "sinon": "^1.17.3",
++    "supertest": "^1.2.0"
+   },
+   "engines": {
+     "node": ">=4.3.2"
+diff --git a/test/app.test.js b/test/app.test.js
+index ccbe126..3178f25 100644
+--- a/test/app.test.js
++++ b/test/app.test.js
+@@ -11,7 +11,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-`use strict`;
++'use strict';
+ 
+ const assert = require(`assert`);
+ const config = require(`./config`);
+diff --git a/test/oauth2.test.js b/test/oauth2.test.js
+index 4f960e9..881f520 100644
+--- a/test/oauth2.test.js
++++ b/test/oauth2.test.js
+@@ -54,8 +54,7 @@ describe(`oauth2.js`, () => {
+       .get(`/auth/login?return=%2Fsome%2Fpath`)
+       .expect(302)
+       .expect((response) => {
+-        const text = response.text;
+-        assert.equal(text.includes(`Redirecting to /auth/google/callback?code=foo`), true);
++        assert.equal(response.text.includes(`Redirecting to /auth/google/callback?code=foo`), true);
+         assert(passportMock.initialize.calledOnce);
+         assert(passportMock.session.calledOnce);
+         assert(passportMock.use.calledOnce);
+@@ -85,8 +84,7 @@ describe(`oauth2.js`, () => {
+       .get(`/auth/google/callback?code=foo`)
+       .expect(302)
+       .expect((response) => {
+-        const text = response.text;
+-        assert.equal(text.includes(`Redirecting to /another/path`), true);
++        assert.equal(response.text.includes(`Redirecting to /another/path`), true);
+         assert(passportMock.initialize.calledOnce);
+         assert(passportMock.session.calledOnce);
+         assert(passportMock.use.calledOnce);
+@@ -139,8 +137,10 @@ describe(`oauth2.js`, () => {
+       .get(`/auth/logout`)
+       .expect(302)
+       .expect((response) => {
+-        const text = response.text;
+-        assert.equal(text.includes(`Redirecting to /`), true);
++        assert.equal(
++          response.text.includes(`Redirecting to /`),
++          true
++        );
+         assert(passportMock.initialize.calledOnce);
+         assert(passportMock.session.calledOnce);
+         assert(passportMock.use.calledOnce);
+diff --git a/test/worker.test.js b/test/worker.test.js
+index 78c5638..2ad8971 100644
+--- a/test/worker.test.js
++++ b/test/worker.test.js
+@@ -13,13 +13,13 @@
+ 
+ 'use strict';
+ 
+-const assert = require('assert');
+-const config = require('./config.worker');
+-const path = require('path');
+-const proxyquire = require('proxyquire');
+-const sinon = require('sinon');
+-const supertest = require('supertest');
+-const utils = require('nodejs-repo-tools');
++const assert = require(`assert`);
++const config = require(`./config.worker`);
++const path = require(`path`);
++const proxyquire = require(`proxyquire`);
++const sinon = require(`sinon`);
++const supertest = require(`supertest`);
++const utils = require(`nodejs-repo-tools`);
+ 
+ const projectId = process.env.GCLOUD_PROJECT;
+ 
+diff --git a/worker.js b/worker.js
+index dd576a1..e32adb3 100644
+--- a/worker.js
++++ b/worker.js
+@@ -94,7 +94,7 @@ function processBook (bookId, callback) {
+     }
+   ], (err) => {
+     if (err) {
+-      logging.error('Error occurred', err);
++      logging.error(`Error occurred`, err);
+       callback(err);
+       return;
+     }
+@@ -127,8 +127,7 @@ function findBookInfo (book, cb) {
+     // If there is already an image for the book or if there's no
+     // thumbnails, go ahead and return.
+     if (book.imageUrl || !top.volumeInfo.imageLinks) {
+-      cb(null, book);
+-      return;
++      return cb(null, book);
+     }
+ 
+     // Otherwise, try to fetch them and upload to cloud storage.
+diff --git a/worker.yaml b/worker.yaml
+deleted file mode 100644
+index a6bae0d..0000000
+--- a/worker.yaml
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#	Copyright 2015-2016, Google, Inc.
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-# [START yaml]
+-module: worker
+-runtime: nodejs
+-vm: true
+-
+-env_variables:
+-  SCRIPT: worker.js
+-
+-# Temporary setting to keep gcloud from uploading node_modules
+-skip_files:
+- - ^node_modules$
+-# [END yaml]

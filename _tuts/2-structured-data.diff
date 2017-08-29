@@ -1,0 +1,1616 @@
+diff --git a/README.md b/README.md
+index 5c1f533..6288230 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,7 @@
+-# 1 - Hello world
++# 2 - Structured data
+ 
+-This folder contains the sample code for the [Hello world][step-1]
++This folder contains the sample code for the [Structured data][step-2]
+ tutorial. Please refer to the tutorial for instructions on configuring, running,
+ and deploying this sample.
+ 
+-[step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
++[step-2]: https://cloud.google.com/nodejs/getting-started/using-structured-data
+diff --git a/app.js b/app.js
+index be60b7e..0865e03 100644
+--- a/app.js
++++ b/app.js
+@@ -13,25 +13,46 @@
+ 
+ 'use strict';
+ 
++const path = require('path');
+ const express = require('express');
++const config = require('./config');
+ 
+ const app = express();
+ 
+-// [START hello_world]
+-// Say hello!
++app.disable('etag');
++app.set('views', path.join(__dirname, 'views'));
++app.set('view engine', 'jade');
++app.set('trust proxy', true);
++
++// Books
++app.use('/books', require('./books/crud'));
++app.use('/api/books', require('./books/api'));
++
++// Redirect root to /books
+ app.get('/', (req, res) => {
+-  res.status(200).send('Hello, world!');
++  res.redirect('/books');
++});
++
++// Basic 404 handler
++app.use((req, res) => {
++  res.status(404).send('Not Found');
++});
++
++// Basic error handler
++app.use((err, req, res, next) => {
++  /* jshint unused:false */
++  console.error(err);
++  // If our routes specified a specific response, then send that. Otherwise,
++  // send a generic message so as not to leak anything.
++  res.status(500).send(err.response || 'Something broke!');
+ });
+-// [END hello_world]
+ 
+ if (module === require.main) {
+-  // [START server]
+   // Start the server
+-  const server = app.listen(process.env.PORT || 8080, () => {
++  const server = app.listen(config.get('PORT'), () => {
+     const port = server.address().port;
+     console.log(`App listening on port ${port}`);
+   });
+-  // [END server]
+ }
+ 
+ module.exports = app;
+diff --git a/app.yaml b/app.yaml
+index 6cfa224..7b396d0 100644
+--- a/app.yaml
++++ b/app.yaml
+@@ -1,4 +1,4 @@
+-#	Copyright 2015-2016, Google, Inc.
++# Copyright 2015-2016, Google, Inc.
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+@@ -11,10 +11,8 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ #
+-# [START runtime]
+ runtime: nodejs
+ env: flex
+-# [END runtime]
+ 
+ # Temporary setting to keep gcloud from uploading node_modules
+ skip_files:
+diff --git a/books/api.js b/books/api.js
+new file mode 100644
+index 0000000..a5afadb
+--- /dev/null
++++ b/books/api.js
+@@ -0,0 +1,120 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const express = require('express');
++const bodyParser = require('body-parser');
++const config = require('../config');
++
++function getModel () {
++  return require(`./model-${config.get('DATA_BACKEND')}`);
++}
++
++const router = express.Router();
++
++// Automatically parse request body as JSON
++router.use(bodyParser.json());
++
++/**
++ * GET /api/books
++ *
++ * Retrieve a page of books (up to ten at a time).
++ */
++router.get('/', (req, res, next) => {
++  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.json({
++      items: entities,
++      nextPageToken: cursor
++    });
++  });
++});
++
++/**
++ * POST /api/books
++ *
++ * Create a new book.
++ */
++router.post('/', (req, res, next) => {
++  getModel().create(req.body, (err, entity) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.json(entity);
++  });
++});
++
++/**
++ * GET /api/books/:id
++ *
++ * Retrieve a book.
++ */
++router.get('/:book', (req, res, next) => {
++  getModel().read(req.params.book, (err, entity) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.json(entity);
++  });
++});
++
++/**
++ * PUT /api/books/:id
++ *
++ * Update a book.
++ */
++router.put('/:book', (req, res, next) => {
++  getModel().update(req.params.book, req.body, (err, entity) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.json(entity);
++  });
++});
++
++/**
++ * DELETE /api/books/:id
++ *
++ * Delete a book.
++ */
++router.delete('/:book', (req, res, next) => {
++  getModel().delete(req.params.book, (err) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.status(200).send('OK');
++  });
++});
++
++/**
++ * Errors on "/api/books/*" routes.
++ */
++router.use((err, req, res, next) => {
++  // Format error and forward to generic error handler for logging and
++  // responding to the request
++  err.response = {
++    message: err.message,
++    internalCode: err.code
++  };
++  next(err);
++});
++
++module.exports = router;
+diff --git a/books/crud.js b/books/crud.js
+new file mode 100644
+index 0000000..a1ce65b
+--- /dev/null
++++ b/books/crud.js
+@@ -0,0 +1,164 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const express = require('express');
++const bodyParser = require('body-parser');
++const config = require('../config');
++
++function getModel () {
++  return require(`./model-${config.get('DATA_BACKEND')}`);
++}
++
++const router = express.Router();
++
++// Automatically parse request body as form data
++router.use(bodyParser.urlencoded({ extended: false }));
++
++// Set Content-Type for all responses for these routes
++router.use((req, res, next) => {
++  res.set('Content-Type', 'text/html');
++  next();
++});
++
++/**
++ * GET /books/add
++ *
++ * Display a page of books (up to ten at a time).
++ */
++router.get('/', (req, res, next) => {
++  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.render('books/list.jade', {
++      books: entities,
++      nextPageToken: cursor
++    });
++  });
++});
++
++/**
++ * GET /books/add
++ *
++ * Display a form for creating a book.
++ */
++// [START add_get]
++router.get('/add', (req, res) => {
++  res.render('books/form.jade', {
++    book: {},
++    action: 'Add'
++  });
++});
++// [END add_get]
++
++/**
++ * POST /books/add
++ *
++ * Create a book.
++ */
++// [START add_post]
++router.post('/add', (req, res, next) => {
++  const data = req.body;
++
++  // Save the data to the database.
++  getModel().create(data, (err, savedData) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.redirect(`${req.baseUrl}/${savedData.id}`);
++  });
++});
++// [END add_post]
++
++/**
++ * GET /books/:id/edit
++ *
++ * Display a book for editing.
++ */
++router.get('/:book/edit', (req, res, next) => {
++  getModel().read(req.params.book, (err, entity) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.render('books/form.jade', {
++      book: entity,
++      action: 'Edit'
++    });
++  });
++});
++
++/**
++ * POST /books/:id/edit
++ *
++ * Update a book.
++ */
++router.post('/:book/edit', (req, res, next) => {
++  const data = req.body;
++
++  getModel().update(req.params.book, data, (err, savedData) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.redirect(`${req.baseUrl}/${savedData.id}`);
++  });
++});
++
++/**
++ * GET /books/:id
++ *
++ * Display a book.
++ */
++router.get('/:book', (req, res, next) => {
++  getModel().read(req.params.book, (err, entity) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.render('books/view.jade', {
++      book: entity
++    });
++  });
++});
++
++/**
++ * GET /books/:id/delete
++ *
++ * Delete a book.
++ */
++router.get('/:book/delete', (req, res, next) => {
++  getModel().delete(req.params.book, (err) => {
++    if (err) {
++      next(err);
++      return;
++    }
++    res.redirect(req.baseUrl);
++  });
++});
++
++/**
++ * Errors on "/books/*" routes.
++ */
++router.use((err, req, res, next) => {
++  // Format error and forward to generic error handler for logging and
++  // responding to the request
++  err.response = err.message;
++  next(err);
++});
++
++module.exports = router;
+diff --git a/books/model-cloudsql.js b/books/model-cloudsql.js
+new file mode 100644
+index 0000000..8855aa5
+--- /dev/null
++++ b/books/model-cloudsql.js
+@@ -0,0 +1,161 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const extend = require('lodash').assign;
++const mysql = require('mysql');
++const config = require('../config');
++
++function getConnection () {
++  const options = {
++    user: config.get('MYSQL_USER'),
++    password: config.get('MYSQL_PASSWORD'),
++    database: 'bookshelf'
++  };
++
++  if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
++    options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
++  }
++
++  return mysql.createConnection(options);
++}
++
++// [START list]
++function list (limit, token, cb) {
++  token = token ? parseInt(token, 10) : 0;
++  const connection = getConnection();
++  connection.query(
++    'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
++    (err, results) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      const hasMore = results.length === limit ? token + results.length : false;
++      cb(null, results, hasMore);
++    }
++  );
++  connection.end();
++}
++// [END list]
++
++// [START create]
++function create (data, cb) {
++  const connection = getConnection();
++  connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    read(res.insertId, cb);
++  });
++  connection.end();
++}
++// [END create]
++
++function read (id, cb) {
++  const connection = getConnection();
++  connection.query(
++    'SELECT * FROM `books` WHERE `id` = ?', id, (err, results) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      if (!results.length) {
++        cb({
++          code: 404,
++          message: 'Not found'
++        });
++        return;
++      }
++      cb(null, results[0]);
++    });
++  connection.end();
++}
++
++// [START update]
++function update (id, data, cb) {
++  const connection = getConnection();
++  connection.query(
++    'UPDATE `books` SET ? WHERE `id` = ?', [data, id], (err) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      read(id, cb);
++    });
++  connection.end();
++}
++// [END update]
++
++function _delete (id, cb) {
++  const connection = getConnection();
++  connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
++  connection.end();
++}
++
++module.exports = {
++  createSchema: createSchema,
++  list: list,
++  create: create,
++  read: read,
++  update: update,
++  delete: _delete
++};
++
++if (module === require.main) {
++  const prompt = require('prompt');
++  prompt.start();
++
++  console.log(
++    `Running this script directly will allow you to initialize your mysql database.
++    This script will not modify any existing tables.`);
++
++  prompt.get(['user', 'password'], (err, result) => {
++    if (err) {
++      return;
++    }
++    createSchema(result);
++  });
++}
++
++function createSchema (config) {
++  const connection = mysql.createConnection(extend({
++    multipleStatements: true
++  }, config));
++
++  connection.query(
++    `CREATE DATABASE IF NOT EXISTS \`bookshelf\`
++      DEFAULT CHARACTER SET = 'utf8'
++      DEFAULT COLLATE 'utf8_general_ci';
++    USE \`bookshelf\`;
++    CREATE TABLE IF NOT EXISTS \`bookshelf\`.\`books\` (
++      \`id\` INT UNSIGNED NOT NULL AUTO_INCREMENT,
++      \`title\` VARCHAR(255) NULL,
++      \`author\` VARCHAR(255) NULL,
++      \`publishedDate\` VARCHAR(255) NULL,
++      \`imageUrl\` VARCHAR(255) NULL,
++      \`description\` TEXT NULL,
++      \`createdBy\` VARCHAR(255) NULL,
++      \`createdById\` VARCHAR(255) NULL,
++    PRIMARY KEY (\`id\`));`,
++    (err) => {
++      if (err) {
++        throw err;
++      }
++      console.log('Successfully created schema');
++      connection.end();
++    }
++  );
++}
+diff --git a/books/model-datastore.js b/books/model-datastore.js
+new file mode 100644
+index 0000000..89f0891
+--- /dev/null
++++ b/books/model-datastore.js
+@@ -0,0 +1,170 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const Datastore = require('@google-cloud/datastore');
++const config = require('../config');
++
++// [START config]
++const ds = Datastore({
++  projectId: config.get('GCLOUD_PROJECT')
++});
++const kind = 'Book';
++// [END config]
++
++// Translates from Datastore's entity format to
++// the format expected by the application.
++//
++// Datastore format:
++//   {
++//     key: [kind, id],
++//     data: {
++//       property: value
++//     }
++//   }
++//
++// Application format:
++//   {
++//     id: id,
++//     property: value
++//   }
++function fromDatastore (obj) {
++  obj.data.id = obj.key.id;
++  return obj.data;
++}
++
++// Translates from the application's format to the datastore's
++// extended entity property format. It also handles marking any
++// specified properties as non-indexed. Does not translate the key.
++//
++// Application format:
++//   {
++//     id: id,
++//     property: value,
++//     unindexedProperty: value
++//   }
++//
++// Datastore extended format:
++//   [
++//     {
++//       name: property,
++//       value: value
++//     },
++//     {
++//       name: unindexedProperty,
++//       value: value,
++//       excludeFromIndexes: true
++//     }
++//   ]
++function toDatastore (obj, nonIndexed) {
++  nonIndexed = nonIndexed || [];
++  const results = [];
++  Object.keys(obj).forEach((k) => {
++    if (obj[k] === undefined) {
++      return;
++    }
++    results.push({
++      name: k,
++      value: obj[k],
++      excludeFromIndexes: nonIndexed.indexOf(k) !== -1
++    });
++  });
++  return results;
++}
++
++// Lists all books in the Datastore sorted alphabetically by title.
++// The ``limit`` argument determines the maximum amount of results to
++// return per page. The ``token`` argument allows requesting additional
++// pages. The callback is invoked with ``(err, books, nextPageToken)``.
++// [START list]
++function list (limit, token, cb) {
++  const q = ds.createQuery([kind])
++    .limit(limit)
++    .order('title')
++    .start(token);
++
++  ds.runQuery(q, (err, entities, nextQuery) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
++    cb(null, entities.map(fromDatastore), hasMore);
++  });
++}
++// [END list]
++
++// Creates a new book or updates an existing book with new data. The provided
++// data is automatically translated into Datastore format. The book will be
++// queued for background processing.
++// [START update]
++function update (id, data, cb) {
++  let key;
++  if (id) {
++    key = ds.key([kind, parseInt(id, 10)]);
++  } else {
++    key = ds.key(kind);
++  }
++
++  const entity = {
++    key: key,
++    data: toDatastore(data, ['description'])
++  };
++
++  ds.save(
++    entity,
++    (err) => {
++      data.id = entity.key.id;
++      cb(err, err ? null : data);
++    }
++  );
++}
++// [END update]
++
++function create (data, cb) {
++  update(null, data, cb);
++}
++
++function read (id, cb) {
++  const key = ds.key([kind, parseInt(id, 10)]);
++  ds.get(key, (err, entity) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    if (!entity) {
++      cb({
++        code: 404,
++        message: 'Not found'
++      });
++      return;
++    }
++    cb(null, fromDatastore(entity));
++  });
++}
++
++function _delete (id, cb) {
++  const key = ds.key([kind, parseInt(id, 10)]);
++  ds.delete(key, cb);
++}
++
++// [START exports]
++module.exports = {
++  create,
++  read,
++  update,
++  delete: _delete,
++  list
++};
++// [END exports]
+diff --git a/books/model-mongodb.js b/books/model-mongodb.js
+new file mode 100644
+index 0000000..622628c
+--- /dev/null
++++ b/books/model-mongodb.js
+@@ -0,0 +1,169 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const MongoClient = require('mongodb').MongoClient;
++const ObjectID = require('mongodb').ObjectID;
++const config = require('../config');
++
++let collection;
++
++// [START translate]
++function fromMongo (item) {
++  if (Array.isArray(item) && item.length) {
++    item = item[0];
++  }
++  item.id = item._id;
++  delete item._id;
++  return item;
++}
++
++function toMongo (item) {
++  delete item.id;
++  return item;
++}
++// [END translate]
++
++function getCollection (cb) {
++  if (collection) {
++    setImmediate(() => {
++      cb(null, collection);
++    });
++    return;
++  }
++  MongoClient.connect(config.get('MONGO_URL'), (err, db) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection = db.collection(config.get('MONGO_COLLECTION'));
++    cb(null, collection);
++  });
++}
++
++// [START list]
++function list (limit, token, cb) {
++  token = token ? parseInt(token, 10) : 0;
++  if (isNaN(token)) {
++    cb(new Error('invalid token'));
++    return;
++  }
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.find({})
++      .skip(token)
++      .limit(limit)
++      .toArray((err, results) => {
++        if (err) {
++          cb(err);
++          return;
++        }
++        const hasMore =
++          results.length === limit ? token + results.length : false;
++        cb(null, results.map(fromMongo), hasMore);
++      });
++  });
++}
++// [END list]
++
++// [START create]
++function create (data, cb) {
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.insert(data, {w: 1}, (err, result) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      const item = fromMongo(result.ops);
++      cb(null, item);
++    });
++  });
++}
++// [END create]
++
++function read (id, cb) {
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.findOne({
++      _id: new ObjectID(id)
++    }, (err, result) => {
++      if (err) {
++        cb(err);
++        return;
++      }
++      if (!result) {
++        cb({
++          code: 404,
++          message: 'Not found'
++        });
++        return;
++      }
++      cb(null, fromMongo(result));
++    });
++  });
++}
++
++// [START update]
++function update (id, data, cb) {
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.update(
++      { _id: new ObjectID(id) },
++      { '$set': toMongo(data) },
++      { w: 1 },
++      (err) => {
++        if (err) {
++          cb(err);
++          return;
++        }
++        read(id, cb);
++        return;
++      }
++    );
++  });
++}
++// [END update]
++
++function _delete (id, cb) {
++  getCollection((err, collection) => {
++    if (err) {
++      cb(err);
++      return;
++    }
++    collection.remove({
++      _id: new ObjectID(id)
++    }, cb);
++  });
++}
++
++module.exports = {
++  create,
++  read,
++  update,
++  delete: _delete,
++  list
++};
+diff --git a/config.js b/config.js
+new file mode 100644
+index 0000000..1d8ac32
+--- /dev/null
++++ b/config.js
+@@ -0,0 +1,77 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++// Hierarchical node.js configuration with command-line arguments, environment
++// variables, and files.
++const nconf = module.exports = require('nconf');
++const path = require('path');
++
++nconf
++  // 1. Command-line arguments
++  .argv()
++  // 2. Environment variables
++  .env([
++    'DATA_BACKEND',
++    'GCLOUD_PROJECT',
++    'MONGO_URL',
++    'MONGO_COLLECTION',
++    'MYSQL_USER',
++    'MYSQL_PASSWORD',
++    'PORT'
++  ])
++  // 3. Config file
++  .file({ file: path.join(__dirname, 'config.json') })
++  // 4. Defaults
++  .defaults({
++    // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
++    // configure the appropriate settings for each storage engine below.
++    // If you are unsure, use datastore as it requires no additional
++    // configuration.
++    DATA_BACKEND: 'datastore',
++
++    // This is the id of your project in the Google Cloud Developers Console.
++    GCLOUD_PROJECT: '',
++
++    // MongoDB connection string
++    // https://docs.mongodb.org/manual/reference/connection-string/
++    MONGO_URL: 'mongodb://localhost:27017',
++    MONGO_COLLECTION: 'books',
++
++    MYSQL_USER: '',
++    MYSQL_PASSWORD: '',
++
++    // Port the HTTP server
++    PORT: 8080
++  });
++
++// Check for required settings
++checkConfig('GCLOUD_PROJECT');
++
++if (nconf.get('DATA_BACKEND') === 'cloudsql') {
++  checkConfig('MYSQL_USER');
++  checkConfig('MYSQL_PASSWORD');
++  if (nconf.get('NODE_ENV') === 'production') {
++    checkConfig('INSTANCE_CONNECTION_NAME');
++  }
++} else if (nconf.get('DATA_BACKEND') === 'mongodb') {
++  checkConfig('MONGO_URL');
++  checkConfig('MONGO_COLLECTION');
++}
++
++function checkConfig (setting) {
++  if (!nconf.get(setting)) {
++    throw new Error(`You must set ${setting} as an environment variable or in config.json!`);
++  }
++}
+diff --git a/package.json b/package.json
+index a7f058f..f48f71f 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,8 @@
+     "start": "node app.js",
+     "monitor": "nodemon app.js",
+     "deploy": "gcloud app deploy app.yaml",
+-    "test": "mocha test/index.js -t 30000"
++    "test": "mocha test/index.js -t 30000",
++    "init-cloudsql": "node books/model-cloudsql.js"
+   },
+   "author": "Google Inc.",
+   "contributors": [
+@@ -37,12 +38,22 @@
+     ]
+   },
+   "dependencies": {
+-    "express": "^4.14.0"
++    "body-parser": "^1.15.2",
++    "express": "^4.14.0",
++    "@google-cloud/datastore": "^0.1.1",
++    "jade": "^1.11.0",
++    "kerberos": "^0.0.21",
++    "lodash": "^4.14.2",
++    "mongodb": "^2.2.5",
++    "mysql": "^2.11.1",
++    "nconf": "^0.8.4",
++    "prompt": "^1.0.0"
+   },
+   "devDependencies": {
+     "mocha": "^3.0.2",
+     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#21daa823090c43fb667157c8b5b0c3b7f45a8357",
+-    "supertest": "^2.0.0"
++    "proxyquire": "^1.7.10",
++    "sinon": "^1.17.5"
+   },
+   "engines": {
+     "node": ">=4.3.2"
+diff --git a/test/api.test.js b/test/api.test.js
+new file mode 100644
+index 0000000..763cccf
+--- /dev/null
++++ b/test/api.test.js
+@@ -0,0 +1,73 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const assert = require(`assert`);
++const config = require(`./config`);
++const utils = require(`nodejs-repo-tools`);
++
++module.exports = (DATA_BACKEND) => {
++  describe(`api.js`, () => {
++    let ORIG_DATA_BACKEND;
++    let id;
++
++    before(() => {
++      const appConfig = require(`../config`);
++      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
++      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
++    });
++
++    it(`should create a book`, (done) => {
++      utils.getRequest(config)
++        .post(`/api/books`)
++        .send({ title: `beep` })
++        .expect(200)
++        .expect((response) => {
++          id = response.body.id;
++          assert.ok(response.body.id);
++          assert.equal(response.body.title, `beep`);
++        })
++        .end(done);
++    });
++
++    it(`should list books`, (done) => {
++      // Give Datastore time to become consistent
++      setTimeout(() => {
++        utils.getRequest(config)
++          .get(`/api/books`)
++          .expect(200)
++          .expect((response) => {
++            assert.ok(Array.isArray(response.body.items));
++            assert.ok(response.body.items.length >= 1);
++          })
++          .end(done);
++      }, 1000);
++    });
++
++    it(`should delete a book`, (done) => {
++      utils.getRequest(config)
++        .delete(`/api/books/${id}`)
++        .expect(200)
++        .expect((response) => {
++          assert.equal(response.text, `OK`);
++        })
++        .end(done);
++    });
++
++    after(() => {
++      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
++    });
++  });
++};
++
+diff --git a/test/app.test.js b/test/app.test.js
+index 0df0601..e02f024 100644
+--- a/test/app.test.js
++++ b/test/app.test.js
+@@ -11,10 +11,12 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-'use strict';
++`use strict`;
+ 
+ const assert = require(`assert`);
+ const config = require(`./config`);
++const proxyquire = require(`proxyquire`).noPreserveCache();
++const sinon = require(`sinon`);
+ const utils = require(`nodejs-repo-tools`);
+ 
+ describe(`app.js`, () => {
+@@ -24,13 +26,66 @@ describe(`app.js`, () => {
+     });
+   }
+ 
+-  it(`should create an express app`, (done) => {
++  it(`should redirect / to /books`, (done) => {
+     utils.getRequest(config)
+       .get(`/`)
+-      .expect(200)
++      .expect(302)
+       .expect((response) => {
+-        assert.equal(response.text, config.msg);
++        assert.equal(response.text.includes(`Redirecting to /books`), true);
+       })
+       .end(done);
+   });
++
++  it(`should check config`, () => {
++    const nconfMock = {
++      argv: sinon.stub().returnsThis(),
++      env: sinon.stub().returnsThis(),
++      file: sinon.stub().returnsThis(),
++      defaults: sinon.stub().returnsThis(),
++      get: function (setting) {
++        return this[setting];
++      }
++    };
++
++    function getMsg (setting) {
++      return `You must set ${setting} as an environment variable or in config.json!`;
++    }
++
++    nconfMock.DATA_BACKEND = `datastore`;
++
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`GCLOUD_PROJECT`));
++
++    nconfMock.GCLOUD_PROJECT = `project`;
++    assert.doesNotThrow(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    });
++
++    nconfMock.DATA_BACKEND = `cloudsql`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`MYSQL_USER`));
++    nconfMock.MYSQL_USER = `user`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`MYSQL_PASSWORD`));
++    nconfMock.MYSQL_PASSWORD = `password`;
++    assert.doesNotThrow(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    });
++
++    nconfMock.DATA_BACKEND = `mongodb`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`MONGO_URL`));
++    nconfMock.MONGO_URL = `url`;
++    assert.throws(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    }, Error, getMsg(`MONGO_COLLECTION`));
++    nconfMock.MONGO_COLLECTION = `collection`;
++    assert.doesNotThrow(() => {
++      proxyquire(`../config`, { nconf: nconfMock });
++    });
++  });
+ });
+diff --git a/test/config.js b/test/config.js
+index 6c6afd8..c73a303 100644
+--- a/test/config.js
++++ b/test/config.js
+@@ -16,9 +16,9 @@
+ const path = require(`path`);
+ 
+ module.exports = {
+-  test: `1-hello-world`,
+-  cwd: path.resolve(path.join(__dirname, '../')),
++  test: `2-structured-data`,
++  cwd: path.resolve(path.join(__dirname, `../`)),
+   cmd: `node`,
+   args: [`app.js`],
+-  msg: `Hello, world!`
++  msg: `Bookshelf`
+ };
+diff --git a/test/crud.test.js b/test/crud.test.js
+new file mode 100644
+index 0000000..c64fd66
+--- /dev/null
++++ b/test/crud.test.js
+@@ -0,0 +1,209 @@
++// Copyright 2015-2016, Google, Inc.
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++'use strict';
++
++const assert = require(`assert`);
++const config = require(`./config`);
++const utils = require(`nodejs-repo-tools`);
++
++module.exports = (DATA_BACKEND) => {
++  describe(`crud.js`, () => {
++    let ORIG_DATA_BACKEND;
++
++    before(() => {
++      const appConfig = require(`../config`);
++      ORIG_DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
++      appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
++    });
++
++    describe(`/books`, () => {
++      let id;
++
++      // setup a book
++      before((done) => {
++        utils.getRequest(config)
++          .post(`/api/books`)
++          .send({ title: `my book` })
++          .expect(200)
++          .expect((response) => {
++            id = response.body.id;
++            assert.ok(response.body.id);
++            assert.equal(response.body.title, `my book`);
++          })
++          .end(done);
++      });
++
++      it(`should show a list of books`, (done) => {
++        // Give Datastore time to become consistent
++        setTimeout(() => {
++          const expected = `<div class="media-body">`;
++          utils.getRequest(config)
++            .get(`/books`)
++            .expect(200)
++            .expect((response) => {
++              assert.equal(response.text.includes(expected), true);
++            })
++            .end(done);
++        }, 2000);
++      });
++
++      it(`should handle error`, (done) => {
++        utils.getRequest(config)
++          .get(`/books`)
++          .query({ pageToken: `badrequest` })
++          .expect(500)
++          .end(done);
++      });
++
++      // delete the book
++      after((done) => {
++        if (id) {
++          utils.getRequest(config)
++            .delete(`/api/books/${id}`)
++            .expect(200)
++            .end(done);
++        } else {
++          done();
++        }
++      });
++    });
++
++    describe(`/books/add`, () => {
++      let id;
++
++      it(`should post to add book form`, (done) => {
++        utils.getRequest(config)
++          .post(`/books/add`)
++          .send(`title=my%20book`)
++          .expect(302)
++          .expect((response) => {
++            const location = response.headers.location;
++            const idPart = location.replace(`/books/`, ``);
++            if (require(`../config`).get(`DATA_BACKEND`) !== `mongodb`) {
++              id = parseInt(idPart, 10);
++            } else {
++              id = idPart;
++            }
++            assert.equal(response.text.includes(`Redirecting to /books/`), true);
++          })
++          .end(done);
++      });
++
++      it(`should show add book form`, (done) => {
++        utils.getRequest(config)
++          .get(`/books/add`)
++          .expect(200)
++          .expect((response) => {
++            assert.equal(response.text.includes(`Add book`), true);
++          })
++          .end(done);
++      });
++
++      // delete the book
++      after((done) => {
++        if (id) {
++          utils.getRequest(config)
++            .delete(`/api/books/${id}`)
++            .expect(200)
++            .end(done);
++        } else {
++          done();
++        }
++      });
++    });
++
++    describe(`/books/:book/edit & /books/:book`, () => {
++      let id;
++
++      // setup a book
++      before((done) => {
++        utils.getRequest(config)
++          .post(`/api/books`)
++          .send({ title: `my book` })
++          .expect(200)
++          .expect((response) => {
++            id = response.body.id;
++            assert.ok(response.body.id);
++            assert.equal(response.body.title, `my book`);
++          })
++          .end(done);
++      });
++
++      it(`should update a book`, (done) => {
++        const expected = `Redirecting to /books/${id}`;
++        utils.getRequest(config)
++          .post(`/books/${id}/edit`)
++          .send(`title=my%20other%20book`)
++          .expect(302)
++          .expect((response) => {
++            assert.equal(response.text.includes(expected), true);
++          })
++          .end(done);
++      });
++
++      it(`should show edit book form`, (done) => {
++        const expected =
++          `<input type="text" name="title" id="title" value="my other book" class="form-control">`;
++        utils.getRequest(config)
++          .get(`/books/${id}/edit`)
++          .expect(200)
++          .expect((response) => {
++            console.log('RT', response.text);
++            console.log('expected', expected);
++            assert.equal(response.text.includes(expected), true);
++          })
++          .end(done);
++      });
++
++      it(`should show a book`, (done) => {
++        const expected = `<h4>my other book&nbsp;<small></small></h4>`;
++        utils.getRequest(config)
++          .get(`/books/${id}`)
++          .expect(200)
++          .expect((response) => {
++            assert.equal(response.text.includes(expected), true);
++          })
++          .end(done);
++      });
++
++      it(`should delete a book`, (done) => {
++        const expected = `Redirecting to /books`;
++        utils.getRequest(config)
++          .get(`/books/${id}/delete`)
++          .expect(302)
++          .expect((response) => {
++            id = undefined;
++            assert.equal(response.text.includes(expected), true);
++          })
++          .end(done);
++      });
++
++      // clean up if necessary
++      after((done) => {
++        if (id) {
++          utils.getRequest(config)
++            .delete(`/api/books/${id}`)
++            .expect(200)
++            .end(done);
++        } else {
++          done();
++        }
++      });
++    });
++
++    after(() => {
++      require(`../config`).set(`DATA_BACKEND`, ORIG_DATA_BACKEND);
++    });
++  });
++};
+diff --git a/test/index.js b/test/index.js
+index 92884d9..7c479e2 100644
+--- a/test/index.js
++++ b/test/index.js
+@@ -23,4 +23,20 @@ describe(`${config.test}/`, () => {
+     }).timeout(120 * 1000);
+   }
+   require(`./app.test`);
++  describe(`books/`, () => {
++    const appConfig = require(`../config`);
++    const DATA_BACKEND = appConfig.get(`DATA_BACKEND`);
++    if (DATA_BACKEND === `datastore` || process.env.TEST_DATASTORE) {
++      require(`./api.test`)(`datastore`);
++      require(`./crud.test`)(`datastore`);
++    }
++    if (DATA_BACKEND === `cloudsql` || process.env.TEST_CLOUDSQL) {
++      require(`./api.test`)(`cloudsql`);
++      require(`./crud.test`)(`cloudsql`);
++    }
++    if (DATA_BACKEND === `mongodb` || process.env.TEST_MONGODB) {
++      require(`./api.test`)(`mongodb`);
++      require(`./crud.test`)(`mongodb`);
++    }
++  });
+ });
+diff --git a/views/base.jade b/views/base.jade
+new file mode 100644
+index 0000000..7a93bf7
+--- /dev/null
++++ b/views/base.jade
+@@ -0,0 +1,32 @@
++//- Copyright 2015-2016, Google, Inc.
++ Licensed under the Apache License, Version 2.0 (the "License");
++ you may not use this file except in compliance with the License.
++ You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++ Unless required by applicable law or agreed to in writing, software
++ distributed under the License is distributed on an "AS IS" BASIS,
++ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ See the License for the specific language governing permissions and
++ limitations under the License.
++
++doctype html
++html(lang="en")
++  head
++    title Bookshelf - Node.js on Google Cloud Platform
++    meta(charset='utf-8')
++    meta(name="viewport", content="width=device-width, initial-scale=1")
++    link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css")
++  body
++    .navbar.navbar-default
++      .container
++        .navbar-header
++          .navbar-brand Bookshelf
++
++        ul.nav.navbar-nav
++          li
++            a(href="/books") Books
++
++    .container
++      block content
+diff --git a/views/books/form.jade b/views/books/form.jade
+new file mode 100644
+index 0000000..24fcc7c
+--- /dev/null
++++ b/views/books/form.jade
+@@ -0,0 +1,35 @@
++//- Copyright 2015-2016, Google, Inc.
++ Licensed under the Apache License, Version 2.0 (the "License");
++ you may not use this file except in compliance with the License.
++ You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++ Unless required by applicable law or agreed to in writing, software
++ distributed under the License is distributed on an "AS IS" BASIS,
++ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ See the License for the specific language governing permissions and
++ limitations under the License.
++
++// [START form]
++extends ../base.jade
++
++block content
++  h3 #{action} book
++  form(method="POST")
++    .form-group
++      label(for="title") Title
++      input.form-control(type="text", name="title", id="title", value=book.title)
++    .form-group
++      label(for="author") Author
++      input.form-control(type="text", name="author", id="author", value=book.author)
++    .form-group
++      label(for="publishedDate") Date Published
++      input.form-control(type="text", name="publishedDate", id="publishedDate", value=book.publishedDate)
++    .form-group
++      label(for="description") Description
++      input.form-control(type="text", name="description", id="description", value=book.description)
++    .form-group
++    button.btn.btn-success(type="submit") Save
++
++// [END form]
+diff --git a/views/books/list.jade b/views/books/list.jade
+new file mode 100644
+index 0000000..3ecd5b5
+--- /dev/null
++++ b/views/books/list.jade
+@@ -0,0 +1,37 @@
++//- Copyright 2015-2016, Google, Inc.
++ Licensed under the Apache License, Version 2.0 (the "License");
++ you may not use this file except in compliance with the License.
++ You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++ Unless required by applicable law or agreed to in writing, software
++ distributed under the License is distributed on an "AS IS" BASIS,
++ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ See the License for the specific language governing permissions and
++ limitations under the License.
++
++extends ../base.jade
++
++block content
++  h3 Books
++
++  a(href="/books/add", class='btn btn-success btn-sm')
++    i.glyphicon.glyphicon-plus
++    span  Add book
++
++  each book in books
++    .media
++      a(href="/books/#{book.id}")
++        .media-body
++          h4= book.title
++          p= book.author
++
++  if !books.length
++    p No books found.
++
++  if nextPageToken
++    nav
++      ul.pager
++        li
++          a(href="?pageToken=#{encodeURIComponent(nextPageToken)}") More
+diff --git a/views/books/view.jade b/views/books/view.jade
+new file mode 100644
+index 0000000..760730f
+--- /dev/null
++++ b/views/books/view.jade
+@@ -0,0 +1,34 @@
++//- Copyright 2015-2016, Google, Inc.
++ Licensed under the Apache License, Version 2.0 (the "License");
++ you may not use this file except in compliance with the License.
++ You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++ Unless required by applicable law or agreed to in writing, software
++ distributed under the License is distributed on an "AS IS" BASIS,
++ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ See the License for the specific language governing permissions and
++ limitations under the License.
++
++extends ../base.jade
++
++block content
++  h3 Book
++    small
++
++  .btn-group
++    a(href="/books/#{book.id}/edit", class='btn btn-primary btn-sm')
++      i.glyphicon.glyphicon-edit
++      span  Edit book
++    a(href="/books/#{book.id}/delete", class='btn btn-danger btn-sm')
++      i.glyphicon.glyphicon-trash
++      span  Delete book
++
++  .media
++    .media-body
++      h4= book.title
++        | &nbsp;
++        small= book.publishedDate
++      h5 By #{book.author||'unknown'}
++      p= book.description
