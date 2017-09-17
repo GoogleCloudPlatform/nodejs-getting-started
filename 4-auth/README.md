@@ -37,6 +37,7 @@ and deploying this sample.
 
         cp config-default.json config.json
 
+    * Enable the [Google+ API](https://console.developers.google.com/apis/api/plus.googleapis.com/overview?project=[YOUR_PROJECT_ID]) for your project 
     * Set `GCLOUD_PROJECT` in `config.json` to your Google Cloud Platform
       project ID.
     * Set `DATA_BACKEND` in `config.json` to one of `"datastore"`, `"cloudsql"`,
