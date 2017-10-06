@@ -14,6 +14,7 @@ and deploying this sample.
 
 1.  Install [git](https://git-scm.com/).
 1.  Create a [Google Cloud Platform project](https://console.cloud.google.com).
+1.  Enable the [Google+ API](https://console.developers.google.com/apis/api/plus.googleapis.com/overview) for your project.
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
     * After downloading the SDK, initialize it:
@@ -36,8 +37,7 @@ and deploying this sample.
 1.  Create a `config.json` file (copied from the `config-default.json` file):
 
         cp config-default.json config.json
-
-    * Enable the [Google+ API](https://console.developers.google.com/apis/api/plus.googleapis.com/overview) for your project 
+ 
     * Set `GCLOUD_PROJECT` in `config.json` to your Google Cloud Platform
       project ID.
     * Set `DATA_BACKEND` in `config.json` to one of `"datastore"`, `"cloudsql"`,
