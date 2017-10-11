@@ -14,23 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export NODE_ENV=development
-export E2E_TESTS=true
-export TEST_DATASTORE=true
-cd github/nodejs-getting-started
-
 # Remove old logs/YAML files
 cd $WORKSPACE
 rm -rf */*.log
 rm -rf *-*.yaml
 
+export NODE_ENV=development
+export E2E_TESTS=true
+export TEST_DATASTORE=true
+cd github/nodejs-getting-started
+
 # Use latest version of Node v8
 npm install -g n && n v8
-
-# Install Node dependencies
-npm install -g yarn @google-cloud/nodejs-repo-tools
-cd 1-hello-world
-yarn install
 
 echo "runtime: nodejs
 env: flex
@@ -68,8 +63,12 @@ export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project nodejs-getting-started-tests
 
+# Install Node dependencies
+npm install -g yarn @google-cloud/nodejs-repo-tools
+cd ../2-structured-data
+yarn install
+
 # Deploy a single step
-cd 1-hello-world
 set +e;
 npm run e2e;
 set -e;
