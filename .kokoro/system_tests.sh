@@ -15,14 +15,25 @@
 # limitations under the License.
 
 # Remove old logs/YAML files
-cd $WORKSPACE
 rm -rf */*.log
 rm -rf *-*.yaml
 
 export NODE_ENV=development
 export E2E_TESTS=true
 export TEST_DATASTORE=true
+
+# Debug
+pwd
+ls
+ls ..
+echo $HOME
+
 cd github/nodejs-getting-started
+
+# Debug
+pwd
+ls
+ls ..
 
 # Use latest version of Node v8
 npm install -g n && n v8
