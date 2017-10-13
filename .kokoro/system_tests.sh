@@ -22,19 +22,6 @@ export NODE_ENV=development
 export E2E_TESTS=true
 export TEST_DATASTORE=true
 
-# Debug
-pwd
-ls
-ls ..
-echo $HOME
-
-cd github/nodejs-getting-started
-
-# Debug
-pwd
-ls
-ls ..
-
 # Use latest version of Node v8
 npm install -g n && n v8
 
@@ -63,7 +50,11 @@ if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
   cd $HOME/gcloud &&
   tar xzf google-cloud-sdk.tar.gz &&
   printf '\ny\n\ny\ny\n' | ./google-cloud-sdk/install.sh
+
+  # Move back to starting directory
+  cd /tmpfs/src
 fi
+
 source $HOME/.bashrc
 source $HOME/gcloud/google-cloud-sdk/path.bash.inc
 gcloud components update
@@ -75,8 +66,9 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
+cd github/nodejs-getting-started
 npm install -g yarn @google-cloud/nodejs-repo-tools
-cd ../2-structured-data
+cd 2-structured-data
 yarn install
 
 # Deploy a single step
@@ -86,6 +78,7 @@ set -e;
 
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
+rm -rf node_modules
 
 if [[ $CODE -ne 0 ]]; then
   exit $CODE
