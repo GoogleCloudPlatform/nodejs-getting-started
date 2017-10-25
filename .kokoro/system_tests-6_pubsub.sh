@@ -34,17 +34,7 @@ skip_files:
   - ^node_modules$
 " > app.yaml
 
-echo '{
-  "MYSQL_USER": "user",
-  "MYSQL_PASSWORD": "pass",
-  "MYSQL_HOST": "127.0.0.1",
-  "MONGO_URL": "",
-  "GCLOUD_PROJECT": "nodejs-getting-started-tests",
-  "CLOUD_BUCKET": "nodejs-getting-started-tests",
-  "OAUTH2_CLIENT_ID": "foo",
-  "OAUTH2_CLIENT_SECRET": "bar",
-  "DATA_BACKEND": "datastore"
-}' > config.json
+cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 
 # Install gcloud
 if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
