@@ -54,23 +54,23 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/datastore": "~1.1.0",
-    "body-parser": "~1.17.1",
-    "express": "~4.15.2",
-    "pug": "2.0.0-rc.3",
-    "lodash": "~4.17.4",
-    "mongodb": "~2.2.25",
-    "mysql": "~2.14.0",
-    "nconf": "~0.8.4",
-    "prompt": "~1.0.0",
-    "uglify-js": "3.0.27"
+    "@google-cloud/datastore": "1.1.0",
+    "body-parser": "1.18.2",
+    "express": "4.16.2",
+    "lodash": "4.17.4",
+    "mongodb": "2.2.33",
+    "mysql": "2.15.0",
+    "nconf": "0.8.5",
+    "prompt": "1.0.0",
+    "pug": "2.0.0-rc.4",
+    "uglify-js": "3.1.6"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "1.4.16",
-    "ava": "~0.21.0",
-    "proxyquire": "~1.8.0",
-    "sinon": "~3.0.0",
-    "tap-dot": "~1.0.5"
+    "@google-cloud/nodejs-repo-tools": "2.1.0",
+    "ava": "0.23.0",
+    "proxyquire": "1.8.0",
+    "sinon": "4.0.2",
+    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"
