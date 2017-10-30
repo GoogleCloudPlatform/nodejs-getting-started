@@ -21,9 +21,7 @@ rm -rf *-*.yaml
 export NODE_ENV=development
 export E2E_TESTS=true
 
-export TEST_DATASTORE=true
-export TEST_CLOUDSQL=true
-export TEST_MONGODB=true
+export DATA_BACKEND="datastore"
 
 # Use latest version of Node v8
 npm install -g n && n v8
