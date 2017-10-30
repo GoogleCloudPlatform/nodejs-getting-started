@@ -26,14 +26,6 @@ export DATA_BACKEND="cloudsql"
 # Use latest version of Node v8
 npm install -g n && n v8
 
-echo "runtime: nodejs
-env: flex
-skip_files:
-  - ^node_modules$
-" > app.yaml
-
-cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
-
 # Install gcloud
 if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
   mkdir -p $HOME/gcloud &&
@@ -61,6 +53,17 @@ cd github/nodejs-getting-started
 npm install -g yarn @google-cloud/nodejs-repo-tools
 cd 2-structured-data
 yarn install
+
+# Initialize app.yaml
+echo "runtime: nodejs
+env: flex
+skip_files:
+  - ^node_modules$
+" > app.yaml
+
+# Copy secrets
+cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
+cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
 # Deploy a single step
 set +e;
