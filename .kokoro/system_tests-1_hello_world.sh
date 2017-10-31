@@ -21,27 +21,6 @@ rm -rf *-*.yaml
 export NODE_ENV=development
 export E2E_TESTS=true
 
-# Use latest version of Node v8, npm, and yarn
-npm install -g n npm yarn && n v8
-
-cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
-
-# Install gcloud
-if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
-  mkdir -p $HOME/gcloud &&
-  wget https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz --directory-prefix=$HOME/gcloud &&
-  cd $HOME/gcloud &&
-  tar xzf google-cloud-sdk.tar.gz &&
-  printf '\ny\n\ny\ny\n' | ./google-cloud-sdk/install.sh
-
-  # Move back to starting directory
-  cd /tmpfs/src
-fi
-
-source $HOME/.bashrc
-source $HOME/gcloud/google-cloud-sdk/path.bash.inc
-gcloud components update
-
 # Configure gcloud
 export GCLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
@@ -49,9 +28,7 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
-cd github/nodejs-getting-started
-yarn add global @google-cloud/nodejs-repo-tools
-cd 1-hello-world
+cd github/nodejs-getting-started/1-hello-world
 yarn install
 
 # Initialize app.yaml
