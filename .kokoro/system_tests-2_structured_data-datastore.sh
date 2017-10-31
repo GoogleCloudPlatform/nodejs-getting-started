@@ -23,6 +23,9 @@ export E2E_TESTS=true
 
 export DATA_BACKEND="datastore"
 
+# Set loglevels
+npm config set loglevel warn
+
 # Use latest version of Node v8
 npm install -g n && n v8
 
