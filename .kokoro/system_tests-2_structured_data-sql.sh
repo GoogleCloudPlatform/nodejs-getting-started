@@ -51,7 +51,6 @@ set -e;
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 rm -rf node_modules
-rm /usr/local/bin/yarn
 
 if [[ $CODE -ne 0 ]]; then
   exit $CODE

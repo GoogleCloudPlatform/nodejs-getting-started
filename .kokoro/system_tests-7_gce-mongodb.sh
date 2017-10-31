@@ -20,36 +20,7 @@ rm -rf *-*.yaml
 
 export NODE_ENV=development
 export E2E_TESTS=true
-
 export DATA_BACKEND="mongodb"
-
-# Set loglevels
-npm config set loglevel warn
-
-# Use latest version of Node v8
-npm install -g n && n v8
-
-echo "runtime: nodejs
-env: flex
-skip_files:
-  - ^node_modules$
-" > app.yaml
-
-# Install gcloud
-if [ ! -d $HOME/gcloud/google-cloud-sdk ]; then
-  mkdir -p $HOME/gcloud &&
-  wget https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz --directory-prefix=$HOME/gcloud &&
-  cd $HOME/gcloud &&
-  tar xzf google-cloud-sdk.tar.gz &&
-  printf '\ny\n\ny\ny\n' | ./google-cloud-sdk/install.sh
-
-  # Move back to starting directory
-  cd /tmpfs/src
-fi
-
-source $HOME/.bashrc
-source $HOME/gcloud/google-cloud-sdk/path.bash.inc
-gcloud components update
 
 # Configure gcloud
 export GCLOUD_PROJECT=nodejs-getting-started-tests
@@ -58,10 +29,15 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
-cd github/nodejs-getting-started
-npm install -g @google-cloud/nodejs-repo-tools
-cd 7-gce
+cd github/nodejs-getting-started/7-gce
 yarn install
+
+# Initialize app.yaml
+echo "runtime: nodejs
+env: flex
+skip_files:
+  - ^node_modules$
+" > app.yaml
 
 # Copy secrets
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
@@ -75,7 +51,6 @@ set -e;
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 rm -rf node_modules
-rm /usr/local/bin/yarn
 
 if [[ $CODE -ne 0 ]]; then
   exit $CODE
