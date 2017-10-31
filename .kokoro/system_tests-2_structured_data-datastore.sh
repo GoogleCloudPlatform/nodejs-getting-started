@@ -23,12 +23,8 @@ export E2E_TESTS=true
 
 export DATA_BACKEND="datastore"
 
-# Use latest version of Node v8 and npm
-npm install -g n && n v8
-npm install -g npm
-
-# Set loglevels
-npm config set loglevel warn
+# Use latest version of Node v8, npm, and yarn
+npm install -g n npm yarn && n v8
 
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 
@@ -56,7 +52,7 @@ gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
 cd github/nodejs-getting-started
-npm install -g @google-cloud/nodejs-repo-tools
+yarn add global @google-cloud/nodejs-repo-tools
 cd 2-structured-data
 yarn install
 

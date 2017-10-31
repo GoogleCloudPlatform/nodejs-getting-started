@@ -21,12 +21,8 @@ rm -rf *-*.yaml
 export NODE_ENV=development
 export E2E_TESTS=true
 
-# Use latest version of Node v8 and npm
-npm install -g n && n v8
-npm install -g npm
-
-# Set loglevels
-npm config set loglevel warn
+# Use latest version of Node v8, npm, and yarn
+npm install -g n npm yarn && n v8
 
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 
@@ -54,7 +50,7 @@ gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
 cd github/nodejs-getting-started
-npm install -g @google-cloud/nodejs-repo-tools
+yarn add global @google-cloud/nodejs-repo-tools
 cd 1-hello-world
 yarn install
 
