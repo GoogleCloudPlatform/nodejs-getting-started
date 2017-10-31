@@ -59,7 +59,7 @@ gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
 cd github/nodejs-getting-started
-npm install -g yarn @google-cloud/nodejs-repo-tools
+npm install -g @google-cloud/nodejs-repo-tools
 cd 3-binary-data
 yarn install
 
