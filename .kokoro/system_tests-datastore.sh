@@ -29,7 +29,7 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
-cd github/nodejs-getting-started/4-auth
+cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 yarn install
 
 # Initialize app.yaml

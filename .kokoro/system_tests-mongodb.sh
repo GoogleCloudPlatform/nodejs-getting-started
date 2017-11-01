@@ -20,7 +20,7 @@ rm -rf *-*.yaml
 
 export NODE_ENV=development
 export E2E_TESTS=true
-export DATA_BACKEND="cloudsql"
+export DATA_BACKEND="mongodb"
 
 # Configure gcloud
 export GCLOUD_PROJECT=nodejs-getting-started-tests
@@ -29,7 +29,7 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
-cd github/nodejs-getting-started/7-gce
+cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 yarn install
 
 # Initialize app.yaml
