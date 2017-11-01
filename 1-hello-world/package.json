@@ -53,13 +53,13 @@
     ]
   },
   "dependencies": {
-    "express": "~4.15.2"
+    "express": "4.16.2"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "1.4.16",
-    "ava": "~0.21.0",
-    "supertest": "~3.0.0",
-    "tap-dot": "~1.0.5"
+    "@google-cloud/nodejs-repo-tools": "2.1.0",
+    "ava": "0.23.0",
+    "supertest": "3.0.0",
+    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"
