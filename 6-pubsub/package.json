@@ -85,7 +85,6 @@
     "proxyquire": "1.8.0",
     "sinon": "4.0.2",
     "supertest": "3.0.0",
-    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node app.js",
     "e2e": "rm -rf node_modules/ &&  samples test build --app --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
-    "test": "samples test app && ava -t 30s --tap test/*.test.js | tap-dot",
+    "test": "samples test app && ava -t 30s --tap test/*.test.js ",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
@@ -70,7 +70,6 @@
     "ava": "0.23.0",
     "proxyquire": "1.8.0",
     "sinon": "4.0.2",
-    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"

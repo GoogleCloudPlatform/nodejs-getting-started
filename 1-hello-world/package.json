@@ -59,7 +59,6 @@
     "@google-cloud/nodejs-repo-tools": "2.1.1",
     "ava": "0.23.0",
     "supertest": "3.0.0",
-    "tap-dot": "1.0.5"
   },
   "engines": {
     "node": ">=4.3.2"
