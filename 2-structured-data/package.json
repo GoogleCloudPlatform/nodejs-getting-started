@@ -69,7 +69,7 @@
     "@google-cloud/nodejs-repo-tools": "2.1.1",
     "ava": "0.23.0",
     "proxyquire": "1.8.0",
-    "sinon": "4.0.2",
+    "sinon": "4.0.2"
   },
   "engines": {
     "node": ">=4.3.2"
