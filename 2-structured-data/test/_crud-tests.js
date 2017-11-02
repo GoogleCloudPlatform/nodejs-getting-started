@@ -78,7 +78,7 @@ module.exports = (DATA_BACKEND) => {
     const expected = /Redirecting to \/books\//;
     getRequest(testConfig)
       .post(`/books/add`)
-      .send(`title=my%20book`)
+      .field(`title`, `my book`)
       .expect(302)
       .expect((response) => {
         const location = response.headers.location;
@@ -134,7 +134,7 @@ module.exports = (DATA_BACKEND) => {
     const expected = new RegExp(`Redirecting to /books/${id}`);
     getRequest(testConfig)
       .post(`/books/${id}/edit`)
-      .send(`title=my%20other%20book`)
+      .field(`title`, `my other book`)
       .expect(302)
       .expect((response) => {
         t.regex(response.text, expected);
