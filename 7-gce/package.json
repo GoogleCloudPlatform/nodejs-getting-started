@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "start": "node ${SCRIPT:-app.js}",
-    "test": "ava -t 30s --tap test/*.test.js && samples test app",
-    "e2e": "rm -rf node_modules/ &&  samples test build --app --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
+    "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
+    "e2e": "rm -rf node_modules/ &&  repo-tools test build --app --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
