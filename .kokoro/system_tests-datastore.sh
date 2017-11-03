@@ -29,8 +29,8 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
+yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
-yarn install
 
 # Initialize app.yaml
 echo "runtime: nodejs
@@ -50,7 +50,6 @@ set -e;
 
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
-rm -rf node_modules
 
 if [[ $CODE -ne 0 ]]; then
   exit $CODE
