@@ -19,7 +19,7 @@ rm -rf */*.log
 rm -rf *-*.yaml
 
 export NODE_ENV=development
-export E2E_TESTS=true
+export E2E_TESTS=true # test the deployed app
 export DATA_BACKEND="cloudsql"
 
 # Configure gcloud
@@ -43,9 +43,11 @@ skip_files:
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
-# Deploy a single step
+# Deploy and test a single step
 set +e;
-npm run e2e;
+export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
+gcloud app deploy --version $GAE_VERSION # nodejs-repo-tools doesn't support specifying versions, so deploy manually
+npm test
 set -e;
 
 # Post-test cleanup

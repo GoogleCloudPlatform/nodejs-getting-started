@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "e2e": "rm -rf node_modules/ &&  repo-tools test build --app --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
+    "e2e": "repo-tools test deploy",
     "test": "repo-tools test app",
     "cover": "nyc --cache npm test; nyc report --reporter=html"
   },

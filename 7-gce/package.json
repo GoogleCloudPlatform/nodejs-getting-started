@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ${SCRIPT:-app.js}",
     "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "rm -rf node_modules/ &&  repo-tools test build --app --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
+    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },

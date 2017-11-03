@@ -43,9 +43,11 @@ skip_files:
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
-# Deploy a single step
+# Deploy and test a single step
 set +e;
-npm run e2e;
+gcloud app deploy --version ${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
+export GAE_VERSION=${BOOKSHELF_DIRECTORY}
+npm test
 set -e;
 
 # Post-test cleanup
