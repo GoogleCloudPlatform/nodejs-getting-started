@@ -43,6 +43,9 @@ skip_files:
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
+# Install dependencies (for running the tests, not the apps themselves)
+yarn install
+
 # Deploy and test a single step
 set +e;
 export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
