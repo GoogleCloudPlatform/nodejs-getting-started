@@ -49,7 +49,7 @@ yarn install
 # Deploy and test a single step
 set +e;
 export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
-gcloud app deploy --version $GAE_VERSION # nodejs-repo-tools doesn't support specifying versions, so deploy manually
+gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 npm test
 set -e;
 
