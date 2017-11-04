@@ -47,11 +47,11 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 yarn install
 
 # Deploy and test a single step
-set +e;
+set -e;
 export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 npm test
-set -e;
+set +e;
 
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
