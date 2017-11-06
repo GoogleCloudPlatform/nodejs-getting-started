@@ -13,3 +13,5 @@
 #
 runtime: nodejs
 env: flex
+skip_files:
+ - ^yarn\.lock$
