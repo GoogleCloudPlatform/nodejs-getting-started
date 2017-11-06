@@ -53,6 +53,8 @@ gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn'
 npm test
 set +e;
 
+gcloud app versions delete $GAE_VERSION
+
 # Post-test cleanup
 gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 
