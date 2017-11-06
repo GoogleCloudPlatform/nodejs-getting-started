@@ -39,7 +39,7 @@ the various config.js files.)
 
 * See [LICENSE](LICENSE)
 
-[travis-badge]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started.svg
+[travis-badge]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started.svg?branch=master
 [travis-link]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started
 [coveralls-badge]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started/coverage.svg?branch=master
 [coveralls-link]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started?branch=master
