@@ -46,6 +46,13 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 # Install dependencies (for running the tests, not the apps themselves)
 yarn install
 
+# Register post-test cleanup
+function cleanup {
+  gcloud app versions delete $GAE_VERSION
+  gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
+}
+trap cleanup EXIT
+
 # Deploy and test a single step
 set -e;
 export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
@@ -53,11 +60,7 @@ gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn'
 npm test
 set +e;
 
-gcloud app versions delete $GAE_VERSION
-
-# Post-test cleanup
-gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
-
+# Exit on error
 if [[ $CODE -ne 0 ]]; then
   exit $CODE
 fi
