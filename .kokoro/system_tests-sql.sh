@@ -50,6 +50,15 @@ yarn install
 function cleanup {
   gcloud app versions delete $GAE_VERSION
   gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
+
+  # Update build badge
+  BADGE_URL="gs://nodejs-getting-started-tests-badges"
+  if [[ $? -ne 0 ]]; then
+    STATUS="passing"
+  else
+    STATUS="failing"
+  fi
+  gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.png ${BADGE_URL}/${GAE_VERSION}.png
 }
 trap cleanup EXIT
 
