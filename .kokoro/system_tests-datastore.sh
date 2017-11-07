@@ -53,12 +53,12 @@ function cleanup {
 
   # Update build badge
   BADGE_URL="gs://nodejs-getting-started-tests-badges"
-  if [[ $? -ne 0 ]]; then
+  if [[ $? -eq 0 ]]; then
     STATUS="passing"
   else
     STATUS="failing"
   fi
-  gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.png ${BADGE_URL}/${GAE_VERSION}.png
+  gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.svg ${BADGE_URL}/${GAE_VERSION}.svg
 }
 trap cleanup EXIT
 
