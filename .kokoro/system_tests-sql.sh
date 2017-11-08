@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE:
+# - Each system test uses a different script for system tests. This is due to the need for database/proxy commands
+# - The end-to-end (E2E) tests don't need additional commands (GAE handles that), so they use a common test script
+
 # Remove old logs/YAML files
 rm -rf */*.log
 rm -rf *-*.yaml
