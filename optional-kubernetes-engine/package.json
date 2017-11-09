@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ${SCRIPT:-app.js}",
     "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js",
+    "e2e": "TEST_URL=$(kubectl get services | awk '{ print $3 }' | grep -E \"(\\d|\\.)+\") ava -t 30s --tap test/*.test.js",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
