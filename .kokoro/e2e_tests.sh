@@ -21,21 +21,17 @@ rm -rf *-*.yaml
 export NODE_ENV=development
 export E2E_TESTS=true # test the deployed app
 
-# Configure gcloud
-export GCLOUD_PROJECT=nodejs-getting-started-tests
-export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
-gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project nodejs-getting-started-tests
-
 # Register post-test cleanup
 export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
 function cleanup {
+  CODE=$?
+
   gcloud app versions delete $GAE_VERSION
   gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 
   # Update build badge
   BADGE_URL="gs://nodejs-getting-started-tests-badges"
-  if [[ $? -eq 0 ]]; then
+  if [[ CODE -eq 0 ]]; then
     STATUS="passing"
   else
     STATUS="failing"
@@ -43,6 +39,13 @@ function cleanup {
   gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.svg ${BADGE_URL}/${GAE_VERSION}.svg
 }
 trap cleanup EXIT
+set -e;
+
+# Configure gcloud
+export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
+gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
+gcloud config set project nodejs-getting-started-tests
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
@@ -63,10 +66,8 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 yarn install
 
 # Deploy and test a single step
-set -e;
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 npm test
-set +e;
 
 # Exit on error
 if [[ $CODE -ne 0 ]]; then

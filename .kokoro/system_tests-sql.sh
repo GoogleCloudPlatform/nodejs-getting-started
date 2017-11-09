@@ -39,15 +39,16 @@ cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
+# Fail on error
+set -e;
+
 # Install dependencies (for running the tests, not the apps themselves)
 yarn install
 
 # Test all steps locally
-set -e;
 npm test
-set +e;
 
 # Exit on error
-if [[ $CODE -ne 0 ]]; then
-  exit $CODE
+if [[ $? -ne 0 ]]; then
+  exit $?
 fi
