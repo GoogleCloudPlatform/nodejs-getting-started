@@ -74,7 +74,7 @@ echo "{
 " > config.json
 
 # Build and deploy Docker images
-docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .
+sudo docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .
 gcloud docker -- push gcr.io/${GCLOUD_PROJECT}/bookshelf
 
 # Create the required K8s clusters
