@@ -68,7 +68,7 @@ yarn install
 # Deploy and test a single step
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 if [ -e "worker.yaml" ]; then
-  gcloud app deploy --version ${GAE_VERSION}-worker --no-promote
+  gcloud app deploy worker.yaml --version ${GAE_VERSION}-worker --no-promote
 fi
 npm test
 
