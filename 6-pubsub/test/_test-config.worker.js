@@ -31,6 +31,6 @@ module.exports = {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`
   },
-  version: process.env.GAE_VERSION || TESTNAME,
-  project: `${PROJECT_ID}-worker`
+  version: `${process.env.GAE_VERSION || TESTNAME}-worker`,
+  project: PROJECT_ID
 };
