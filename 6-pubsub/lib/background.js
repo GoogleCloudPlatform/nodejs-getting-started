@@ -33,7 +33,7 @@ const pubsub = Pubsub({
 function getTopic (cb) {
   pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
-    if (err && err.code === 409) {
+    if (err && err.code === 6) {
       cb(null, pubsub.topic(topicName));
       return;
     }
