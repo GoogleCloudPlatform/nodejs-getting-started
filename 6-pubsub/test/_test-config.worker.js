@@ -14,21 +14,23 @@
 'use strict';
 
 const path = require(`path`);
-const projectId = process.env.GCLOUD_PROJECT;
-const test = `6-pubsub-worker`;
-const port = 8091;
+const PROJECT_ID = process.env.GCLOUD_PROJECT;
+const TESTNAME = `6-pubsub`;
+const PORT = 8091;
 
 module.exports = {
-  test: test,
-  url: `http://localhost:${port}`,
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
+  test: TESTNAME,
+  url: `http://localhost:${PORT}`,
+  demoUrl: `http://${TESTNAME}-dot-worker-dot-${PROJECT_ID}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `worker`,
   msg: `This worker has processed`,
-  port: port,
+  port: PORT,
   env: {
-    SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
-    TOPIC_NAME: `book-process-queue-${test}`
-  }
+    SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
+    TOPIC_NAME: `book-process-queue-${TESTNAME}`
+  },
+  version: process.env.GAE_VERSION || TESTNAME,
+  project: `${PROJECT_ID}-worker`
 };
