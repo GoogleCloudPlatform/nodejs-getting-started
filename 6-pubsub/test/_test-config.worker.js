@@ -17,11 +17,12 @@ const path = require(`path`);
 const PROJECT_ID = process.env.GCLOUD_PROJECT;
 const TESTNAME = `6-pubsub`;
 const PORT = 8091;
+const VERSION = `${process.env.GAE_VERSION || TESTNAME}-worker`;
 
 module.exports = {
   test: TESTNAME,
   url: `http://localhost:${PORT}`,
-  demoUrl: `http://${TESTNAME}-dot-worker-dot-${PROJECT_ID}.appspot.com`,
+  testUrl: `https://${VERSION}.worker.${PROJECT_ID}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `worker`,
@@ -31,6 +32,6 @@ module.exports = {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`
   },
-  version: `${process.env.GAE_VERSION || TESTNAME}-worker`,
+  version: VERSION`,
   project: PROJECT_ID
 };
