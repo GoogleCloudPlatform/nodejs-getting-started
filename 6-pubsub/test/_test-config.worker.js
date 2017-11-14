@@ -32,6 +32,6 @@ module.exports = {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`
   },
-  version: VERSION`,
+  version: VERSION,
   project: PROJECT_ID
 };
