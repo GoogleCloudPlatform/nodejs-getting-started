@@ -27,6 +27,9 @@ function cleanup {
   CODE=$?
 
   gcloud app versions delete $GAE_VERSION
+  if [ -e "worker.yaml" ]; then
+    gcloud app versions delete ${GAE_VERSION}-worker
+  fi
   gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 
   # Update build badge
