@@ -67,6 +67,7 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
 # Install dependencies (for running the tests, not the apps themselves)
 yarn install
+yarn list @google-cloud/pubsub
 
 # Deploy and test a single step
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
