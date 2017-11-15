@@ -75,7 +75,7 @@ if [ -e "worker.yaml" ]; then
 fi
 
 # Wait 3 minutes (to reduce the risk of 502s)
-sleep 3m
+sleep 5m
 
 # Test the deployed step
 npm test
