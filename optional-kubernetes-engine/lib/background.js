@@ -97,7 +97,7 @@ function queueBook (bookId) {
       return;
     }
 
-    const publisher = topic.publisher;
+    const publisher = topic.publisher();
     publisher.publish(JSON.stringify({
       action: 'processBook',
       bookId: bookId
