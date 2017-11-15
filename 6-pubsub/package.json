@@ -80,7 +80,7 @@
     "winston": "2.4.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "2.1.2",
+    "@google-cloud/nodejs-repo-tools": "GoogleCloudPlatform/nodejs-repo-tools#fix-geturl",
     "ava": "0.23.0",
     "proxyquire": "1.8.0",
     "sinon": "4.1.2",
