@@ -34,8 +34,8 @@ test.beforeEach((t) => {
     on: sinon.stub()
   };
   mocks.publisher = {
-    publish: sinon.stub().callsArg(1, null)
-  }
+    publish: sinon.stub().callsArgWith(1, null)
+  };
   mocks.topic = {
     createSubscription: sinon.stub().callsArgWith(1, null, mocks.subscription),
     publisher: sinon.stub().returns(mocks.publisher)
@@ -70,7 +70,6 @@ test.serial.cb(`should subscribe and log message`, (t) => {
   background.subscribe((err, message) => {
     // Assertions
     t.is(err, null);
-
     t.deepEqual(message, testMessage, `should have message`);
     t.true(
       mocks.pubsub.createTopic.calledOnce,
