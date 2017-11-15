@@ -74,8 +74,15 @@ if [ -e "worker.yaml" ]; then
   gcloud app deploy worker.yaml --version ${GAE_VERSION}-worker --no-promote
 fi
 
-# Wait 3 minutes (to reduce the risk of 502s)
-sleep 5m
+# Wait for deployments to finish
+while curl -I "https://${GAE_VERSION}-dot-${GCLOUD_PROJECT}.appspot.com" | grep "HTTP/1.1 502"; do
+  sleep 30s
+done
+if [ -e "worker.yaml" ]; then
+  while curl -I "https://${GAE_VERSION}-worker.worker.${GCLOUD_PROJECT}.appspot.com" | grep "HTTP/1.1 502"; do
+    sleep 30s
+  done
+fi
 
 # Test the deployed step
 npm test
