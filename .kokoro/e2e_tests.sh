@@ -68,11 +68,16 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 # Install dependencies (for running the tests, not the apps themselves)
 yarn install
 
-# Deploy and test a single step
+# Deploy a single step
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 if [ -e "worker.yaml" ]; then
   gcloud app deploy worker.yaml --version ${GAE_VERSION}-worker --no-promote
 fi
+
+# Wait 3 minutes (to reduce the risk of 502s)
+sleep 3m
+
+# Test the deployed step
 npm test
 
 # Exit on error
