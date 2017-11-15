@@ -18,8 +18,10 @@ const path = require(`path`);
 const proxyquire = require(`proxyquire`);
 const sinon = require(`sinon`);
 const test = require(`ava`);
+
+const supertest = require(`supertest`);
 const utils = {
-  getRequest: c => c.testUrl
+  getRequest: c => supertest(c.testUrl)
 };
 
 test.serial.cb(`should return number of processed books`, (t) => {
