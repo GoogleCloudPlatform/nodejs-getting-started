@@ -22,7 +22,7 @@ export NODE_ENV=development
 export E2E_TESTS=true # test the deployed app
 
 # Register post-test cleanup
-export GAE_VERSION=${BOOKSHELF_DIRECTORY}-${DATA_BACKEND}
+export GAE_VERSION=${BOOKSHELF_DIRECTORY:0:1}-${DATA_BACKEND}
 function cleanup {
   CODE=$?
 
@@ -72,20 +72,6 @@ yarn install
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 if [ -e "worker.yaml" ]; then
   gcloud app deploy worker.yaml --version ${GAE_VERSION} --no-promote
-fi
-
-# Wait for deployment(s) to finish
-URL="https://${GAE_VERSION}-dot-${GCLOUD_PROJECT}.appspot.com"
-while curl -I $URL | grep "HTTP/1.1 502"; do
-  echo waiting 1 minute for [$URL] to stop 502ing...
-  sleep 1m
-done
-if [ -e "worker.yaml" ]; then
-  URL="https://${GAE_VERSION}.worker.${GCLOUD_PROJECT}.appspot.com"
-  while curl -I $URL | grep "HTTP/1.1 502"; do
-    echo waiting 1 minute for [$URL] to stop 502ing...
-    sleep 1m
-  done
 fi
 
 # Test the deployed step
