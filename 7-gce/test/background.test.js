@@ -242,10 +242,10 @@ test.serial(`should queue a book and log message`, (t) => {
   );
   t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
-    JSON.stringify({
+    Buffer.from(JSON.stringify({
       action: `processBook`,
       bookId: testBookId
-    }),
+    })),
     `publisher.publish() should have been called with the right arguments`
   );
   t.true(
@@ -298,10 +298,10 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
   );
   t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
-    JSON.stringify({
+    Buffer.from(JSON.stringify({
       action: `processBook`,
       bookId: testBookId
-    }),
+    })),
     `publisher.publish() should have been called with the right arguments`
   );
   t.true(
