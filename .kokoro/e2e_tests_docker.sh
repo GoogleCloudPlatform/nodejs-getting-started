@@ -79,7 +79,7 @@ gcloud docker -- push gcr.io/${GCLOUD_PROJECT}/bookshelf
 
 # Substitute required variables
 # Use sed, as @google-cloud/nodejs-repo-tools doesn't support K8s deployments
-sed -i '' "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
+sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 
 # Create the required K8s clusters
 kubectl create -f bookshelf-frontend.yaml
