@@ -74,13 +74,17 @@ if [ -e "worker.yaml" ]; then
   gcloud app deploy worker.yaml --version ${GAE_VERSION}-worker --no-promote
 fi
 
-# Wait for deployments to finish
-while curl -I "https://${GAE_VERSION}-dot-${GCLOUD_PROJECT}.appspot.com" | grep "HTTP/1.1 502"; do
-  sleep 30s
+# Wait for deployment(s) to finish
+URL="https://${GAE_VERSION}-dot-${GCLOUD_PROJECT}.appspot.com"
+while curl -I $URL | grep "HTTP/1.1 502"; do
+  echo waiting 1 minute for [$URL] to stop 502ing...
+  sleep 1m
 done
 if [ -e "worker.yaml" ]; then
-  while curl -I "https://${GAE_VERSION}-worker.worker.${GCLOUD_PROJECT}.appspot.com" | grep "HTTP/1.1 502"; do
-    sleep 30s
+  URL="https://${GAE_VERSION}-worker.worker.${GCLOUD_PROJECT}.appspot.com"
+  while curl -I $URL | grep "HTTP/1.1 502"; do
+    echo waiting 1 minute for [$URL] to stop 502ing...
+    sleep 1m
   done
 fi
 
