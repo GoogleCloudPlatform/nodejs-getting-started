@@ -71,7 +71,7 @@ yarn install
 # Deploy a single step
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
 if [ -e "worker.yaml" ]; then
-  gcloud app deploy worker.yaml --version ${GAE_VERSION}-worker --no-promote
+  gcloud app deploy worker.yaml --version ${GAE_VERSION} --no-promote
 fi
 
 # Wait for deployment(s) to finish
@@ -81,7 +81,7 @@ while curl -I $URL | grep "HTTP/1.1 502"; do
   sleep 1m
 done
 if [ -e "worker.yaml" ]; then
-  URL="https://${GAE_VERSION}-worker.worker.${GCLOUD_PROJECT}.appspot.com"
+  URL="https://${GAE_VERSION}.worker.${GCLOUD_PROJECT}.appspot.com"
   while curl -I $URL | grep "HTTP/1.1 502"; do
     echo waiting 1 minute for [$URL] to stop 502ing...
     sleep 1m

@@ -17,7 +17,7 @@ const path = require(`path`);
 const PROJECT_ID = process.env.GCLOUD_PROJECT;
 const TESTNAME = `6-pubsub`;
 const PORT = 8091;
-const VERSION = `${process.env.GAE_VERSION || TESTNAME}-worker`;
+const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;
 
 module.exports = {
   test: TESTNAME,
