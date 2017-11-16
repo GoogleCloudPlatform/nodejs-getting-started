@@ -22,7 +22,7 @@ const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;
 module.exports = {
   test: TESTNAME,
   url: `http://localhost:${PORT}`,
-  testUrl: `https://${VERSION}.worker.${PROJECT_ID}.appspot.com`,
+  testUrl: `https://${VERSION}-dot-worker-dot-${PROJECT_ID}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `worker`,
