@@ -103,7 +103,7 @@ function queueBook (bookId) {
     };
 
     const publisher = topic.publisher();
-    publisher.publish(JSON.stringify(data), (err) => {
+    publisher.publish(Buffer.from(JSON.stringify(data)), (err) => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {

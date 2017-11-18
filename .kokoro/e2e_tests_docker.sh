@@ -74,14 +74,18 @@ echo "{
 " > config.json
 
 # Build and deploy Docker images
-sudo docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .
+docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .
 gcloud docker -- push gcr.io/${GCLOUD_PROJECT}/bookshelf
 
 # Substitute required variables
 # Use sed, as @google-cloud/nodejs-repo-tools doesn't support K8s deployments
 sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 
-# Create the required K8s clusters
+# Create and connect to the required K8s cluster
+gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone us-central1-a
+gcloud container clusters get-credentials bookshelf --zone us-central1-a
+
+# Create the required K8s services
 kubectl create -f bookshelf-frontend.yaml
 kubectl create -f bookshelf-worker.yaml
 kubectl create -f bookshelf-service.yaml

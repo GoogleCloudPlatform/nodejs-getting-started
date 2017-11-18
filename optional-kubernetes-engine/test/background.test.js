@@ -240,7 +240,7 @@ test.serial(`should queue a book and log message`, (t) => {
     mocks.publisher.publish.calledOnce,
     `publisher.publish() should have been called once`
   );
-  t.is(
+  t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
     Buffer.from(JSON.stringify({
       action: `processBook`,
@@ -296,7 +296,7 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
     mocks.publisher.publish.calledOnce,
     `publisher.publish() should have been called once`
   );
-  t.is(
+  t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
     Buffer.from(JSON.stringify({
       action: `processBook`,
