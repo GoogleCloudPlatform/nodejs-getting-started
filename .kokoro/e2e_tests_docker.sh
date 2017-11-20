@@ -36,7 +36,7 @@ function cleanup {
   kubectl delete -f bookshelf-worker.yaml || true
 
   # Delete the cluster
-  gcloud container clusters delete bookshelf --zone $ZONE || true
+  gcloud container clusters delete bookshelf --zone $ZONE -q || true
 
   gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 
