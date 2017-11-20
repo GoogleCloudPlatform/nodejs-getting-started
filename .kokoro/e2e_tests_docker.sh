@@ -21,6 +21,7 @@
 rm -rf */*.log
 rm -rf *-*.yaml
 
+ZONE=us-central1-a
 export NODE_ENV=development
 export E2E_TESTS=true # test the deployed app
 
@@ -33,6 +34,9 @@ function cleanup {
   kubectl delete -f bookshelf-frontend.yaml || true
   kubectl delete -f bookshelf-service.yaml || true
   kubectl delete -f bookshelf-worker.yaml || true
+
+  # Delete the cluster
+  gcloud container clusters delete bookshelf --zone $ZONE || true
 
   gsutil -m cp */*.log gs://nodejs-getting-started-tests-deployment-logs || true
 
@@ -83,10 +87,10 @@ sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 
 # Create and connect to the required K8s cluster
 echo "DBG A"
-gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone us-central1-a
+gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone $ZONE
 sleep 1m # Wait for cluster to initialize
 echo "DBG B"
-gcloud container clusters get-credentials bookshelf --zone us-central1-a
+gcloud container clusters get-credentials bookshelf --zone $ZONE
 echo "DBG C"
 
 # Create the required K8s services
