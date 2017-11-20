@@ -82,13 +82,20 @@ gcloud docker -- push gcr.io/${GCLOUD_PROJECT}/bookshelf
 sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 
 # Create and connect to the required K8s cluster
+echo "DBG A"
 gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone us-central1-a
+sleep 1m # Wait for cluster to initialize
+echo "DBG B"
 gcloud container clusters get-credentials bookshelf --zone us-central1-a
+echo "DBG C"
 
 # Create the required K8s services
 kubectl create -f bookshelf-frontend.yaml
+echo "DBG D"
 kubectl create -f bookshelf-worker.yaml
+echo "DBG E"
 kubectl create -f bookshelf-service.yaml
+echo "DBG F"
 
 # Run tests
 npm run e2e
