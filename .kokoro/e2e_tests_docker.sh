@@ -87,14 +87,18 @@ sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 
 # Create and connect to the required K8s cluster
 gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone $ZONE
-sleep 1m # Wait for cluster to initialize
 gcloud container clusters get-credentials bookshelf --zone $ZONE
 
 # Create the required K8s services
 kubectl create -f bookshelf-frontend.yaml
 kubectl create -f bookshelf-worker.yaml
 kubectl create -f bookshelf-service.yaml
-sleep 1m # Wait for services to initialize
+
+# Wait for services to initialize
+until kubectl get services | awk '{ print $3 }' | grep -E "(\\d|\\.)+"
+do
+  sleep 30;
+done
 
 # Run (only) the tests that GKE supports
 export SKIP_WORKER_HTTP_TESTS=True
