@@ -58,7 +58,7 @@ function subscribe () {
     if (err) {
       throw err;
     }
-    if (message.data.action === 'processBook') {
+    if (message.data && message.data.action === 'processBook') {
       logging.info(`Received request to process book ${message.data.bookId}`);
       processBook(message.data.bookId);
     } else {
