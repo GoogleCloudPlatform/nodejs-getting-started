@@ -95,10 +95,11 @@ kubectl create -f bookshelf-worker.yaml
 kubectl create -f bookshelf-service.yaml
 
 # Wait for services to initialize
-until kubectl get services | awk '{ print $3 }' | grep -E "(\\d|\\.)+"
+until kubectl get services | awk '{ print $4 }' | grep -E "(\\d|\\.)+"
 do
   sleep 30;
 done
+export TEST_URL=http://$(kubectl get services | awk '{ print $4 }' | grep -E "(\d|\.)+")
 
 # Run (only) the tests that GKE supports
 export SKIP_WORKER_HTTP_TESTS=True
