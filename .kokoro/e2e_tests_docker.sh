@@ -98,6 +98,13 @@ kubectl create -f bookshelf-service.yaml
 sleep 30;
 until kubectl get services | awk '{ print $4 }' | grep -E "^(\\d|\\.)+$"
 do
+  echo "DBG: waiting..."
+  echo $(kubectl get services)
+  echo "DBG 1 ------"
+  echo $(kubectl get services | awk '{ print $4 }')
+  echo "DBG 2 ------"
+  echo $(kubectl get services | awk '{ print $4 }' | grep -E "^(\\d|\\.)+$")
+  echo "DBG 3 ------"
   sleep 30;
 done
 export TEST_URL=http://$(kubectl get services | awk '{ print $4 }' | grep -E "^(\d|\.)+$")
