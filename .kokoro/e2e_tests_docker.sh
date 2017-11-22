@@ -96,18 +96,18 @@ kubectl create -f bookshelf-service.yaml
 
 # Wait for services to initialize
 sleep 30;
-until kubectl get services | awk '{ print $4 }' | grep -E "^(\\d|\\.)+$"
+until kubectl get services | awk '{ print $4 }' | grep -E "(\\d|\\.)+"
 do
   echo "DBG: waiting..."
   echo $(kubectl get services)
   echo "DBG 1 ------"
   echo $(kubectl get services | awk '{ print $4 }')
   echo "DBG 2 ------"
-  echo $(kubectl get services | awk '{ print $4 }' | grep -E "^(\\d|\\.)+$")
+  echo $(kubectl get services | awk '{ print $4 }' | grep -E "(\\d|\\.)+")
   echo "DBG 3 ------"
   sleep 30;
 done
-export TEST_URL=http://$(kubectl get services | awk '{ print $4 }' | grep -E "^(\d|\.)+$")
+export TEST_URL=http://$(kubectl get services | awk '{ print $4 }' | grep -E "(\d|\.)+")
 
 # Run (only) the tests that GKE supports
 export SKIP_WORKER_HTTP_TESTS=True
