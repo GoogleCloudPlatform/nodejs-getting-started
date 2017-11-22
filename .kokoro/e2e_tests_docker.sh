@@ -89,6 +89,9 @@ sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone $ZONE
 gcloud container clusters get-credentials bookshelf --zone $ZONE
 
+# Create K8s version of the service account keyfile
+kubectl create secret generic keyfile --from-file "$GOOGLE_APPLICATION_CREDENTIALS"
+
 # Create the required K8s services
 kubectl create -f bookshelf-frontend.yaml
 kubectl create -f bookshelf-worker.yaml
