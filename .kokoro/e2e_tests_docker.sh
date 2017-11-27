@@ -31,9 +31,9 @@ function cleanup {
 
   # Delete the K8s resources
   set +e
-  kubectl delete -f bookshelf-frontend.yaml || true
+  kubectl delete -f bookshelf-frontend-${DATA_BACKEND}.yaml || true
+  kubectl delete -f bookshelf-worker-${DATA_BACKEND}.yaml || true
   kubectl delete -f bookshelf-service.yaml || true
-  kubectl delete -f bookshelf-worker.yaml || true
 
   # Delete the cluster
   gcloud container clusters delete bookshelf --zone $ZONE -q || true
@@ -100,8 +100,8 @@ kubectl create secret generic cloudsql-db-credentials --from-literal=username="$
 kubectl create secret generic mongodb-credentials --from-literal=mongo-url="$MONGO_URL"
 
 # Create the required K8s services
-kubectl create -f bookshelf-frontend.yaml
-kubectl create -f bookshelf-worker.yaml
+kubectl create -f bookshelf-frontend-${DATA_BACKEND}.yaml
+kubectl create -f bookshelf-worker-${DATA_BACKEND}.yaml
 kubectl create -f bookshelf-service.yaml
 
 # Wait for services to initialize
