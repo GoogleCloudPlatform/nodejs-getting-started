@@ -38,6 +38,7 @@ nconf
     'PORT',
     'SECRET',
     'SUBSCRIPTION_NAME',
+    'INSTANCE_CONNECTION_NAME'
     'TOPIC_NAME'
   ])
   // 3. Config file
