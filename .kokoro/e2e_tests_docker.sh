@@ -58,6 +58,11 @@ export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project nodejs-getting-started-tests
 
+# Extract secrets
+export MYSQL_USER=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-user.json)
+export MYSQL_PASSWORD=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-password.json)
+export MONGO_URL=$(cat ${KOKORO_GFILE_DIR}/secrets-mongo-url.json)
+
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
@@ -89,8 +94,10 @@ sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone $ZONE
 gcloud container clusters get-credentials bookshelf --zone $ZONE
 
-# Create K8s version of the service account keyfile
+# Create K8s secrets
 kubectl create secret generic keyfile --from-file "$GOOGLE_APPLICATION_CREDENTIALS"
+kubectl create secret generic cloudsql-db-credentials --from-literal=username="$MYSQL_USER" --from-literal=password="$MYSQL_PASSWORD"
+kubectl create secret generic mongodb-credentials --from-literal=mongo-url="$MONGO_URL"
 
 # Create the required K8s services
 kubectl create -f bookshelf-frontend.yaml
