@@ -35,7 +35,7 @@ test.beforeEach((t) => {
   };
   mocks.publisher = {
     publish: sinon.stub().callsArg(1, null)
-  }
+  };
   mocks.topic = {
     createSubscription: sinon.stub().callsArgWith(1, null, mocks.subscription),
     publisher: sinon.stub().returns(mocks.publisher)
