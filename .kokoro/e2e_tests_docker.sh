@@ -62,7 +62,7 @@ gcloud config set project nodejs-getting-started-tests
 export MYSQL_USER=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-user.json)
 export MYSQL_PASSWORD=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-password.json)
 export MONGO_URL=$(cat ${KOKORO_GFILE_DIR}/secrets-mongo-url.json)
-export INSTANCE_CONNECTION_NAME="${GCLOUD_PROJECT}:us-central1:integration-tests-instance"
+export INSTANCE_CONNECTION_NAME="${GCLOUD_PROJECT}:us-central1:integration-test-instance"
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
