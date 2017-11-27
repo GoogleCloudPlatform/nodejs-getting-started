@@ -62,6 +62,7 @@ gcloud config set project nodejs-getting-started-tests
 export MYSQL_USER=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-user.json)
 export MYSQL_PASSWORD=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-password.json)
 export MONGO_URL=$(cat ${KOKORO_GFILE_DIR}/secrets-mongo-url.json)
+export INSTANCE_CONNECTION_NAME="${GCLOUD_PROJECT}:us-central1:integration-tests-instance"
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
@@ -96,7 +97,10 @@ gcloud container clusters get-credentials bookshelf --zone $ZONE
 
 # Create K8s secrets
 kubectl create secret generic keyfile --from-file "$GOOGLE_APPLICATION_CREDENTIALS"
-kubectl create secret generic cloudsql-db-credentials --from-literal=username="$MYSQL_USER" --from-literal=password="$MYSQL_PASSWORD"
+kubectl create secret generic cloudsql-db-credentials \
+  --from-literal=username="$MYSQL_USER" \
+  --from-literal=password="$MYSQL_PASSWORD" \
+  --from-literal=instance-connection-name="$INSTANCE_CONNECTION_NAME"
 kubectl create secret generic mongodb-credentials --from-literal=mongo-url="$MONGO_URL"
 
 # Create the required K8s services
