@@ -48,7 +48,7 @@ spec:
         - name: SCRIPT
           value: worker.js
         - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secret/cloud.google.com/service-account.json
+          value: /var/run/secret/cloud.google.com/secrets-key.json
         - name: PROJECT_ID
           value: [GCLOUD_PROJECT]
         - name: MYSQL_USER
