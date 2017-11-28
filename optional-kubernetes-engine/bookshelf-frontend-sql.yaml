@@ -67,6 +67,8 @@ spec:
                 key: instance-connection-name
           - name: MYSQL_HOST
             value: "127.0.0.1"
+          - name: SQL_PORT
+            value: 3306
         volumeMounts:
         - name: "secrets-key"
           mountPath: "/var/run/secret/cloud.google.com"
