@@ -8,14 +8,6 @@ FROM gcr.io/google_appengine/nodejs
 RUN /usr/local/bin/install_node '>=0.12.7'
 COPY . /app/
 
-# Install the Cloud SQL proxy
-# Optional if you aren't using Cloud SQL
-RUN curl -o /usr/local/bin/cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 \
-    && chmod +x /usr/local/bin/cloud_sql_proxy
-
-# Install dependencies for the Cloud SQL proxy
-RUN apt-get update && apt-get install -y fuse
-
 # You have to specify "--unsafe-perm" with npm install
 # when running as root.  Failing to do this can cause
 # install to appear to succeed even if a preinstall

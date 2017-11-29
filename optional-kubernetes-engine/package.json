@@ -5,9 +5,8 @@
   "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
   "private": true,
   "scripts": {
-    "start": "npm run start-proxy; node ${SCRIPT:-app.js}",
+    "start": "node ${SCRIPT:-app.js}",
     "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "start-proxy": "[ $SQL_PORT ] && ! pgrep cloud_sql_proxy > /dev/null && cloud_sql_proxy -instances=$INSTANCE_CONNECTION_NAME=tcp:$SQL_PORT &",
     "e2e": "echo Testing deployment at $TEST_URL; ava -T 30s --tap test/*.test.js",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"

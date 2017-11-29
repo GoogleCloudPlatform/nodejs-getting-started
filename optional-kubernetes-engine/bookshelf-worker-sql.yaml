@@ -61,16 +61,28 @@ spec:
             secretKeyRef:
               name: cloudsql-db-credentials
               key: password
-        - name: INSTANCE_CONNECTION_NAME
-          valueFrom:
-            secretKeyRef:
-              name: cloudsql-db-credentials
-              key: instance-connection-name
         - name: MYSQL_HOST
           value: "127.0.0.1"
         - name: SQL_PORT
           value: "3306"
+          # Change [INSTANCE_CONNECTION_NAME] here to include your GCP
+          # project, the region of your Cloud SQL instance and the name
+          # of your Cloud SQL instance. The format is
+          # $PROJECT:$REGION:$INSTANCE
+        - name: INSTANCE_CONNECTION_NAME
+          value: "[INSTANCE_CONNECTION_NAME]"
         volumeMounts:
+        - name: "secrets-key"
+          mountPath: "/var/run/secret/cloud.google.com"
+          readOnly: true
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                  "-instances=[INSTANCE_CONNECTION_NAME]=tcp:3306",
+                  "-credential_file=/var/run/secret/cloud.google.com/secrets-key.json"]
+        volumeMounts:
+        - name: cloudsql
+          mountPath: /cloudsql
         - name: "secrets-key"
           mountPath: "/var/run/secret/cloud.google.com"
           readOnly: true
@@ -78,3 +90,8 @@ spec:
         - name: "secrets-key"
           secret:
             secretName: "keyfile"
+        - name: "cloudsql"
+          emptyDir:
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs
