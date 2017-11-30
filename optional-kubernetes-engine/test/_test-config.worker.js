@@ -15,7 +15,7 @@
 
 const path = require(`path`);
 const projectId = process.env.GCLOUD_PROJECT;
-const test = `optional-container-engine-worker`;
+const test = `optional-kubernetes-engine-worker`;
 const port = 8093;
 
 module.exports = {
