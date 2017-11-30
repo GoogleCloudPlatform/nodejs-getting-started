@@ -7,7 +7,8 @@ all: deploy
 create-cluster:
 	gcloud container clusters create bookshelf \
 		--scope "cloud-platform" \
-		--num-nodes 2
+		--num-nodes 5 \
+		--zone us-central1-a
 	gcloud container clusters get-credentials bookshelf
 
 .PHONY: create-bucket
@@ -25,8 +26,7 @@ push: build
 
 .PHONY: template
 template:
-	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-frontend.yaml
-	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-worker.yaml
+	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-*.yaml
 
 .PHONY: create-service
 create-service:

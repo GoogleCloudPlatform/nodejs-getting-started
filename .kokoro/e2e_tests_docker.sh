@@ -93,7 +93,7 @@ sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
 sed -i.bak "s/\[INSTANCE_CONNECTION_NAME\]/${INSTANCE_CONNECTION_NAME}/g" bookshelf-*.yaml
 
 # Create and connect to the required K8s cluster
-gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 2 --zone $ZONE
+gcloud container clusters create bookshelf --scopes "cloud-platform" --num-nodes 5 --zone $ZONE
 gcloud container clusters get-credentials bookshelf --zone $ZONE
 
 # Create K8s secrets
