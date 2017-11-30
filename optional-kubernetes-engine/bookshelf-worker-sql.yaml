@@ -75,6 +75,8 @@ spec:
         - name: "secrets-key"
           mountPath: "/var/run/secret/cloud.google.com"
           readOnly: true
+        - name: cloudsql
+          mountPath: /cloudsql
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy", "--dir=/cloudsql",
