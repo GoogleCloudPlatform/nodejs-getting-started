@@ -20,9 +20,7 @@ const sinon = require(`sinon`);
 const test = require(`ava`);
 
 const supertest = require(`supertest`);
-const utils = {
-  getRequest: c => supertest(c.testUrl)
-};
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 test.serial.cb(`should return number of processed books`, (t) => {
   utils.getRequest(testConfig)
