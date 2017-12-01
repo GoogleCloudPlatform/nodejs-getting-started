@@ -56,7 +56,7 @@ set -e;
 export GCLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project nodejs-getting-started-tests
+gcloud config set project $GCLOUD_PROJECT
 
 # Extract secrets
 export MYSQL_USER=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-user.json)
@@ -74,14 +74,6 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
 # Install dependencies (for running the tests, not the apps themselves)
 yarn install
-
-# Create configuration
-echo "{
-  \"GCLOUD_PROJECT\": \"$GCLOUD_PROJECT\",
-  \"CLOUD_BUCKET\": \"nodejs-getting-started-tests-k8s\",
-  \"DATA_BACKEND\": \"$DATA_BACKEND\"
-}
-" > config.json
 
 # Build and deploy Docker images
 docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .

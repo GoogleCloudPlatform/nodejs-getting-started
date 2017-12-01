@@ -29,7 +29,7 @@ export DATA_BACKEND="datastore"
 export GCLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project nodejs-getting-started-tests
+gcloud config set project $GCLOUD_PROJECT
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools

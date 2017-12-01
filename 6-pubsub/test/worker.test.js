@@ -18,9 +18,7 @@ const path = require(`path`);
 const proxyquire = require(`proxyquire`);
 const sinon = require(`sinon`);
 const test = require(`ava`);
-const utils = require(`@google-cloud/nodejs-repo-tools`)
-const supertest = require(`supertest`);
-
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 test.serial.cb(`should return number of processed books`, (t) => {
   utils.getRequest(testConfig)
