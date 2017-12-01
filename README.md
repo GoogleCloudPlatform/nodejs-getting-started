@@ -16,7 +16,7 @@ Tutorial | Folder | Build Status
 [Logging app events][step-5] | [5-logging][step-5-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-5] ![Datastore Build Status][ci-badge-datastore-5] ![MongoDB Build Status][ci-badge-mongodb-5]
 [Using Cloud Pub/Sub][step-6] | [6-pubsub][step-6-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-6] ![Datastore Build Status][ci-badge-datastore-6] ![MongoDB Build Status][ci-badge-mongodb-6]
 [Deploying to Google Compute Engine][step-7] | [7-gce][step-7-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-7] ![Datastore Build Status][ci-badge-datastore-7] ![MongoDB Build Status][ci-badge-mongodb-7]
-[Deploying to Google Container Engine][step-optional] | [optional-container-engine][step-optional-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-optional] ![Datastore Build Status][ci-badge-datastore-optional] ![MongoDB Build Status][ci-badge-mongodb-optional]
+[Deploying to Google Kubernetes Engine][step-optional] | [optional-kubernetes-engine][step-optional-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-optional] ![Datastore Build Status][ci-badge-datastore-optional] ![MongoDB Build Status][ci-badge-mongodb-optional]
 
 ## Contributing changes
 
