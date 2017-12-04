@@ -47,7 +47,7 @@ function cleanup {
   else
     STATUS="failing"
   fi
-  gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.svg ${BADGE_URL}/${GAE_VERSION}.svg
+  gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.svg ${BADGE_URL}/${BOOKSHELF_DIRECTORY:0:1}-${DATA_BACKEND}.svg
 }
 trap cleanup EXIT
 set -e;

@@ -2,9 +2,9 @@
 
 ![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
 
-[ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-gce-datastore.svg
-[ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-gce-cloudsql.svg
-[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-gce-mongodb.svg
+[ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-datastore.svg
+[ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-cloudsql.svg
+[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-mongodb.svg
 
 This folder contains the sample code for the [Deploying to Google Compute Engine][step-7]
 tutorial. Please refer to the tutorial for instructions on configuring, running,

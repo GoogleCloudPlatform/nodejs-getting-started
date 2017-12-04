@@ -56,8 +56,8 @@ the various config.js files.)
 [step-6-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/6-pubsub
 [step-7]: https://cloud.google.com/nodejs/getting-started/run-on-compute-engine
 [step-7-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/7-gce
-[step-optional]: https://cloud.google.com/nodejs/tutorials/bookshelf-on-container-engine
-[step-optional-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/optional-container-engine
+[step-optional]: https://cloud.google.com/nodejs/tutorials/bookshelf-on-kubernetes-engine
+[step-optional-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/optional-kubernetes-engine
 
 [ci-badge-tests-1]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/1-tests.svg
 [ci-badge-datastore-2]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-datastore.svg
