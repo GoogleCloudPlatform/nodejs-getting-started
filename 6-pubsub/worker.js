@@ -45,7 +45,7 @@ app.get('/_ah/health', (req, res) => {
 let bookCount = 0;
 
 app.get('/', (req, res) => {
-  res.send(`This worker has processed ${bookCount} books.`);
+  res.status(200).send(`This worker has processed ${bookCount} books.`);
 });
 
 app.use(logging.errorLogger);
