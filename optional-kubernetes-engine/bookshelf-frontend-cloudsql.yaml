@@ -26,7 +26,7 @@ metadata:
 # For more info about Pods see:
 #   https://cloud.google.com/container-engine/docs/pods/
 spec:
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
