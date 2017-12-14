@@ -15,10 +15,11 @@
 
 const path = require(`path`);
 
+const TESTNAME = `5-logging`;
 const PORT = 8085;
 
 module.exports = {
-  test: `5-logging`,
+  test: TESTNAME,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `app`,
   port: PORT,
@@ -26,5 +27,7 @@ module.exports = {
     PORT: PORT
   },
   url: `http://localhost:${PORT}`,
+  version: process.env.GAE_VERSION || TESTNAME,
+  project: process.env.GCLOUD_PROJECT,
   msg: `Bookshelf`
 };

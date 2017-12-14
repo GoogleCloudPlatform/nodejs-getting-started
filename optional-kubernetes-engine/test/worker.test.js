@@ -20,25 +20,27 @@ const sinon = require(`sinon`);
 const test = require(`ava`);
 const utils = require(`@google-cloud/nodejs-repo-tools`);
 
-test.serial.cb(`should return number of processed books`, (t) => {
-  utils.getRequest(testConfig)
-    .get(`/`)
-    .expect(200)
-    .expect((response) => {
-      t.regex(response.text, /This worker has processed/);
-    })
-    .end(t.end);
-});
+if (!process.env.SKIP_WORKER_HTTP_TESTS) {
+  test.serial.cb(`should return number of processed books`, (t) => {
+    utils.getRequest(testConfig)
+      .get(`/`)
+      .expect(200)
+      .expect((response) => {
+        t.regex(response.text, /This worker has processed/);
+      })
+      .end(t.end);
+  });
 
-test.serial.cb(`should do a health check`, (t) => {
-  utils.getRequest(testConfig)
-    .get(`/_ah/health`)
-    .expect(200)
-    .expect((response) => {
-      t.is(response.text, `ok`);
-    })
-    .end(t.end);
-});
+  test.serial.cb(`should do a health check`, (t) => {
+    utils.getRequest(testConfig)
+      .get(`/_ah/health`)
+      .expect(200)
+      .expect((response) => {
+        t.is(response.text, `ok`);
+      })
+      .end(t.end);
+  });
+}
 
 test.serial.cb(`should process a book`, (t) => {
   const appConfig = require(`../config`);

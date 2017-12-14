@@ -45,7 +45,7 @@ app.get('/_ah/health', (req, res) => {
 let bookCount = 0;
 
 app.get('/', (req, res) => {
-  res.send(`This worker has processed ${bookCount} books.`);
+  res.status(200).send(`This worker has processed ${bookCount} books.`);
 });
 
 app.use(logging.errorLogger);
@@ -63,16 +63,16 @@ function subscribe () {
   // The subscription will continue to listen for messages until the process
   // is killed.
   // [START subscribe]
-  const unsubscribeFn = background.subscribe((err, message) => {
+  const unsubscribeFn = background.subscribe((err, data) => {
     // Any errors received are considered fatal.
     if (err) {
       throw err;
     }
-    if (message.data.action === 'processBook') {
-      logging.info(`Received request to process book ${message.data.bookId}`);
-      processBook(message.data.bookId);
+    if (data.action === 'processBook') {
+      logging.info(`Received request to process book ${data.bookId}`);
+      processBook(data.bookId);
     } else {
-      logging.warn('Unknown request', message);
+      logging.warn('Unknown request', data);
     }
   });
   // [END subscribe]

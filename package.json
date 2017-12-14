@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
-    "ava": "ava -s -t 30s --tap **/*.test.js | tap-dot",
+    "ava": "ava -s -t 30s --tap **/*.test.js",
     "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "e2e": "mocha test/e2e.js -t 1800000",
@@ -50,9 +50,9 @@
     "@google-cloud/datastore": "1.1.0",
     "@google-cloud/debug-agent": "2.2.2",
     "@google-cloud/logging-winston": "^0.6.0",
-    "@google-cloud/pubsub": "0.14.5",
+    "@google-cloud/pubsub": "0.14.6",
     "@google-cloud/storage": "1.4.0",
-    "@google-cloud/trace-agent": "2.3.0",
+    "@google-cloud/trace-agent": "2.3.1",
     "async": "2.5.0",
     "body-parser": "1.18.2",
     "connect-memcached": "0.2.0",
@@ -73,12 +73,11 @@
     "winston": "2.4.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "2.1.0",
+    "@google-cloud/nodejs-repo-tools": "2.1.1",
     "ava": "0.23.0",
     "npm-check-updates": "^2.13.0",
     "proxyquire": "1.8.0",
     "sinon": "4.0.2",
-    "supertest": "3.0.0",
-    "tap-dot": "1.0.5"
+    "supertest": "3.0.0"
   }
 }
