@@ -14,20 +14,22 @@
 'use strict';
 
 const path = require(`path`);
-const test = `optional`;
 
+const TESTNAME = `optional`;
 const PORT = 8088;
 
 module.exports = {
-  test: test,
+  test: TESTNAME,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `app`,
   msg: `Bookshelf`,
   port: PORT,
   url: `http://localhost:${PORT}`,
+  version: process.env.GAE_VERSION || TESTNAME,
+  project: process.env.GCLOUD_PROJECT,
   env: {
     PORT: PORT,
-    SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,
-    TOPIC_NAME: `book-process-queue-${test}`
+    SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
+    TOPIC_NAME: `book-process-queue-${TESTNAME}`
   }
 };

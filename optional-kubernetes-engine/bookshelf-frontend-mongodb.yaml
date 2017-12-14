@@ -24,7 +24,7 @@ metadata:
 # The bookshelf frontend replica set ensures that at least 3
 # instances of the bookshelf app are running on the cluster.
 # For more info about Pods see:
-#   https://cloud.google.com/kubernetes-engine/docs/pods/
+#   https://cloud.google.com/container-engine/docs/pods/
 spec:
   replicas: 3
   template:
@@ -45,3 +45,23 @@ spec:
         ports:
         - name: http-server
           containerPort: 8080
+        env:
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/run/secret/cloud.google.com/secrets-key.json
+          - name: PROJECT_ID
+            value: [GCLOUD_PROJECT]
+          - name: MONGO_URL
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: mongo-url
+          - name: MONGO_COLLECTION
+            value: books
+        volumeMounts:
+        - name: "secrets-key"
+          mountPath: "/var/run/secret/cloud.google.com"
+          readOnly: true
+      volumes:
+        - name: "secrets-key"
+          secret:
+            secretName: "keyfile"

@@ -56,7 +56,7 @@ module.exports = (DATA_BACKEND) => {
   test.serial.cb(`should delete a book`, (t) => {
     getRequest(testConfig)
       .delete(`/api/books/${id}/`)
-      // .expect(200)
+      .expect(200)
       .expect((response) => {
         t.is(response.text, `OK`);
       })

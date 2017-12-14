@@ -24,7 +24,7 @@ metadata:
 # The bookshelf worker replica set ensures that at least 2 instances of the
 # bookshelf worker pod are running on the cluster.
 # For more info about Pods see:
-#   https://cloud.google.com/kubernetes-engine/docs/pods/
+#   https://cloud.google.com/container-engine/docs/pods/
 spec:
   replicas: 2
   template:
@@ -47,3 +47,15 @@ spec:
         env:
         - name: SCRIPT
           value: worker.js
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secret/cloud.google.com/secrets-key.json
+        - name: PROJECT_ID
+          value: [GCLOUD_PROJECT]
+        volumeMounts:
+        - name: "secrets-key"
+          mountPath: "/var/run/secret/cloud.google.com"
+          readOnly: true
+      volumes:
+        - name: "secrets-key"
+          secret:
+            secretName: "keyfile"

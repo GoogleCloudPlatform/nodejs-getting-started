@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "samples test app && ava -t 30s --tap test/*.test.js | tap-dot",
-    "e2e": "rm -rf node_modules/ &&  samples test build --deploy --timeout 20m --builderProject $GCLOUD_PROJECT",
+    "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
+    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
@@ -58,7 +58,7 @@
     "@google-cloud/debug-agent": "2.2.2",
     "@google-cloud/logging-winston": "^0.6.0",
     "@google-cloud/storage": "1.4.0",
-    "@google-cloud/trace-agent": "2.3.0",
+    "@google-cloud/trace-agent": "2.3.1",
     "body-parser": "1.18.2",
     "connect-memcached": "0.2.0",
     "express": "4.16.2",
@@ -77,12 +77,11 @@
     "winston": "2.4.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "2.1.0",
+    "@google-cloud/nodejs-repo-tools": "2.1.1",
     "ava": "0.23.0",
     "proxyquire": "1.8.0",
     "sinon": "4.0.2",
-    "supertest": "3.0.0",
-    "tap-dot": "1.0.5"
+    "supertest": "3.0.0"
   },
   "engines": {
     "node": ">=4.3.2"

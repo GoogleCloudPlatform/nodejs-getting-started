@@ -53,16 +53,16 @@ function subscribe () {
   // Subscribe to Cloud Pub/Sub and receive messages to process books.
   // The subscription will continue to listen for messages until the process
   // is killed.
-  return background.subscribe((err, message) => {
+  return background.subscribe((err, data) => {
     // Any errors received are considered fatal.
     if (err) {
       throw err;
     }
-    if (message.data.action === 'processBook') {
-      logging.info(`Received request to process book ${message.data.bookId}`);
-      processBook(message.data.bookId);
+    if (data.action === 'processBook') {
+      logging.info(`Received request to process book ${data.bookId}`);
+      processBook(data.bookId);
     } else {
-      logging.warn('Unknown request', message);
+      logging.warn('Unknown request', data);
     }
   });
 }

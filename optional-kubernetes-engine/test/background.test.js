@@ -33,9 +33,12 @@ test.beforeEach((t) => {
   mocks.subscription = {
     on: sinon.stub()
   };
+  mocks.publisher = {
+    publish: sinon.stub().callsArgWith(1, null)
+  };
   mocks.topic = {
-    subscribe: sinon.stub().callsArgWith(2, null, mocks.subscription),
-    publish: sinon.stub().callsArg(1)
+    createSubscription: sinon.stub().callsArgWith(1, null, mocks.subscription),
+    publisher: sinon.stub().returns(mocks.publisher)
   };
   mocks.pubsub = {
     createTopic: sinon.stub().callsArgWith(1, null, mocks.topic),
@@ -53,7 +56,7 @@ test.beforeEach((t) => {
     './logging': mocks.logging
   });
 
-  t.truthy(
+  t.true(
     mocks.Pubsub.calledOnce,
     `Pubsub() should have been called once`
   );
@@ -61,18 +64,15 @@ test.beforeEach((t) => {
 
 test.serial.cb(`should subscribe and log message`, (t) => {
   // Setup
-  const testMessage = `test message`;
+  const testMessage = { test: `foo` };
 
   // Run target functionality
   background.subscribe((err, message) => {
     // Assertions
-    t.truthy(
-      err === null,
-      `err should be null`
-    );
-    t.is(message, testMessage, `should have message`);
-    t.truthy(
-      mocks.pubsub.createTopic,
+    t.is(err, null);
+    t.deepEqual(message, testMessage, `should have message`);
+    t.true(
+      mocks.pubsub.createTopic.calledOnce,
       `pubsub.createTopic() should have been called once`
     );
     t.is(
@@ -85,23 +85,16 @@ test.serial.cb(`should subscribe and log message`, (t) => {
       0,
       `pubsub.topic() should NOT have been called`
     );
-    t.truthy(
-      mocks.topic.subscribe.calledOnce,
-      `topic.subscribe should have been called once`
+    t.true(
+      mocks.topic.createSubscription.calledOnce,
+      `topic.createSubscription should have been called once`
     );
     t.is(
-      mocks.topic.subscribe.firstCall.args[0],
+      mocks.topic.createSubscription.firstCall.args[0],
       `shared-worker-subscription`,
-      `topic.subscribe() should have been called with the right arguments`
+      `topic.createSubscription() should have been called with the right arguments`
     );
-    t.deepEqual(
-      mocks.topic.subscribe.firstCall.args[1],
-      {
-        autoAck: true
-      },
-      `topic.subscribe() should have been called with the right arguments`
-    );
-    t.truthy(
+    t.true(
       mocks.subscription.on.calledTwice,
       `subscription.on should have been called twice`
     );
@@ -110,7 +103,7 @@ test.serial.cb(`should subscribe and log message`, (t) => {
       `message`,
       `subscription.on() should have been called with the right arguments`
     );
-    t.truthy(
+    t.true(
       typeof mocks.subscription.on.firstCall.args[1] === `function`,
       `subscription.on() should have been called with the right arguments`
     );
@@ -119,7 +112,7 @@ test.serial.cb(`should subscribe and log message`, (t) => {
       `error`,
       `subscription.on() should have been called with the right arguments`
     );
-    t.truthy(
+    t.true(
       typeof mocks.subscription.on.secondCall.args[1] === `function`,
       `subscription.on() should have been called with the right arguments`
     );
@@ -129,7 +122,7 @@ test.serial.cb(`should subscribe and log message`, (t) => {
   // Trigger a message
   setTimeout(() => {
     mocks.subscription.on.firstCall.args[1]({
-      data: testMessage
+      data: JSON.stringify(testMessage)
     });
   }, 10);
 });
@@ -142,8 +135,8 @@ test.serial.cb(`should return topic error, if any`, (t) => {
   // Run target functionality
   background.subscribe((data) => {
     // Assertions
-    t.truthy(
-      mocks.pubsub.createTopic,
+    t.true(
+      mocks.pubsub.createTopic.calledOnce,
       `pubsub.createTopic() should have been called once`
     );
     t.is(
@@ -158,9 +151,9 @@ test.serial.cb(`should return topic error, if any`, (t) => {
     );
     t.is(data, testErrorMsg);
     t.is(
-      mocks.topic.subscribe.callCount,
+      mocks.topic.createSubscription.callCount,
       0,
-      `topic.subscribe() should NOT have been called`
+      `topic.createSubscription() should NOT have been called`
     );
     t.is(
       mocks.subscription.on.callCount,
@@ -174,13 +167,13 @@ test.serial.cb(`should return topic error, if any`, (t) => {
 test.serial.cb(`should return subscription error, if any`, (t) => {
   // Setup
   const testErrorMsg = `test error`;
-  mocks.topic.subscribe = sinon.stub().callsArgWith(2, testErrorMsg);
+  mocks.topic.createSubscription = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
   background.subscribe((data) => {
     // Assertions
-    t.truthy(
-      mocks.pubsub.createTopic,
+    t.true(
+      mocks.pubsub.createTopic.calledOnce,
       `pubsub.createTopic() should have been called once`
     );
     t.is(
@@ -193,21 +186,14 @@ test.serial.cb(`should return subscription error, if any`, (t) => {
       0,
       `pubsub.topic() should NOT have been called`
     );
-    t.truthy(
-      mocks.topic.subscribe.calledOnce,
-      `topic.subscribe should have been called once`
+    t.true(
+      mocks.topic.createSubscription.calledOnce,
+      `topic.createSubscription should have been called once`
     );
     t.is(
-      mocks.topic.subscribe.firstCall.args[0],
+      mocks.topic.createSubscription.firstCall.args[0],
       `shared-worker-subscription`,
-      `topic.subscribe() should have been called with the right arguments`
-    );
-    t.deepEqual(
-      mocks.topic.subscribe.firstCall.args[1],
-      {
-        autoAck: true
-      },
-      `topic.subscribe() should have been called with the right arguments`
+      `topic.createSubscription() should have been called with the right arguments`
     );
     t.is(data, testErrorMsg);
     t.is(
@@ -232,8 +218,8 @@ test.serial(`should queue a book and log message`, (t) => {
   background.queueBook(testBookId);
 
   // Assertions
-  t.truthy(
-    mocks.pubsub.createTopic,
+  t.true(
+    mocks.pubsub.createTopic.calledOnce,
     `pubsub.createTopic() should have been called once`
   );
   t.is(
@@ -246,21 +232,23 @@ test.serial(`should queue a book and log message`, (t) => {
     0,
     `pubsub.topic() should NOT have been called`
   );
-  t.truthy(
-    mocks.topic.publish,
-    `topic.publish() should have been called once`
+  t.true(
+    mocks.topic.publisher.calledOnce,
+    `topic.publisher() should have been called once`
+  );
+  t.true(
+    mocks.publisher.publish.calledOnce,
+    `publisher.publish() should have been called once`
   );
   t.deepEqual(
-    mocks.topic.publish.firstCall.args[0],
-    {
-      data: {
-        action: `processBook`,
-        bookId: testBookId
-      }
-    },
-    `topic.publish() should have been called with the right arguments`
+    mocks.publisher.publish.firstCall.args[0],
+    Buffer.from(JSON.stringify({
+      action: `processBook`,
+      bookId: testBookId
+    })),
+    `publisher.publish() should have been called with the right arguments`
   );
-  t.truthy(
+  t.true(
     mocks.logging.info.calledOnce,
     `logging.info() should have been called`
   );
@@ -275,15 +263,15 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
   // Setup
   const testBookId = 1;
   mocks.pubsub.createTopic = sinon.stub().callsArgWith(1, {
-    code: 409
+    code: 6
   });
 
   // Run target functionality
   background.queueBook(testBookId);
 
   // Assertions
-  t.truthy(
-    mocks.pubsub.createTopic,
+  t.true(
+    mocks.pubsub.createTopic.calledOnce,
     `pubsub.createTopic() should have been called once`
   );
   t.is(
@@ -291,7 +279,7 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
     `book-process-queue`,
     `pubsub.createTopic() should have been called with the right arguments`
   );
-  t.truthy(
+  t.true(
     mocks.pubsub.topic.calledOnce,
     `pubsub.topic() should have been called once`
   );
@@ -300,21 +288,23 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
     `book-process-queue`,
     `pubsub.topic() should have been called with the right arguments`
   );
-  t.truthy(
-    mocks.topic.publish,
-    `topic.publish() should have been called once`
+  t.true(
+    mocks.topic.publisher.calledOnce,
+    `topic.publisher() should have been called once`
+  );
+  t.true(
+    mocks.publisher.publish.calledOnce,
+    `publisher.publish() should have been called once`
   );
   t.deepEqual(
-    mocks.topic.publish.firstCall.args[0],
-    {
-      data: {
-        action: `processBook`,
-        bookId: testBookId
-      }
-    },
-    `topic.publish() should have been called with the right arguments`
+    mocks.publisher.publish.firstCall.args[0],
+    Buffer.from(JSON.stringify({
+      action: `processBook`,
+      bookId: testBookId
+    })),
+    `publisher.publish() should have been called with the right arguments`
   );
-  t.truthy(
+  t.true(
     mocks.logging.info.calledOnce,
     `logging.info() should have been called`
   );
@@ -335,8 +325,8 @@ test.serial(`should log error if cannot get topic`, (t) => {
   background.queueBook(testBookId);
 
   // Assertions
-  t.truthy(
-    mocks.pubsub.createTopic,
+  t.true(
+    mocks.pubsub.createTopic.calledOnce,
     `pubsub.createTopic() should have been called once`
   );
   t.is(
@@ -350,16 +340,21 @@ test.serial(`should log error if cannot get topic`, (t) => {
     `pubsub.topic() should NOT have been called`
   );
   t.is(
-    mocks.topic.publish.callCount,
+    mocks.topic.publisher.callCount,
     0,
-    `topic.publish() should NOT have been called`
+    `topic.publisher() should NOT have been called`
+  );
+  t.is(
+    mocks.publisher.publish.callCount,
+    0,
+    `publisher.publish() should NOT have been called`
   );
   t.is(
     mocks.logging.info.callCount,
     0,
     `logging.info() should NOT have been called`
   );
-  t.truthy(
+  t.true(
     mocks.logging.error.calledOnce,
     `logging.error() should have been called`
   );
@@ -375,8 +370,8 @@ test.serial(`should log error if cannot publish message`, (t) => {
   background.queueBook(testBookId);
 
   // Assertions
-  t.truthy(
-    mocks.pubsub.createTopic,
+  t.true(
+    mocks.pubsub.createTopic.calledOnce,
     `pubsub.createTopic() should have been called once`
   );
   t.is(
@@ -389,8 +384,12 @@ test.serial(`should log error if cannot publish message`, (t) => {
     0,
     `pubsub.topic() should NOT have been called`
   );
-  t.truthy(
-    mocks.topic.publish,
-    `topic.publish() should have been called once`
+  t.true(
+    mocks.topic.publisher.calledOnce,
+    `topic.publisher() should have been called once`
+  );
+  t.true(
+    mocks.publisher.publish.calledOnce,
+    `publisher.publish() should have been called once`
   );
 });

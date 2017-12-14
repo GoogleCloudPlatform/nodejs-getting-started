@@ -143,8 +143,7 @@ module.exports = (DATA_BACKEND) => {
   });
 
   test.serial.cb(`should show edit book form`, (t) => {
-    const expected =
-      /<input class="form-control" type="text" name="title" id="title" value="my other book">/;
+    const expected = /"title" value="my other book"/;
     getRequest(testConfig)
       .get(`/books/${id}/edit`)
       .expect(200)
