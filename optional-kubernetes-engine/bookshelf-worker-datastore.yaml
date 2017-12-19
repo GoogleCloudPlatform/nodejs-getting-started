@@ -47,15 +47,5 @@ spec:
         env:
         - name: SCRIPT
           value: worker.js
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secret/cloud.google.com/secrets-key.json
         - name: PROJECT_ID
           value: [GCLOUD_PROJECT]
-        volumeMounts:
-        - name: "secrets-key"
-          mountPath: "/var/run/secret/cloud.google.com"
-          readOnly: true
-      volumes:
-        - name: "secrets-key"
-          secret:
-            secretName: "keyfile"
