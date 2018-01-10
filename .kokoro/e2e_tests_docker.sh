@@ -35,7 +35,7 @@ function cleanup {
   kubectl delete -f bookshelf-worker-${DATA_BACKEND}.yaml || true
   kubectl delete -f bookshelf-service.yaml || true
 
-  # Wait for cluster deletion to finalize
+  # Wait for service deletion to finalize
   sleep 120;
 
   # Delete the cluster
