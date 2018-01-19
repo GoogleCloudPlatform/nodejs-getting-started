@@ -56,8 +56,8 @@
     "express": "4.16.2"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "2.1.1",
-    "ava": "0.23.0",
+    "@google-cloud/nodejs-repo-tools": "2.1.4",
+    "ava": "0.24.0",
     "supertest": "3.0.0"
   },
   "engines": {

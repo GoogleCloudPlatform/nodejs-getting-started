@@ -22,7 +22,6 @@ const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;
 module.exports = {
   test: TESTNAME,
   url: `http://localhost:${PORT}`,
-  testUrl: `https://${VERSION}-dot-worker-dot-${PROJECT_ID}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `worker`,
@@ -35,3 +34,7 @@ module.exports = {
   version: VERSION,
   project: PROJECT_ID
 };
+
+if (process.env.E2E_TESTS) {
+  module.exports.testUrl = `https://${VERSION}-dot-worker-dot-${PROJECT_ID}.appspot.com`;
+}
