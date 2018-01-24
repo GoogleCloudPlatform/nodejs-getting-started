@@ -18,6 +18,12 @@
 const nconf = module.exports = require('nconf');
 const path = require('path');
 
+// Debug code, please delete
+console.log(`config.json path:`, path.join(__dirname, 'config.json'));
+const fs = require(`fs`);
+console.log(`config.json contents:`, fs.readFileSync(path.join(__dirname, 'config.json')).toString());
+console.log(`config.json parsed MONGO_DB_NAME:`, JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')).toString())['MONGO_DB_NAME']);
+
 nconf
   // 1. Command-line arguments
   .argv()
