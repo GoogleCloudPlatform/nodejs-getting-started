@@ -29,6 +29,7 @@ nconf
     'MEMCACHE_URL',
     'MONGO_URL',
     'MONGO_COLLECTION',
+    'MONGO_DB_NAME',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'NODE_ENV',
