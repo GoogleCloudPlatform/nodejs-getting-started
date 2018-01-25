@@ -70,7 +70,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');
-  console.log('MONGO_DB_NAME:', nconf.get('MONGO_DB_NAME')); // Debug code, please delete
   checkConfig('MONGO_DB_NAME');
 }
 

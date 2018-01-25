@@ -35,9 +35,6 @@ gcloud config set project $GCLOUD_PROJECT
 yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started
 
-# DEBUG
-cat ${KOKORO_GFILE_DIR}/secrets-config.json
-
 # Copy secrets into subdirectories
 find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json" \;
 find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
