@@ -122,7 +122,8 @@ test.serial.cb(`should subscribe and log message`, (t) => {
   // Trigger a message
   setTimeout(() => {
     mocks.subscription.on.firstCall.args[1]({
-      data: JSON.stringify(testMessage)
+      data: JSON.stringify(testMessage),
+      ack: sinon.stub()
     });
   }, 10);
 });

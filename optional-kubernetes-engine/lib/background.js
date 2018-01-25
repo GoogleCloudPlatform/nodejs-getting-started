@@ -50,6 +50,7 @@ function subscribe (cb) {
   // Event handlers
   function handleMessage (message) {
     const data = JSON.parse(message.data);
+    message.ack();
     cb(null, data);
   }
   function handleError (err) {

@@ -76,6 +76,9 @@ test(`should check config`, (t) => {
 
   nconfMock.DATA_BACKEND = `mongodb`;
 
+  t.throws(testFunc, Error, getMsg(`MONGO_DB_NAME`));
+  nconfMock.MONGO_DB_NAME = `test`;
+
   t.throws(testFunc, Error, getMsg(`MONGO_URL`));
   nconfMock.MONGO_URL = `url`;
 

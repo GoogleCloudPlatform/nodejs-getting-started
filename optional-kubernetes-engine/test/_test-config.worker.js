@@ -14,14 +14,12 @@
 'use strict';
 
 const path = require(`path`);
-const projectId = process.env.GCLOUD_PROJECT;
 const test = `optional-kubernetes-engine-worker`;
 const port = 8093;
 
 module.exports = {
   test: test,
   url: `http://localhost:${port}`,
-  demoUrl: `http://${test}-dot-worker-dot-${projectId}.appspot.com`,
   yaml: `worker.yaml`,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `worker`,
