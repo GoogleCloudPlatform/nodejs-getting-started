@@ -40,7 +40,7 @@ find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/sec
 find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
 
 # Start SQL proxy
-/usr/local/bin/cloud_sql_proxy -instances="${GCLOUD_PROJECT}:us-central1:integration-test-instance"=tcp:3306 &
+cloud_sql_proxy -instances="${GCLOUD_PROJECT}:us-central1:integration-test-instance"=tcp:3306 &
 
 # Fail on error
 set -e;
