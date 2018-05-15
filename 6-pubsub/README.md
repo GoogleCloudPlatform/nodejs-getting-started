@@ -52,7 +52,6 @@ and deploying this sample.
     * Set `OAUTH2_CLIENT_ID` in `config.json`.
     * Set `OAUTH2_CLIENT_SECRET` in `config.json`.
     * Set `TOPIC_NAME` in `config.json`.
-    * Set `SUBSCRIPTION_NAME` in `config.json`.
 
 1.  Install dependencies using NPM or Yarn:
 

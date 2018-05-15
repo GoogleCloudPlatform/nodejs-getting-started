@@ -82,6 +82,8 @@ and deploying this sample.
     * If `DATA_BACKEND` is set to `"mongodb"`:
 
         1.  Set `MONGO_URL` in `config.json`, e.g. `"mongodb://username:password@123.45.67.890:27017"`.
+        1.  Set `MONGO_DB_NAME` in `config.json`.
+        1.  Set `MONGO_COLLECTION` to `books` in `config.json`.
 
 1.  Start the app using NPM or Yarn:
 

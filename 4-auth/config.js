@@ -27,6 +27,8 @@ nconf
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
     'MEMCACHE_URL',
+    'MEMCACHE_USERNAME',
+    'MEMCACHE_PASSWORD',
     'MONGO_URL',
     'MONGO_COLLECTION',
     'MONGO_DB_NAME',
@@ -55,9 +57,6 @@ nconf
 
     // This is the id of your project in the Google Cloud Developers Console.
     GCLOUD_PROJECT: '',
-
-    // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: 'localhost:11211',
 
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/

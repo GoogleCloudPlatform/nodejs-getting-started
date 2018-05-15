@@ -29,7 +29,6 @@ module.exports = {
   project: process.env.GCLOUD_PROJECT,
   env: {
     PORT: PORT,
-    SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`
   }
 };

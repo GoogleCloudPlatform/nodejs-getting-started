@@ -39,7 +39,6 @@ nconf
     'OAUTH2_CALLBACK',
     'PORT',
     'SECRET',
-    'SUBSCRIPTION_NAME',
     'TOPIC_NAME'
   ])
   // 3. Config file
@@ -78,7 +77,6 @@ nconf
     // Set this a secret string of your choosing
     SECRET: 'keyboardcat',
 
-    SUBSCRIPTION_NAME: 'shared-worker-subscription',
     TOPIC_NAME: 'book-process-queue'
   });
 
