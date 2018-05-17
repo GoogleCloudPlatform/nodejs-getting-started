@@ -58,11 +58,6 @@ nconf
     // This is the id of your project in the Google Cloud Developers Console.
     GCLOUD_PROJECT: '',
 
-    // MongoDB connection string
-    // https://docs.mongodb.org/manual/reference/connection-string/
-    MONGO_URL: 'mongodb://localhost:27017',
-    MONGO_COLLECTION: 'books',
-
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
@@ -88,10 +83,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   if (nconf.get('NODE_ENV') === 'production') {
     checkConfig('INSTANCE_CONNECTION_NAME');
   }
-} else if (nconf.get('DATA_BACKEND') === 'mongodb') {
-  checkConfig('MONGO_URL');
-  checkConfig('MONGO_COLLECTION');
-  checkConfig('MONGO_DB_NAME');
 }
 
 function checkConfig (setting) {
