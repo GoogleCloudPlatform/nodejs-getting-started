@@ -67,17 +67,4 @@ test(`should check config`, (t) => {
   nconfMock.MYSQL_PASSWORD = `password`;
 
   t.notThrows(testFunc);
-
-  nconfMock.DATA_BACKEND = `mongodb`;
-
-  t.throws(testFunc, Error, getMsg(`MONGO_DB_NAME`));
-  nconfMock.MONGO_DB_NAME = `test`;
-
-  t.throws(testFunc, Error, getMsg(`MONGO_URL`));
-  nconfMock.MONGO_URL = `url`;
-
-  t.throws(testFunc, Error, getMsg(`MONGO_COLLECTION`));
-  nconfMock.MONGO_COLLECTION = `collection`;
-
-  t.notThrows(testFunc);
 });

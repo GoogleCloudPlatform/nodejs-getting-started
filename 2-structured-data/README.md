@@ -1,6 +1,6 @@
 # 2 - Structured data
 
-![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] !
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore]
 
 [ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-datastore.svg
 [ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-cloudsql.svg
