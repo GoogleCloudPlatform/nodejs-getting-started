@@ -44,7 +44,6 @@ test.cb(`should start authorization`, (t) => {
   });
   const app = proxyquire(`../app`, {
     passport: passportMock,
-    MemcachedStore: {},
     './lib/oauth2': proxyquire(`../lib/oauth2`, {
       passport: passportMock
     })
@@ -79,7 +78,6 @@ test.cb(`should finish authorization`, (t) => {
   });
   const app = proxyquire(`../app`, {
     passport: passportMock,
-    MemcachedStore: {},
     './lib/oauth2': oauth2
   });
   request(app)
@@ -133,7 +131,6 @@ test.cb(`should logout`, (t) => {
   const passportMock = getPassportMock();
   const app = proxyquire(`../app`, {
     passport: passportMock,
-    MemcachedStore: {},
     './lib/oauth2': proxyquire(`../lib/oauth2`, {
       passport: passportMock
     })
