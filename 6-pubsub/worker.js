@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
 const request = require('request');
 const waterfall = require('async').waterfall;
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const config = require('./config');
 
 const logging = require('./lib/logging');
@@ -35,7 +35,7 @@ const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
 // [START server]
 const app = express();
 
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
 
 app.use(logging.requestLogger);
 
@@ -56,7 +56,7 @@ app.post('/endpoint', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
 
-  const dataUtf8encoded = (new Buffer.from(req.body.message.data, 'base64'))
+  const dataUtf8encoded = Buffer.from(req.body.message.data, 'base64')
     .toString('utf8');
   var content;
   try {
@@ -66,14 +66,14 @@ app.post('/endpoint', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
 
-  if (content.action && content.action === 'processBook' && content.bookId ) {
+  if (content.action && content.action === 'processBook' && content.bookId) {
     logging.info(`Received request to process book ${content.bookId}`);
     processBook(content.bookId);
   } else {
     logging.warn('Bad request', content);
     return res.sendStatus(400);
   }
-})
+});
 
 app.use(logging.errorLogger);
 
