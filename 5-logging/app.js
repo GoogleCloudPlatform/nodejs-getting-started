@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const Datastore = require('@google-cloud/datastore');
 const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 const passport = require('passport');
 const config = require('./config');
