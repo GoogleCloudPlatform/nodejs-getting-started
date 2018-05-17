@@ -169,9 +169,9 @@ function queryBooksApi (query, cb) {
     `https://www.googleapis.com/books/v1/volumes?country=US&q=${encodeURIComponent(query)}`,
     (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        console.log(err);
-        console.log(resp);
-        console.log(body);
+        console.log(`Error: ${err}`);
+        console.log(`Response from Google Books: ${resp}`);
+        console.log(`Response body from Google Books: ${body}`);
         cb(err || `Response returned ${resp.statusCode}`);
         return;
       }
