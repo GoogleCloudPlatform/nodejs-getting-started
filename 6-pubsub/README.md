@@ -49,6 +49,8 @@ and deploying this sample.
       Storage bucket.
     * Set `OAUTH2_CLIENT_ID` in `config.json`.
     * Set `OAUTH2_CLIENT_SECRET` in `config.json`.
+    * Set `MEMCACHE_URL` in `config.json`.
+    * (If applicable) Set `MEMCACHE_USERNAME` and `MEMCACHE_PASSWORD` in `config.json`.
     * Set `TOPIC_NAME` in `config.json`.
 
 1.  Install dependencies using NPM or Yarn:
