@@ -24,7 +24,6 @@ if (process.env.NODE_ENV === 'production') {
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
-const Datastore = require('@google-cloud/datastore');
 const MemcachedStore = require('connect-memjs')(session);
 const passport = require('passport');
 const config = require('./config');
@@ -64,6 +63,7 @@ if (config.get('NODE_ENV') === 'production' && config.get('MEMCACHE_URL')) {
       servers: [config.get('MEMCACHE_URL')]
     });
   }
+}
 
 app.use(session(sessionConfig));
 
