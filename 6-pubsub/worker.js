@@ -22,11 +22,11 @@ if (process.env.NODE_ENV === 'production') {
 const request = require('request');
 const waterfall = require('async').waterfall;
 const express = require('express');
+const bodyParser = require('body-parser');
 const config = require('./config');
 
 const logging = require('./lib/logging');
 const images = require('./lib/images');
-const background = require('./lib/background');
 
 const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
 
@@ -34,6 +34,8 @@ const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
 // to respond to HTTP requests and can optionally supply a health check.
 // [START server]
 const app = express();
+
+const jsonParser = bodyParser.json();
 
 app.use(logging.requestLogger);
 
@@ -48,6 +50,33 @@ app.get('/', (req, res) => {
   res.status(200).send(`This worker has processed ${bookCount} books.`);
 });
 
+// [START endpoint]
+app.post('/endpoint', jsonParser, (req, res) => {
+  if (!req.body || !req.body.message || !req.body.message.data) {
+    logging.warn('Bad request');
+    return res.sendStatus(400);
+  }
+
+  const dataUtf8encoded = Buffer.from(req.body.message.data, 'base64')
+    .toString('utf8');
+  var content;
+  try {
+    content = JSON.parse(dataUtf8encoded);
+  } catch (ex) {
+    logging.warn('Bad request');
+    return res.sendStatus(400);
+  }
+
+  if (content.action && content.action === 'processBook' && content.bookId) {
+    logging.info(`Received request to process book ${content.bookId}`);
+    processBook(content.bookId);
+  } else {
+    logging.warn('Bad request', content);
+    return res.sendStatus(400);
+  }
+});
+// [END endpoint]
+
 app.use(logging.errorLogger);
 
 if (module === require.main) {
@@ -57,31 +86,6 @@ if (module === require.main) {
   });
 }
 // [END server]
-
-function subscribe () {
-  // Subscribe to Cloud Pub/Sub and receive messages to process books.
-  // The subscription will continue to listen for messages until the process
-  // is killed.
-  // [START subscribe]
-  const unsubscribeFn = background.subscribe((err, data) => {
-    // Any errors received are considered fatal.
-    if (err) {
-      throw err;
-    }
-    if (data.action === 'processBook') {
-      logging.info(`Received request to process book ${data.bookId}`);
-      processBook(data.bookId);
-    } else {
-      logging.warn('Unknown request', data);
-    }
-  });
-  // [END subscribe]
-  return unsubscribeFn;
-}
-
-if (module === require.main) {
-  subscribe();
-}
 
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
@@ -164,9 +168,12 @@ function findBookInfo (book, cb) {
 // [START query]
 function queryBooksApi (query, cb) {
   request(
-    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`,
+    `https://www.googleapis.com/books/v1/volumes?country=US&q=${encodeURIComponent(query)}`,
     (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
+        console.log(`Error: ${err}`);
+        console.log(`Response from Google Books: ${resp}`);
+        console.log(`Response body from Google Books: ${body}`);
         cb(err || `Response returned ${resp.statusCode}`);
         return;
       }
@@ -177,7 +184,6 @@ function queryBooksApi (query, cb) {
 // [END query]
 
 app.mocks = {
-  subscribe: subscribe,
   processBook: processBook,
   findBookInfo: findBookInfo,
   queryBooksApi: queryBooksApi

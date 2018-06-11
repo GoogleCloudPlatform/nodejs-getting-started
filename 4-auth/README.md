@@ -1,10 +1,9 @@
 # 4 - Authenticating users
 
-![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore]
 
 [ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-datastore.svg
 [ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-cloudsql.svg
-[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-mongodb.svg
 
 This folder contains the sample code for the [Authenticating users][step-4]
 tutorial. Please refer to the tutorial for instructions on configuring, running,
@@ -46,12 +45,13 @@ and deploying this sample.
 
     * Set `GCLOUD_PROJECT` in `config.json` to your Google Cloud Platform
       project ID.
-    * Set `DATA_BACKEND` in `config.json` to one of `"datastore"`, `"cloudsql"`,
-      or `"mongodb"`.
+    * Set `DATA_BACKEND` in `config.json` to `"datastore"` or `"cloudsql"`.
     * Set `CLOUD_BUCKET` in `config.json` to the name of your Google Cloud
       Storage bucket.
     * Set `OAUTH2_CLIENT_ID` in `config.json`.
     * Set `OAUTH2_CLIENT_SECRET` in `config.json`.
+    * Set `MEMCACHE_URL` in `config.json`.
+    * (If applicable) Set `MEMCACHE_USERNAME` and `MEMCACHE_PASSWORD` in `config.json`.
 
 1.  Install dependencies using NPM or Yarn:
 
@@ -83,10 +83,6 @@ and deploying this sample.
             * Using Yarn:
 
                     yarn run init-cloudsql
-
-    * If `DATA_BACKEND` is set to `"mongodb"`:
-
-        1.  Set `MONGO_URL` in `config.json`, e.g. `"mongodb://username:password@123.45.67.890:27017"`.
 
 1.  Start the app using NPM or Yarn:
 

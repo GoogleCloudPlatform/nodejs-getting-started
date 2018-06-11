@@ -27,9 +27,8 @@ nconf
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
     'MEMCACHE_URL',
-    'MONGO_URL',
-    'MONGO_COLLECTION',
-    'MONGO_DB_NAME',
+    'MEMCACHE_USERNAME',
+    'MEMCACHE_PASSWORD',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'INSTANCE_CONNECTION_NAME',
@@ -56,14 +55,6 @@ nconf
     // This is the id of your project in the Google Cloud Developers Console.
     GCLOUD_PROJECT: '',
 
-    // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: 'localhost:11211',
-
-    // MongoDB connection string
-    // https://docs.mongodb.org/manual/reference/connection-string/
-    MONGO_URL: 'mongodb://localhost:27017',
-    MONGO_COLLECTION: 'books',
-
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
@@ -89,10 +80,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   if (nconf.get('NODE_ENV') === 'production') {
     checkConfig('INSTANCE_CONNECTION_NAME');
   }
-} else if (nconf.get('DATA_BACKEND') === 'mongodb') {
-  checkConfig('MONGO_URL');
-  checkConfig('MONGO_COLLECTION');
-  checkConfig('MONGO_DB_NAME');
 }
 
 function checkConfig (setting) {
