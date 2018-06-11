@@ -15,7 +15,7 @@
 
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const StackdriverTransport = require('@google-cloud/logging-winston');
+const StackdriverTransport = require('@google-cloud/logging-winston').LoggingWinston;
 
 const colorize = process.env.NODE_ENV !== 'production';
 
