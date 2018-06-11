@@ -48,13 +48,13 @@ console.log(JSON.stringify(pkgDevSet, null, 2));
 
 // Update root-level package.json (by shelling to npm)
 const spawnSync = require('child_process').spawnSync;
-let args = [`add`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`));
-console.log(`yarn ${args.join(' ')}`);
-spawnSync(`yarn`, args, {
+let args = [`install`, `--save`].concat(Object.keys(pkgSet).map(pkg => `${pkg}@${pkgSet[pkg]}`));
+console.log(`npm ${args.join(' ')}`);
+spawnSync(`npm`, args, {
   cwd: PROJECT_ROOT
 });
-args = [`add`, `-D`].concat(Object.keys(pkgDevSet).map(pkg => `${pkg}@${pkgDevSet[pkg]}`));
-console.log(`yarn ${args.join(' ')}`);
-spawnSync(`yarn`, args, {
+args = [`install`, `--save-dev`].concat(Object.keys(pkgDevSet).map(pkg => `${pkg}@${pkgDevSet[pkg]}`));
+console.log(`npm ${args.join(' ')}`);
+spawnSync(`npm`, args, {
   cwd: PROJECT_ROOT
 });

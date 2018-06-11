@@ -1,5 +1,11 @@
 # 4 - Authenticating users
 
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
+
+[ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-datastore.svg
+[ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-cloudsql.svg
+[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-mongodb.svg
+
 This folder contains the sample code for the [Authenticating users][step-4]
 tutorial. Please refer to the tutorial for instructions on configuring, running,
 and deploying this sample.

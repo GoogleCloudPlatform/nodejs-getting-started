@@ -1,8 +1,5 @@
 # Getting started with Node.js on Google Cloud Platform
 
-[![Build Status][travis-badge]][travis-link]
-[![Coverage Status][coveralls-badge]][coveralls-link]
-
 This repository contains the complete sample code for the
 [Node.js Getting Started on Google Cloud Platform][getting-started] tutorials.
 Please refer to the tutorials for instructions on configuring, running, and
@@ -10,15 +7,16 @@ deploying these samples.
 
 The code for each tutorial is in an individual folder in this repository.
 
-Tutorial | Folder
----------|-------
-[Hello world][step-1] | [1-hello-world][step-1-code]
-[Structured data][step-2] | [2-structured-data][step-2-code]
-[Cloud Storage][step-3] | [3-binary-data][step-3-code]
-[Authenticating users][step-4] | [4-auth][step-4-code]
-[Logging app events][step-5] | [5-logging][step-5-code]
-[Using Cloud Pub/Sub][step-6] | [6-pubsub][step-6-code]
-[Deploying to Google Compute Engine][step-7] | [7-gce][step-7-code]
+Tutorial | Folder | Build Status
+---------|--------|-------------
+[Hello world][step-1] | [1-hello-world][step-1-code] | ![Build Status][ci-badge-tests-1]
+[Structured data][step-2] | [2-structured-data][step-2-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-2] ![Datastore Build Status][ci-badge-datastore-2] ![MongoDB Build Status][ci-badge-mongodb-2]
+[Cloud Storage][step-3] | [3-binary-data][step-3-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-3] ![Datastore Build Status][ci-badge-datastore-3] ![MongoDB Build Status][ci-badge-mongodb-3]
+[Authenticating users][step-4] | [4-auth][step-4-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-4] ![Datastore Build Status][ci-badge-datastore-4] ![MongoDB Build Status][ci-badge-mongodb-4]
+[Logging app events][step-5] | [5-logging][step-5-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-5] ![Datastore Build Status][ci-badge-datastore-5] ![MongoDB Build Status][ci-badge-mongodb-5]
+[Using Cloud Pub/Sub][step-6] | [6-pubsub][step-6-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-6] ![Datastore Build Status][ci-badge-datastore-6] ![MongoDB Build Status][ci-badge-mongodb-6]
+[Deploying to Google Compute Engine][step-7] | [7-gce][step-7-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-7] ![Datastore Build Status][ci-badge-datastore-7] ![MongoDB Build Status][ci-badge-mongodb-7]
+[Deploying to Google Kubernetes Engine][step-optional] | [optional-kubernetes-engine][step-optional-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-optional] ![Datastore Build Status][ci-badge-datastore-optional] ![MongoDB Build Status][ci-badge-mongodb-optional]
 
 ## Contributing changes
 
@@ -58,3 +56,28 @@ the various config.js files.)
 [step-6-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/6-pubsub
 [step-7]: https://cloud.google.com/nodejs/getting-started/run-on-compute-engine
 [step-7-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/7-gce
+[step-optional]: https://cloud.google.com/nodejs/tutorials/bookshelf-on-kubernetes-engine
+[step-optional-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/optional-kubernetes-engine
+
+[ci-badge-tests-1]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/1-tests.svg
+[ci-badge-datastore-2]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-datastore.svg
+[ci-badge-cloudsql-2]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-cloudsql.svg
+[ci-badge-mongodb-2]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-mongodb.svg
+[ci-badge-datastore-3]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/3-datastore.svg
+[ci-badge-cloudsql-3]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/3-cloudsql.svg
+[ci-badge-mongodb-3]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/3-mongodb.svg
+[ci-badge-datastore-4]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-datastore.svg
+[ci-badge-cloudsql-4]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-cloudsql.svg
+[ci-badge-mongodb-4]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/4-mongodb.svg
+[ci-badge-datastore-5]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/5-datastore.svg
+[ci-badge-cloudsql-5]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/5-cloudsql.svg
+[ci-badge-mongodb-5]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/5-mongodb.svg
+[ci-badge-datastore-6]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-datastore.svg
+[ci-badge-cloudsql-6]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-cloudsql.svg
+[ci-badge-mongodb-6]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-mongodb.svg
+[ci-badge-datastore-7]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-datastore.svg
+[ci-badge-cloudsql-7]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-cloudsql.svg
+[ci-badge-mongodb-7]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-mongodb.svg
+[ci-badge-datastore-optional]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/o-datastore.svg
+[ci-badge-cloudsql-optional]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/o-cloudsql.svg
+[ci-badge-mongodb-optional]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/o-mongodb.svg

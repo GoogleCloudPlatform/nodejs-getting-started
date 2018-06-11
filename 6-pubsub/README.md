@@ -1,5 +1,11 @@
 # 6 - Using Cloud Pub/Sub
 
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
+
+[ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-datastore.svg
+[ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-cloudsql.svg
+[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/6-mongodb.svg
+
 This folder contains the sample code for the [Using Cloud Pub/Sub][step-6]
 tutorial. Please refer to the tutorial for instructions on configuring, running,
 and deploying this sample.
@@ -31,7 +37,7 @@ and deploying this sample.
 
 1.  Change directory:
 
-        cd nodejs-getting-started/5-logging
+        cd nodejs-getting-started/6-pubsub
 
 1.  Create a `config.json` file (copied from the `config-default.json` file):
 

@@ -29,8 +29,10 @@ nconf
     'MEMCACHE_URL',
     'MONGO_URL',
     'MONGO_COLLECTION',
+    'MONGO_DB_NAME',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
+    'INSTANCE_CONNECTION_NAME',
     'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
@@ -95,6 +97,7 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
 } else if (nconf.get('DATA_BACKEND') === 'mongodb') {
   checkConfig('MONGO_URL');
   checkConfig('MONGO_COLLECTION');
+  checkConfig('MONGO_DB_NAME');
 }
 
 function checkConfig (setting) {

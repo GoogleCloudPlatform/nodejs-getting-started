@@ -33,7 +33,7 @@ const pubsub = Pubsub({
 function getTopic (cb) {
   pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
-    if (err && err.code === 409) {
+    if (err && err.code === 6) {
       cb(null, pubsub.topic(topicName));
       return;
     }
@@ -52,7 +52,9 @@ function subscribe (cb) {
 
   // Event handlers
   function handleMessage (message) {
-    cb(null, message.data);
+    const data = JSON.parse(message.data);
+    message.ack();
+    cb(null, data);
   }
   function handleError (err) {
     logging.error(err);
@@ -64,9 +66,7 @@ function subscribe (cb) {
       return;
     }
 
-    topic.subscribe(subscriptionName, {
-      autoAck: true
-    }, (err, sub) => {
+    topic.createSubscription(subscriptionName, (err, sub) => {
       if (err) {
         cb(err);
         return;
@@ -103,12 +103,13 @@ function queueBook (bookId) {
       return;
     }
 
-    topic.publish({
-      data: {
-        action: 'processBook',
-        bookId: bookId
-      }
-    }, (err) => {
+    const data = {
+      action: 'processBook',
+      bookId: bookId
+    };
+
+    const publisher = topic.publisher();
+    publisher.publish(Buffer.from(JSON.stringify(data)), (err) => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {

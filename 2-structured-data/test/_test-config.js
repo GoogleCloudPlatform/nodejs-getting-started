@@ -15,10 +15,11 @@
 
 const path = require(`path`);
 
+const TESTNAME = `2-structured-data`;
 const PORT = 8082;
 
 module.exports = {
-  test: `2-structured-data`,
+  test: TESTNAME,
   cwd: path.resolve(path.join(__dirname, `../`)),
   cmd: `app`,
   port: PORT,
@@ -26,5 +27,7 @@ module.exports = {
     PORT: PORT
   },
   url: `http://localhost:${PORT}`,
+  version: process.env.GAE_VERSION || TESTNAME,
+  project: process.env.GCLOUD_PROJECT,
   msg: `Bookshelf`
 };

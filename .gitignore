@@ -8,4 +8,9 @@ test/encrypted/nodejs-docs-samples.json
 .idea/
 key.json
 .nyc_output
+secrets-*
 repo-tools-cloudbuild.yaml
+package-lock.json
+**/package-lock.json
+yarn.lock
+**/yarn.lock
