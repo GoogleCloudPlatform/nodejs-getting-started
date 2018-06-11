@@ -13,8 +13,7 @@
 #
 # [START yaml]
 service: worker
-runtime: nodejs
-env: flex
+runtime: nodejs8
 
 env_variables:
   SCRIPT: worker.js

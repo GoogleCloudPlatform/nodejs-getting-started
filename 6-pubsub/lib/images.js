@@ -37,7 +37,9 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
       logging.warn(`Could not fetch image ${sourceUrl}`, err);
       cb(err);
     })
-    .pipe(file.createWriteStream())
+    .pipe(file.createWriteStream({
+      resumable: false
+    }))
     .on('finish', () => {
       logging.info(`Uploaded image ${destFileName}`);
       file.makePublic(() => {
@@ -72,7 +74,8 @@ function sendUploadToGCS (req, res, next) {
   const stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype
-    }
+    },
+    resumable: false
   });
 
   stream.on('error', (err) => {

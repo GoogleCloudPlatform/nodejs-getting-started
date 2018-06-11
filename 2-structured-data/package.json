@@ -58,7 +58,6 @@
     "body-parser": "1.18.2",
     "express": "4.16.2",
     "lodash": "4.17.5",
-    "mongodb": "3.0.2",
     "mysql": "2.15.0",
     "nconf": "0.10.0",
     "prompt": "1.0.0",
@@ -72,6 +71,6 @@
     "sinon": "4.3.0"
   },
   "engines": {
-    "node": ">=4.3.2"
+    "node": "8.x.x"
   }
 }
