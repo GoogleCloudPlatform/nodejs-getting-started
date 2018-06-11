@@ -20,6 +20,7 @@ and deploying this sample.
 
 1.  Install [git](https://git-scm.com/).
 1.  Create a [Google Cloud Platform project](https://console.cloud.google.com).
+1.  Enable the [Google+ API](https://console.developers.google.com/apis/api/plus.googleapis.com/overview) for your project.
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
     * After downloading the SDK, initialize it:
