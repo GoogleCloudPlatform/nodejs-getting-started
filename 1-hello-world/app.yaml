@@ -13,8 +13,4 @@
 #
 # [START runtime]
 runtime: nodejs8
-
-handlers:
-- url: /.*
-  script: auto
 # [END runtime]
