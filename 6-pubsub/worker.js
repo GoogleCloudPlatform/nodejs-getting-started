@@ -50,6 +50,7 @@ app.get('/', (req, res) => {
   res.status(200).send(`This worker has processed ${bookCount} books.`);
 });
 
+// [START endpoint]
 app.post('/endpoint', jsonParser, (req, res) => {
   if (!req.body || !req.body.message || !req.body.message.data) {
     logging.warn('Bad request');
@@ -74,6 +75,7 @@ app.post('/endpoint', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
 });
+// [END endpoint]
 
 app.use(logging.errorLogger);
 
