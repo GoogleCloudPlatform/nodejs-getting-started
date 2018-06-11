@@ -37,7 +37,7 @@ and deploying this sample.
 
 1.  Change directory:
 
-        cd nodejs-getting-started/5-logging
+        cd nodejs-getting-started/6-pubsub
 
 1.  Create a `config.json` file (copied from the `config-default.json` file):
 
