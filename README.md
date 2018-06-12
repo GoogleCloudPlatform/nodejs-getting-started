@@ -1,3 +1,4 @@
+[![Travis badge][travis-badge]][travis-link]
 # Getting started with Node.js on Google Cloud Platform
 
 This repository contains the complete sample code for the
