@@ -48,7 +48,8 @@ function sendUploadToGCS (req, res, next) {
   const stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype
-    }
+    },
+    resumable: false
   });
 
   stream.on('error', (err) => {

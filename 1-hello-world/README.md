@@ -2,12 +2,11 @@
 
 ![Build Status][ci-badge]
 
-This folder contains the sample code for the [Hello world][step-1]
-tutorial. Please refer to the tutorial for instructions on configuring, running,
-and deploying this sample.
+This folder contains the sample code for a small App Engine application that
+displays a short message. See the instructions below for how to configure, run,
+and deploy this sample.
 
 [ci-badge]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/1-tests.svg
-[step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
 
 # Simple instructions
 

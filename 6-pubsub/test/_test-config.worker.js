@@ -28,7 +28,6 @@ module.exports = {
   msg: `This worker has processed`,
   port: PORT,
   env: {
-    SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`
   },
   version: VERSION,

@@ -1,10 +1,9 @@
 # 2 - Structured data
 
-![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore]
 
 [ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-datastore.svg
 [ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-cloudsql.svg
-[ci-badge-mongodb]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/2-mongodb.svg
 
 This folder contains the sample code for the [Structured data][step-2]
 tutorial. Please refer to the tutorial for instructions on configuring, running,
@@ -45,8 +44,7 @@ and deploying this sample.
 
     * Set `GCLOUD_PROJECT` in `config.json` to your Google Cloud Platform
       project ID.
-    * Set `DATA_BACKEND` in `config.json` to one of `"datastore"`, `"cloudsql"`,
-      or `"mongodb"`.
+    * Set `DATA_BACKEND` in `config.json` to `"datastore"` or `"cloudsql"`.
 
 1.  Install dependencies using NPM or Yarn:
 
@@ -78,10 +76,6 @@ and deploying this sample.
             * Using Yarn:
 
                     yarn run init-cloudsql
-
-    * If `DATA_BACKEND` is set to `"mongodb"`:
-
-        1.  Set `MONGO_URL` in `config.json`, e.g. `"mongodb://username:password@123.45.67.890:27017"`.
 
 1.  Start the app using NPM or Yarn:
 

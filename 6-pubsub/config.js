@@ -27,9 +27,8 @@ nconf
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
     'MEMCACHE_URL',
-    'MONGO_URL',
-    'MONGO_COLLECTION',
-    'MONGO_DB_NAME',
+    'MEMCACHE_USERNAME',
+    'MEMCACHE_PASSWORD',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'INSTANCE_CONNECTION_NAME',
@@ -39,7 +38,6 @@ nconf
     'OAUTH2_CALLBACK',
     'PORT',
     'SECRET',
-    'SUBSCRIPTION_NAME',
     'TOPIC_NAME'
   ])
   // 3. Config file
@@ -49,7 +47,7 @@ nconf
     // Typically you will create a bucket with the same name as your project ID.
     CLOUD_BUCKET: '',
 
-    // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
+    // dataBackend can be 'datastore' or 'cloudsql'. Be sure to
     // configure the appropriate settings for each storage engine below.
     // If you are unsure, use datastore as it requires no additional
     // configuration.
@@ -60,11 +58,6 @@ nconf
 
     // Connection url for the Memcache instance used to store session data
     MEMCACHE_URL: 'localhost:11211',
-
-    // MongoDB connection string
-    // https://docs.mongodb.org/manual/reference/connection-string/
-    MONGO_URL: 'mongodb://localhost:27017',
-    MONGO_COLLECTION: 'books',
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
@@ -78,7 +71,6 @@ nconf
     // Set this a secret string of your choosing
     SECRET: 'keyboardcat',
 
-    SUBSCRIPTION_NAME: 'shared-worker-subscription',
     TOPIC_NAME: 'book-process-queue'
   });
 
@@ -94,10 +86,6 @@ if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   if (nconf.get('NODE_ENV') === 'production') {
     checkConfig('INSTANCE_CONNECTION_NAME');
   }
-} else if (nconf.get('DATA_BACKEND') === 'mongodb') {
-  checkConfig('MONGO_URL');
-  checkConfig('MONGO_COLLECTION');
-  checkConfig('MONGO_DB_NAME');
 }
 
 function checkConfig (setting) {

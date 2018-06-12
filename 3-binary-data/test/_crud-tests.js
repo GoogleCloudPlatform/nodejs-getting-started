@@ -83,11 +83,7 @@ module.exports = (DATA_BACKEND) => {
       .expect((response) => {
         const location = response.headers.location;
         const idPart = location.replace(`/books/`, ``);
-        if (DATA_BACKEND !== `mongodb`) {
-          id = parseInt(idPart, 10);
-        } else {
-          id = idPart;
-        }
+        id = idPart;
         t.regex(response.text, expected);
       })
       .end(t.end);
