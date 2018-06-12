@@ -33,8 +33,5 @@ before_install:
   - npm set progress=false
   - npm install -g nyc codecov
 
-script:
-  - npm run cover
-
 after_success:
   - nyc report --reporter=lcov > coverage.lcov && codecov
