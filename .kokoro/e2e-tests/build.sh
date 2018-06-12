@@ -18,6 +18,9 @@
 rm -rf */*.log
 rm -rf *-*.yaml
 
+# Install the latest version of Node 8
+nvm install 8
+
 export NODE_ENV=development
 export E2E_TESTS=true # test the deployed app
 
