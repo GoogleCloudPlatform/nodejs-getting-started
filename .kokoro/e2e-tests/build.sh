@@ -14,9 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Fail on error
+set -e;
+
 # Remove old logs/YAML files
 rm -rf */*.log
 rm -rf *-*.yaml
+
+# Load the Node version manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Install the latest version of Node 8
 nvm install 8
@@ -45,7 +52,6 @@ function cleanup {
   gsutil cp ${BADGE_URL}/${DATA_BACKEND}-${STATUS}.svg ${BADGE_URL}/${GAE_VERSION}.svg
 }
 trap cleanup EXIT
-set -e;
 
 # Configure gcloud
 export GCLOUD_PROJECT=nodejs-getting-started-tests
