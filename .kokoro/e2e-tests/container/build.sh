@@ -67,6 +67,14 @@ export MYSQL_PASSWORD=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-password.json)
 export MONGO_URL=$(cat ${KOKORO_GFILE_DIR}/secrets-mongo-url.json)
 export INSTANCE_CONNECTION_NAME="${GCLOUD_PROJECT}:us-central1:integration-test-instance"
 
+
+# Load the Node version manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# Use Node 8
+nvm install 8
+
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
