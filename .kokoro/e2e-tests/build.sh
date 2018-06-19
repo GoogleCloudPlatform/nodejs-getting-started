@@ -63,13 +63,6 @@ gcloud config set project $GCLOUD_PROJECT
 yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 
-# Initialize app.yaml
-echo "runtime: nodejs
-env: flex
-skip_files:
-  - ^node_modules$
-" > app.yaml
-
 # Copy secrets
 cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
