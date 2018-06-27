@@ -15,10 +15,9 @@
 
 const test = require(`ava`);
 
-// TODO(franzih): Make these work again
-// if (require(`../config`).get(`DATA_BACKEND`) === `datastore` || process.env.TEST_DATASTORE) {
-// require(`./_api-tests`)(`datastore`);
-// require(`./_crud-tests`)(`datastore`);
-// } else {
-test(`Skipping Cloud Datastore tests...`, (t) => t.pass());
-// }
+if (require(`../config`).get(`DATA_BACKEND`) === `datastore` || process.env.TEST_DATASTORE) {
+  require(`./_api-tests`)(`datastore`);
+  require(`./_crud-tests`)(`datastore`);
+} else {
+  test(`Skipping Cloud Datastore tests...`, (t) => t.pass());
+}
