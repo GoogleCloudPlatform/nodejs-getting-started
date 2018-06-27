@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
-    "ava": "ava -s -t 30s --tap **/*.test.js",
+    "ava": "ava -s -t 30s --tap \"**/!(datastore).test.js\"",
     "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "e2e": "mocha test/e2e.js -t 1800000",
