@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ${SCRIPT:-app.js}",
     "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "echo Testing deployment at $TEST_URL; ava -T 30s --tap test/*.test.js",
+    "e2e": "echo Testing deployment at $TEST_URL; ava -T 60s --tap test/*.test.js",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
