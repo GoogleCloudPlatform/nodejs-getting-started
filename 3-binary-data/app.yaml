@@ -12,3 +12,5 @@
 # limitations under the License.
 #
 runtime: nodejs8
+
+instance_class: F2
