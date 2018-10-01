@@ -61,7 +61,7 @@
     "mysql": "2.15.0",
     "nconf": "0.10.0",
     "prompt": "1.0.0",
-    "pug": "2.0.0-rc.4",
+    "pug": "^2.0.3",
     "uglify-js": "3.3.12"
   },
   "devDependencies": {
