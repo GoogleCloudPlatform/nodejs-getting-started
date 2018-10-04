@@ -29,10 +29,12 @@ Tutorial | Folder | Build Status
 has enabled all the APIs used by these tutorials.
 * Make sure you've got the required environment variables set. (Take a look at
 the various config.js files.)
-* `git clone git@github.com:GoogleCloudPlatform/nodejs-getting-started.git`
-* `cd nodejs-getting-started`
-* `npm install`
-* `npm test`
+```bash
+git clone git@github.com:GoogleCloudPlatform/nodejs-getting-started.git
+cd nodejs-getting-started
+npm install
+npm test
+```
 
 ## Licensing
 
@@ -42,7 +44,7 @@ the various config.js files.)
 [travis-link]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started
 [coveralls-badge]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started/coverage.svg?branch=master
 [coveralls-link]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started?branch=master
-[getting-started]: http://cloud.google.com/nodejs/getting-started
+[getting-started]: https://cloud.google.com/nodejs/getting-started/tutorial-app
 [step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
 [step-1-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/1-hello-world
 [step-2]: https://cloud.google.com/nodejs/getting-started/using-structured-data
