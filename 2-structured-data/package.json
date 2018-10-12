@@ -71,6 +71,6 @@
     "sinon": "4.3.0"
   },
   "engines": {
-    "node": "8.x.x"
+    "node": ">=8"
   }
 }
