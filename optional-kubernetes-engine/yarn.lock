@@ -2451,6 +2451,10 @@ formidable@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.2.1.tgz#70fb7ca0290ee6ff961090415f4b3df3d2082659"
 
+formidable@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.2.1.tgz#70fb7ca0290ee6ff961090415f4b3df3d2082659"
+
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
@@ -5052,6 +5056,24 @@ protobufjs@^6.8.1:
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
+protobufjs@^6.8.1:
+  version "6.8.8"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.8.8.tgz#c8b4f1282fd7a90e6f5b109ed11c84af82908e7c"
+  dependencies:
+    "@protobufjs/aspromise" "^1.1.2"
+    "@protobufjs/base64" "^1.1.2"
+    "@protobufjs/codegen" "^2.0.4"
+    "@protobufjs/eventemitter" "^1.1.0"
+    "@protobufjs/fetch" "^1.1.0"
+    "@protobufjs/float" "^1.0.2"
+    "@protobufjs/inquire" "^1.1.0"
+    "@protobufjs/path" "^1.1.2"
+    "@protobufjs/pool" "^1.1.0"
+    "@protobufjs/utf8" "^1.1.0"
+    "@types/long" "^4.0.0"
+    "@types/node" "^10.1.0"
+    long "^4.0.0"
+
 proxy-addr@~2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.2.tgz#6571504f47bb988ec8180253f85dd7e14952bdec"
@@ -5302,7 +5324,7 @@ readable-stream@1.1.x:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@2.3.3, readable-stream@^2.0.0, readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2:
+readable-stream@2.3.3, readable-stream@^2.0.0, readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.3.tgz#368f2512d79f9d46fdfc71349ae7878bbc1eb95c"
   dependencies:
@@ -5740,9 +5762,9 @@ simple-lru-cache@0.0.x:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/simple-lru-cache/-/simple-lru-cache-0.0.2.tgz#d59cc3a193c1a5d0320f84ee732f6e4713e511dd"
 
-sinon@4.3.0:
-  version "4.3.0"
-  resolved "http://registry.npmjs.org/sinon/-/sinon-4.3.0.tgz#cec9b27d5f4e2c63c1a79c9dc1c05d34bb088234"
+sinon@4.5.0:
+  version "4.5.0"
+  resolved "http://registry.npmjs.org/sinon/-/sinon-4.5.0.tgz#427ae312a337d3c516804ce2754e8c0d5028cb04"
   dependencies:
     "@sinonjs/formatio" "^2.0.0"
     diff "^3.1.0"
@@ -6103,6 +6125,35 @@ superagent@^3.8.3:
 supertap@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supertap/-/supertap-1.0.0.tgz#bd9751c7fafd68c68cf8222a29892206a119fa9e"
+
+superagent@^3.8.3:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.8.3.tgz#460ea0dbdb7d5b11bc4f78deba565f86a178e128"
+  dependencies:
+    component-emitter "^1.2.0"
+    cookiejar "^2.1.0"
+    debug "^3.1.0"
+    extend "^3.0.0"
+    form-data "^2.3.1"
+    formidable "^1.2.0"
+    methods "^1.1.1"
+    mime "^1.4.1"
+    qs "^6.5.1"
+    readable-stream "^2.3.5"
+
+supertap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/supertap/-/supertap-1.0.0.tgz#bd9751c7fafd68c68cf8222a29892206a119fa9e"
+  dependencies:
+    arrify "^1.0.1"
+    indent-string "^3.2.0"
+    js-yaml "^3.10.0"
+    serialize-error "^2.1.0"
+    strip-ansi "^4.0.0"
+
+supertest@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/supertest/-/supertest-3.0.0.tgz#8d4bb68fd1830ee07033b1c5a5a9a4021c965296"
   dependencies:
     arrify "^1.0.1"
     indent-string "^3.2.0"
@@ -6111,6 +6162,13 @@ supertap@^1.0.0:
     strip-ansi "^4.0.0"
 
 supertest@3.3.0, supertest@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/supertest/-/supertest-3.3.0.tgz#79b27bd7d34392974ab33a31fa51a3e23385987e"
+  dependencies:
+    methods "^1.1.2"
+    superagent "^3.8.3"
+
+supertest@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/supertest/-/supertest-3.3.0.tgz#79b27bd7d34392974ab33a31fa51a3e23385987e"
   dependencies:
