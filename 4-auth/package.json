@@ -71,7 +71,7 @@
     "uglify-js": "3.3.12"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "2.2.1",
+    "@google-cloud/nodejs-repo-tools": "^2.3.5",
     "ava": "0.25.0",
     "proxyquire": "1.8.0",
     "sinon": "4.3.0"
