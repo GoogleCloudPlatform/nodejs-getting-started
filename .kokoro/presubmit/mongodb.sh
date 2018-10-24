@@ -31,8 +31,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project $GCLOUD_PROJECT
 
-# Install Node dependencies
-yarn global add @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/
 
 # Copy secrets into subdirectories
@@ -46,7 +44,7 @@ cd 7-gce
 set -e;
 
 # Install dependencies (for running the tests, not the apps themselves)
-yarn install
+npm install
 
 # Test all steps locally
 npm test
@@ -60,7 +58,7 @@ fi
 cd ../optional-kubernetes-engine
 
 # Install dependencies (for running the tests, not the apps themselves)
-yarn install
+npm install
 
 # Test all steps locally
 npm test
