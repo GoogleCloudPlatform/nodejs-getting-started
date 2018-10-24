@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@google-cloud/datastore": "^1.3.4",
-    "@google-cloud/debug-agent": "^2.3.2",
+    "@google-cloud/debug-agent": "^3.0.0",
     "@google-cloud/logging-winston": "^0.10.0",
     "@google-cloud/pubsub": "^0.16.4",
     "@google-cloud/storage": "^1.6.0",
