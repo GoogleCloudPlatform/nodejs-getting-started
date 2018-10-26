@@ -39,7 +39,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Use Node 8
-nvm install 8
+nvm install 10
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
