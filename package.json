@@ -43,7 +43,7 @@
     "update-dependencies": "./scripts/update-dependencies.sh"
   },
   "dependencies": {
-    "@google-cloud/datastore": "^1.3.4",
+    "@google-cloud/datastore": "^2.0.0",
     "@google-cloud/debug-agent": "^3.0.0",
     "@google-cloud/logging-winston": "^0.10.0",
     "@google-cloud/pubsub": "^0.16.4",
