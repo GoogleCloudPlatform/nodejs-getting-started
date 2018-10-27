@@ -76,7 +76,7 @@
     "prompt": "1.0.0",
     "pug": "2.0.3",
     "request": "2.88.0",
-    "uglify-js": "3.3.12",
+    "uglify-js": "3.4.9",
     "winston": "2.4.4"
   },
   "devDependencies": {

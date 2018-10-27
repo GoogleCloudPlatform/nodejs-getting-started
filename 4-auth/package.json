@@ -68,7 +68,7 @@
     "passport-google-oauth20": "1.0.0",
     "prompt": "1.0.0",
     "pug": "^2.0.3",
-    "uglify-js": "3.3.12"
+    "uglify-js": "3.4.9"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.3.5",
