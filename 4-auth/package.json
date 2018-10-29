@@ -54,7 +54,7 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/datastore": "1.4.2",
+    "@google-cloud/datastore": "2.0.0",
     "@google-cloud/storage": "1.7.0",
     "body-parser": "1.18.3",
     "connect-memjs": "0.2.1",
@@ -68,7 +68,7 @@
     "passport-google-oauth20": "1.0.0",
     "prompt": "1.0.0",
     "pug": "^2.0.3",
-    "uglify-js": "3.3.12"
+    "uglify-js": "3.4.9"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.3.5",
