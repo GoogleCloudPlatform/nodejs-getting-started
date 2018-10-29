@@ -25,8 +25,8 @@ rm -rf *-*.yaml
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# Install the latest version of Node 8
-nvm install 8
+# Install the latest version of Node 10
+nvm install 10
 
 export NODE_ENV=development
 export E2E_TESTS=true # test the deployed app
