@@ -47,7 +47,7 @@
     "@google-cloud/debug-agent": "^3.0.0",
     "@google-cloud/logging-winston": "^0.10.0",
     "@google-cloud/pubsub": "^0.16.4",
-    "@google-cloud/storage": "^1.6.0",
+    "@google-cloud/storage": "^2.0.0",
     "@google-cloud/trace-agent": "^3.0.0",
     "async": "^2.6.0",
     "body-parser": "^1.18.2",
