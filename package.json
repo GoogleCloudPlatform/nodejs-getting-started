@@ -67,7 +67,7 @@
     "pug": "^2.0.3",
     "request": "^2.83.0",
     "uglify-js": "^3.3.12",
-    "winston": "^2.4.0"
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.3.5",
