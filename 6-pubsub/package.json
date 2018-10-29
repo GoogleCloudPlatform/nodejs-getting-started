@@ -54,10 +54,10 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/datastore": "1.3.4",
+    "@google-cloud/datastore": "1.4.2",
     "@google-cloud/debug-agent": "2.3.2",
     "@google-cloud/logging-winston": "^0.8.1",
-    "@google-cloud/pubsub": "0.16.4",
+    "@google-cloud/pubsub": "0.20.1",
     "@google-cloud/storage": "1.6.0",
     "@google-cloud/trace-agent": "2.4.1",
     "async": "2.6.0",

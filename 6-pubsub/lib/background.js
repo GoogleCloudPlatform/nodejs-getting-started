@@ -19,7 +19,7 @@ const logging = require('./logging');
 
 const topicName = config.get('TOPIC_NAME');
 
-const pubsub = Pubsub({
+const pubsub = new Pubsub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 

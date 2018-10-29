@@ -57,7 +57,7 @@
     "@google-cloud/datastore": "2.0.0",
     "@google-cloud/debug-agent": "2.6.0",
     "@google-cloud/logging-winston": "^0.8.1",
-    "@google-cloud/pubsub": "0.16.4",
+    "@google-cloud/pubsub": "0.20.1",
     "@google-cloud/storage": "1.6.0",
     "@google-cloud/trace-agent": "2.11.0",
     "async": "2.6.1",
@@ -87,6 +87,6 @@
     "sinon": "^4.5.0"
   },
   "engines": {
-    "node": ">=4.3.2"
+    "node": ">=8"
   }
 }
