@@ -1,35 +1,15 @@
 {
   "name": "nodejs-getting-started",
-  "version": "1.0.0",
   "description": "End to end sample for running Node.js applications on Google Cloud Platform",
-  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
-  "private": true,
-  "scripts": {
-    "start": "node ${SCRIPT:-app.js}",
-    "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "echo Testing deployment at $TEST_URL; ava -T 60s --tap test/*.test.js",
-    "cover": "nyc --cache npm test; nyc report --reporter=html",
-    "init-cloudsql": "node books/model-cloudsql.js"
-  },
+  "version": "1.0.0",
+  "license": "Apache-2.0",
   "author": "Google Inc.",
-  "contributors": [
-    {
-      "name": "Jon Wayne Parrott",
-      "email": "jonwayne@google.com"
-    },
-    {
-      "name": "Jonathan Simon",
-      "email": "jbsimon@google.com"
-    },
-    {
-      "name": "Jason Dobry",
-      "email": "jdobry@google.com"
-    },
-    {
-      "name": "Ace Nassri",
-      "email": "anassri@google.com"
-    }
-  ],
+  "engines": {
+    "node": ">=8"
+  },
+  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
+  "main": "src/index.js",
+  "private": true,
   "cloud-repo-tools": {
     "requiresKeyFile": true,
     "requiresProjectId": true,
@@ -42,7 +22,6 @@
       }
     }
   },
-  "license": "Apache-2.0",
   "semistandard": {
     "globals": [
       "after",
@@ -52,6 +31,31 @@
       "describe",
       "it"
     ]
+  },
+  "contributors": [
+    "Ace Nassri <anassri@google.com>",
+    "Ahmet Alp Balkan <ahmetalpbalkan@gmail.com>",
+    "Allen Day <allenday@users.noreply.github.com>",
+    "André Cipriani Bandarra <andreban@gmail.com>",
+    "Dominik Staskiewicz <stadominik@gmail.com>",
+    "F. Hinkelmann <fhinkel@vt.edu>",
+    "Jason Dobry <jdobry@google.com>",
+    "Jon Wayne Parrott <jonwayne@google.com>",
+    "Justin Beckwith <justin.beckwith@gmail.com>",
+    "Michael McDonald <mcdonald@firebase.com>",
+    "Sean McBreen <seanmcb@google.com>",
+    "Steren <steren.giannini@gmail.com>",
+    "Steve Perry <steveperry-53@users.noreply.github.com>",
+    "chenyumic <chenyumic@google.com>",
+    "renovate[bot] <renovate[bot]@users.noreply.github.com>",
+    "shollyman <shollyman@google.com>"
+  ],
+  "scripts": {
+    "start": "node ${SCRIPT:-app.js}",
+    "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
+    "e2e": "echo Testing deployment at $TEST_URL; ava -T 60s --tap test/*.test.js",
+    "cover": "nyc --cache npm test; nyc report --reporter=html",
+    "init-cloudsql": "node books/model-cloudsql.js"
   },
   "dependencies": {
     "@google-cloud/datastore": "2.0.0",
@@ -85,8 +89,5 @@
     "proxyquire": "1.8.0",
     "supertest": "^3.3.0",
     "sinon": "^4.5.0"
-  },
-  "engines": {
-    "node": ">=8"
   }
 }
