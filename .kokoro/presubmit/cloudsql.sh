@@ -38,8 +38,8 @@ gcloud config set project $GCLOUD_PROJECT
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# Use Node 8
-nvm install 8
+# Use Node 10
+nvm install 10
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
