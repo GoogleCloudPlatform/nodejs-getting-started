@@ -25,10 +25,10 @@ Tutorial | Folder | Build Status
 
 ### Run the tests
 
-* Make sure you're authenticated with the gcloud sdk and your gcloud project
+* Make sure you're authenticated with the `gcloud` SDK and your GCP project
 has enabled all the APIs used by these tutorials.
 * Make sure you've got the required environment variables set. (Take a look at
-the various config.js files.)
+the various `config.js` files.)
 ```bash
 git clone git@github.com:GoogleCloudPlatform/nodejs-getting-started.git
 cd nodejs-getting-started
