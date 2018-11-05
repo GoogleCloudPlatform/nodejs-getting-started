@@ -11,9 +11,6 @@ and deploy this sample.
 # Simple instructions
 
 1.  Install [Node.js](https://nodejs.org/en/).
-
-    * Optional: Install [Yarn](https://yarnpkg.com/).
-
 1.  Install [git](https://git-scm.com/).
 1.  Create a [Google Cloud Platform project](https://console.cloud.google.com).
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
@@ -30,25 +27,13 @@ and deploy this sample.
 
         cd nodejs-getting-started/1-hello-world
 
-1.  Install dependencies using NPM or Yarn:
+1.  Install dependencies:
 
-    * Using NPM:
+        npm install
 
-            npm install
+1.  Start the app:
 
-    * Using Yarn:
-
-            yarn install
-
-1.  Start the app using NPM or Yarn:
-
-    * Using NPM:
-
-            npm start
-
-    * Using Yarn:
-
-            yarn start
+        npm start
 
 1.  View the app at [http://localhost:8080](http://localhost:8080).
 
