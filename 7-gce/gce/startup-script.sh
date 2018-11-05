@@ -28,11 +28,11 @@ service google-fluentd restart &
 
 # Install dependencies from apt
 apt-get update
-apt-get install -yq ca-certificates git nodejs build-essential supervisor
+apt-get install -yq ca-certificates git build-essential supervisor
 
 # Install nodejs
 mkdir /opt/nodejs
-curl https://nodejs.org/dist/v4.2.2/node-v4.2.2-linux-x64.tar.gz | tar xvzf - -C /opt/nodejs --strip-components=1
+curl https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.gz | tar xvzf - -C /opt/nodejs --strip-components=1
 ln -s /opt/nodejs/bin/node /usr/bin/node
 ln -s /opt/nodejs/bin/npm /usr/bin/npm
 
