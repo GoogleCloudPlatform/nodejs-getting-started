@@ -13,7 +13,7 @@
 #
 # [START yaml]
 service: worker
-runtime: nodejs8
+runtime: nodejs10
 
 env_variables:
   SCRIPT: worker.js
