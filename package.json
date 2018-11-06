@@ -29,9 +29,14 @@
     "F. Hinkelmann <fhinkel@vt.edu>",
     "Jason Dobry <jdobry@google.com>",
     "Jon Wayne Parrott <jonwayne@google.com>",
+    "Justin Beckwith <justin.beckwith@gmail.com>",
     "Michael McDonald <mcdonald@firebase.com>",
+    "Sean McBreen <seanmcb@google.com>",
+    "Steren <steren.giannini@gmail.com>",
     "Steve Perry <steveperry-53@users.noreply.github.com>",
-    "chenyumic <chenyumic@google.com>"
+    "chenyumic <chenyumic@google.com>",
+    "renovate[bot] <renovate[bot]@users.noreply.github.com>",
+    "shollyman <shollyman@google.com>"
   ],
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
