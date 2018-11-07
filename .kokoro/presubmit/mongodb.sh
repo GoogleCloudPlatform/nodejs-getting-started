@@ -22,36 +22,48 @@
 rm -rf */*.log
 rm -rf *-*.yaml
 
-# TODO(franzih): Make these work again
-exit 0
+export NODE_ENV=development
+export DATA_BACKEND="mongodb"
 
-# export NODE_ENV=development
-# export DATA_BACKEND="mongodb"
+# Configure gcloud
+export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
+gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
+gcloud config set project $GCLOUD_PROJECT
 
-# # Configure gcloud
-# export GCLOUD_PROJECT=nodejs-getting-started-tests
-# export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
-# gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-# gcloud config set project $GCLOUD_PROJECT
+cd github/nodejs-getting-started/
 
-# # Install Node dependencies
-# yarn global add @google-cloud/nodejs-repo-tools
-# cd github/nodejs-getting-started
+# Copy secrets into subdirectories
+find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json" \;
+find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
 
-# # Copy secrets into subdirectories
-# find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json" \;
-# find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
+# Test samples for Compute Engine (7-gce)
+cd 7-gce
 
-# # Fail on error
-# set -e;
+# Fail on error
+set -e;
 
-# # Install dependencies (for running the tests, not the apps themselves)
-# yarn install
+# Install dependencies (for running the tests, not the apps themselves)
+npm install
 
-# # Test all steps locally
-# npm test
+# Test all steps locally
+npm test
 
-# # Exit on error
-# if [[ $? -ne 0 ]]; then
-#   exit $?
-# fi
+# Exit on error
+if [[ $? -ne 0 ]]; then
+  exit $?
+fi
+
+# Test samples for Kubernetes Engine (optional-kubernetes-engine)
+cd ../optional-kubernetes-engine
+
+# Install dependencies (for running the tests, not the apps themselves)
+npm install
+
+# Test all steps locally
+npm test
+
+# Exit on error
+if [[ $? -ne 0 ]]; then
+  exit $?
+fi
