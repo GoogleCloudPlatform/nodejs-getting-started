@@ -15,9 +15,12 @@
 
 const test = require(`ava`);
 
-if (require(`../config`).get(`DATA_BACKEND`) === `cloudsql` || process.env.TEST_CLOUDSQL) {
+if (
+  require(`../config`).get(`DATA_BACKEND`) === `cloudsql` ||
+  process.env.TEST_CLOUDSQL
+) {
   require(`./_api-tests`)(`cloudsql`);
   require(`./_crud-tests`)(`cloudsql`);
 } else {
-  test(`Skipping Cloud SQL tests...`, (t) => t.pass());
+  test(`Skipping Cloud SQL tests...`, t => t.pass());
 }

@@ -16,7 +16,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-function getModel () {
+function getModel() {
   return require(`./model-${require('../config').get('DATA_BACKEND')}`);
 }
 
@@ -38,7 +38,7 @@ router.get('/', (req, res, next) => {
     }
     res.json({
       items: entities,
-      nextPageToken: cursor
+      nextPageToken: cursor,
     });
   });
 });
@@ -94,7 +94,7 @@ router.put('/:book', (req, res, next) => {
  * Delete a book.
  */
 router.delete('/:book', (req, res, next) => {
-  getModel().delete(req.params.book, (err) => {
+  getModel().delete(req.params.book, err => {
     if (err) {
       next(err);
       return;
@@ -111,7 +111,7 @@ router.use((err, req, res, next) => {
   // responding to the request
   err.response = {
     message: err.message,
-    internalCode: err.code
+    internalCode: err.code,
   };
   next(err);
 });

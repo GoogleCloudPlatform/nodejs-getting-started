@@ -20,51 +20,48 @@ const test = require(`ava`);
 let background;
 const mocks = {};
 
-test.beforeEach((t) => {
+test.beforeEach(t => {
   // Mock dependencies used by background.js
   mocks.config = {
     GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
     SUBSCRIPTION_NAME: `shared-worker-subscription`,
-    TOPIC_NAME: `book-process-queue`
+    TOPIC_NAME: `book-process-queue`,
   };
-  mocks.config.get = function (key) {
+  mocks.config.get = function(key) {
     return this[key];
   };
   mocks.subscription = {
-    on: sinon.stub()
+    on: sinon.stub(),
   };
   mocks.publisher = {
-    publish: sinon.stub().callsArgWith(1, null)
+    publish: sinon.stub().callsArgWith(1, null),
   };
   mocks.topic = {
     createSubscription: sinon.stub().callsArgWith(1, null, mocks.subscription),
-    publisher: sinon.stub().returns(mocks.publisher)
+    publisher: sinon.stub().returns(mocks.publisher),
   };
   mocks.pubsub = {
     createTopic: sinon.stub().callsArgWith(1, null, mocks.topic),
-    topic: sinon.stub().returns(mocks.topic)
+    topic: sinon.stub().returns(mocks.topic),
   };
   mocks.Pubsub = sinon.stub().returns(mocks.pubsub);
   mocks.logging = {
     info: sinon.stub(),
-    error: sinon.stub()
+    error: sinon.stub(),
   };
   // Load background.js with provided mocks
   background = proxyquire(`../lib/background`, {
     '@google-cloud/pubsub': mocks.Pubsub,
     '../config': mocks.config,
-    './logging': mocks.logging
+    './logging': mocks.logging,
   });
 
-  t.true(
-    mocks.Pubsub.calledOnce,
-    `Pubsub() should have been called once`
-  );
+  t.true(mocks.Pubsub.calledOnce, `Pubsub() should have been called once`);
 });
 
-test.serial.cb(`should subscribe and log message`, (t) => {
+test.serial.cb(`should subscribe and log message`, t => {
   // Setup
-  const testMessage = { test: `foo` };
+  const testMessage = {test: `foo`};
 
   // Run target functionality
   background.subscribe((err, message) => {
@@ -123,18 +120,18 @@ test.serial.cb(`should subscribe and log message`, (t) => {
   setTimeout(() => {
     mocks.subscription.on.firstCall.args[1]({
       data: JSON.stringify(testMessage),
-      ack: sinon.stub()
+      ack: sinon.stub(),
     });
   }, 10);
 });
 
-test.serial.cb(`should return topic error, if any`, (t) => {
+test.serial.cb(`should return topic error, if any`, t => {
   // Setup
   const testErrorMsg = `test error`;
   mocks.pubsub.createTopic = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
-  background.subscribe((data) => {
+  background.subscribe(data => {
     // Assertions
     t.true(
       mocks.pubsub.createTopic.calledOnce,
@@ -165,13 +162,13 @@ test.serial.cb(`should return topic error, if any`, (t) => {
   });
 });
 
-test.serial.cb(`should return subscription error, if any`, (t) => {
+test.serial.cb(`should return subscription error, if any`, t => {
   // Setup
   const testErrorMsg = `test error`;
   mocks.topic.createSubscription = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
-  background.subscribe((data) => {
+  background.subscribe(data => {
     // Assertions
     t.true(
       mocks.pubsub.createTopic.calledOnce,
@@ -211,7 +208,7 @@ test.serial.cb(`should return subscription error, if any`, (t) => {
   });
 });
 
-test.serial(`should queue a book and log message`, (t) => {
+test.serial(`should queue a book and log message`, t => {
   // Setup
   const testBookId = 1;
 
@@ -243,10 +240,12 @@ test.serial(`should queue a book and log message`, (t) => {
   );
   t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
-    Buffer.from(JSON.stringify({
-      action: `processBook`,
-      bookId: testBookId
-    })),
+    Buffer.from(
+      JSON.stringify({
+        action: `processBook`,
+        bookId: testBookId,
+      })
+    ),
     `publisher.publish() should have been called with the right arguments`
   );
   t.true(
@@ -260,11 +259,11 @@ test.serial(`should queue a book and log message`, (t) => {
   );
 });
 
-test.serial(`should queue a book and log message even if topic exists`, (t) => {
+test.serial(`should queue a book and log message even if topic exists`, t => {
   // Setup
   const testBookId = 1;
   mocks.pubsub.createTopic = sinon.stub().callsArgWith(1, {
-    code: 6
+    code: 6,
   });
 
   // Run target functionality
@@ -299,10 +298,12 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
   );
   t.deepEqual(
     mocks.publisher.publish.firstCall.args[0],
-    Buffer.from(JSON.stringify({
-      action: `processBook`,
-      bookId: testBookId
-    })),
+    Buffer.from(
+      JSON.stringify({
+        action: `processBook`,
+        bookId: testBookId,
+      })
+    ),
     `publisher.publish() should have been called with the right arguments`
   );
   t.true(
@@ -316,7 +317,7 @@ test.serial(`should queue a book and log message even if topic exists`, (t) => {
   );
 });
 
-test.serial(`should log error if cannot get topic`, (t) => {
+test.serial(`should log error if cannot get topic`, t => {
   // Setup
   const testBookId = 1;
   const testErrorMsg = `test error`;
@@ -361,7 +362,7 @@ test.serial(`should log error if cannot get topic`, (t) => {
   );
 });
 
-test.serial(`should log error if cannot publish message`, (t) => {
+test.serial(`should log error if cannot publish message`, t => {
   // Setup
   const testBookId = 1;
   const testErrorMsg = `test error`;

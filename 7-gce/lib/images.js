@@ -21,18 +21,18 @@ const logging = require('./logging');
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
 const storage = Storage({
-  projectId: config.get('GCLOUD_PROJECT')
+  projectId: config.get('GCLOUD_PROJECT'),
 });
 const bucket = storage.bucket(CLOUD_BUCKET);
 
 // Downloads a given image (by URL) and then uploads it to
 // Google Cloud Storage. Provides the publicly accessable URL to the callback.
-function downloadAndUploadImage (sourceUrl, destFileName, cb) {
+function downloadAndUploadImage(sourceUrl, destFileName, cb) {
   const file = bucket.file(destFileName);
 
   request
     .get(sourceUrl)
-    .on('error', (err) => {
+    .on('error', err => {
       logging.warn(`Could not fetch image ${sourceUrl}`, err);
       cb(err);
     })
@@ -43,7 +43,7 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
         cb(null, getPublicUrl(destFileName));
       });
     })
-    .on('error', (err) => {
+    .on('error', err => {
       logging.error('Could not upload image', err);
       cb(err);
     });
@@ -52,7 +52,7 @@ function downloadAndUploadImage (sourceUrl, destFileName, cb) {
 // Returns the public, anonymously accessable URL to a given Cloud Storage
 // object.
 // The object's ACL has to be set to public read.
-function getPublicUrl (filename) {
+function getPublicUrl(filename) {
   return `https://storage.googleapis.com/${CLOUD_BUCKET}/${filename}`;
 }
 
@@ -60,7 +60,7 @@ function getPublicUrl (filename) {
 // req.file is processed and will have two new properties:
 // * ``cloudStorageObject`` the object name in cloud storage.
 // * ``cloudStoragePublicUrl`` the public url to the object.
-function sendUploadToGCS (req, res, next) {
+function sendUploadToGCS(req, res, next) {
   if (!req.file) {
     return next();
   }
@@ -69,11 +69,11 @@ function sendUploadToGCS (req, res, next) {
   const file = bucket.file(gcsname);
   const stream = file.createWriteStream({
     metadata: {
-      contentType: req.file.mimetype
-    }
+      contentType: req.file.mimetype,
+    },
   });
 
-  stream.on('error', (err) => {
+  stream.on('error', err => {
     req.file.cloudStorageError = err;
     next(err);
   });
@@ -96,13 +96,13 @@ const Multer = require('multer');
 const multer = Multer({
   storage: Multer.MemoryStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // no larger than 5mb
-  }
+    fileSize: 5 * 1024 * 1024, // no larger than 5mb
+  },
 });
 
 module.exports = {
   downloadAndUploadImage,
   getPublicUrl,
   sendUploadToGCS,
-  multer
+  multer,
 };

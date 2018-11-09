@@ -21,7 +21,7 @@ const topicName = config.get('TOPIC_NAME');
 const subscriptionName = config.get('SUBSCRIPTION_NAME');
 
 const pubsub = new Pubsub({
-  projectId: config.get('GCLOUD_PROJECT')
+  projectId: config.get('GCLOUD_PROJECT'),
 });
 
 // This configuration will automatically create the topic if
@@ -29,7 +29,7 @@ const pubsub = new Pubsub({
 // that a least one subscription exists on the topic before
 // publishing anything to it as topics without subscribers
 // will essentially drop any messages.
-function getTopic (cb) {
+function getTopic(cb) {
   pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
     if (err && err.code === 6) {
@@ -44,16 +44,16 @@ function getTopic (cb) {
 // When more than one worker is running they will all share the same
 // subscription, which means that pub/sub will evenly distribute messages
 // to each worker.
-function subscribe (cb) {
+function subscribe(cb) {
   let subscription;
 
   // Event handlers
-  function handleMessage (message) {
+  function handleMessage(message) {
     const data = JSON.parse(message.data);
     message.ack();
     cb(null, data);
   }
-  function handleError (err) {
+  function handleError(err) {
     logging.error(err);
   }
 
@@ -75,7 +75,9 @@ function subscribe (cb) {
       subscription.on('message', handleMessage);
       subscription.on('error', handleError);
 
-      logging.info(`Listening to ${topicName} with subscription ${subscriptionName}`);
+      logging.info(
+        `Listening to ${topicName} with subscription ${subscriptionName}`
+      );
     });
   });
 
@@ -91,7 +93,7 @@ function subscribe (cb) {
 }
 
 // Adds a book to the queue to be processed by the worker.
-function queueBook (bookId) {
+function queueBook(bookId) {
   getTopic((err, topic) => {
     if (err) {
       logging.error('Error occurred while getting pubsub topic', err);
@@ -100,11 +102,11 @@ function queueBook (bookId) {
 
     const data = {
       action: 'processBook',
-      bookId: bookId
+      bookId: bookId,
     };
 
     const publisher = topic.publisher();
-    publisher.publish(Buffer.from(JSON.stringify(data)), (err) => {
+    publisher.publish(Buffer.from(JSON.stringify(data)), err => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {
@@ -116,5 +118,5 @@ function queueBook (bookId) {
 
 module.exports = {
   subscribe,
-  queueBook
+  queueBook,
 };

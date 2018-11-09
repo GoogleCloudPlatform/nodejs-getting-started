@@ -20,7 +20,7 @@ const logging = require('./logging');
 const topicName = config.get('TOPIC_NAME');
 
 const pubsub = new Pubsub({
-  projectId: config.get('GCLOUD_PROJECT')
+  projectId: config.get('GCLOUD_PROJECT'),
 });
 
 // This configuration will automatically create the topic if
@@ -29,7 +29,7 @@ const pubsub = new Pubsub({
 // publishing anything to it as topics without subscribers
 // will essentially drop any messages.
 // [START topic]
-function getTopic (cb) {
+function getTopic(cb) {
   pubsub.createTopic(topicName, (err, topic) => {
     // topic already exists.
     if (err && err.code === 6) {
@@ -43,7 +43,7 @@ function getTopic (cb) {
 
 // Adds a book to the queue to be processed by the worker.
 // [START queue]
-function queueBook (bookId) {
+function queueBook(bookId) {
   getTopic((err, topic) => {
     if (err) {
       logging.error('Error occurred while getting pubsub topic', err);
@@ -52,11 +52,11 @@ function queueBook (bookId) {
 
     const data = {
       action: 'processBook',
-      bookId: bookId
+      bookId: bookId,
     };
 
     const publisher = topic.publisher();
-    publisher.publish(Buffer.from(JSON.stringify(data)), (err) => {
+    publisher.publish(Buffer.from(JSON.stringify(data)), err => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {
@@ -68,5 +68,5 @@ function queueBook (bookId) {
 // [END queue]
 
 module.exports = {
-  queueBook
+  queueBook,
 };

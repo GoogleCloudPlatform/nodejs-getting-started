@@ -12,24 +12,6 @@
     "init-cloudsql": "node books/model-cloudsql.js"
   },
   "author": "Google Inc.",
-  "contributors": [
-    {
-      "name": "Jon Wayne Parrott",
-      "email": "jonwayne@google.com"
-    },
-    {
-      "name": "Jonathan Simon",
-      "email": "jbsimon@google.com"
-    },
-    {
-      "name": "Jason Dobry",
-      "email": "jdobry@google.com"
-    },
-    {
-      "name": "Ace Nassri",
-      "email": "anassri@google.com"
-    }
-  ],
   "cloud-repo-tools": {
     "requiresKeyFile": true,
     "requiresProjectId": true,
@@ -43,16 +25,6 @@
     }
   },
   "license": "Apache-2.0",
-  "semistandard": {
-    "globals": [
-      "after",
-      "afterEach",
-      "before",
-      "beforeEach",
-      "describe",
-      "it"
-    ]
-  },
   "dependencies": {
     "@google-cloud/datastore": "1.4.2",
     "@google-cloud/debug-agent": "3.0.0",

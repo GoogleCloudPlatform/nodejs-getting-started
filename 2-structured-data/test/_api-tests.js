@@ -16,7 +16,7 @@
 const getRequest = require(`@google-cloud/nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
 
-module.exports = (DATA_BACKEND) => {
+module.exports = DATA_BACKEND => {
   let originalDataBackend, id, testConfig, appConfig;
 
   test.before(() => {
@@ -26,12 +26,12 @@ module.exports = (DATA_BACKEND) => {
     appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
   });
 
-  test.serial.cb(`should create a book`, (t) => {
+  test.serial.cb(`should create a book`, t => {
     getRequest(testConfig)
       .post(`/api/books`)
-      .send({ title: `beep` })
+      .send({title: `beep`})
       .expect(200)
-      .expect((response) => {
+      .expect(response => {
         id = response.body.id;
         t.truthy(response.body.id);
         t.is(response.body.title, `beep`);
@@ -39,13 +39,13 @@ module.exports = (DATA_BACKEND) => {
       .end(t.end);
   });
 
-  test.serial.cb(`should list books`, (t) => {
+  test.serial.cb(`should list books`, t => {
     // Give Datastore time to become consistent
     setTimeout(() => {
       getRequest(testConfig)
         .get(`/api/books`)
         .expect(200)
-        .expect((response) => {
+        .expect(response => {
           t.true(Array.isArray(response.body.items));
           t.true(response.body.items.length >= 1);
         })
@@ -53,11 +53,11 @@ module.exports = (DATA_BACKEND) => {
     }, 1000);
   });
 
-  test.serial.cb(`should delete a book`, (t) => {
+  test.serial.cb(`should delete a book`, t => {
     getRequest(testConfig)
       .delete(`/api/books/${id}/`)
       .expect(200)
-      .expect((response) => {
+      .expect(response => {
         t.is(response.text, `OK`);
       })
       .end(t.end);

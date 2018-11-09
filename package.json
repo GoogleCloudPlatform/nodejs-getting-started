@@ -10,36 +10,8 @@
   "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
   "main": "src/index.js",
   "private": true,
-  "semistandard": {
-    "globals": [
-      "after",
-      "afterEach",
-      "before",
-      "beforeEach",
-      "describe",
-      "it"
-    ]
-  },
-  "contributors": [
-    "Ace Nassri <anassri@google.com>",
-    "Ahmet Alp Balkan <ahmetalpbalkan@gmail.com>",
-    "Allen Day <allenday@users.noreply.github.com>",
-    "André Cipriani Bandarra <andreban@gmail.com>",
-    "Dominik Staskiewicz <stadominik@gmail.com>",
-    "F. Hinkelmann <fhinkel@vt.edu>",
-    "Jason Dobry <jdobry@google.com>",
-    "Jon Wayne Parrott <jonwayne@google.com>",
-    "Justin Beckwith <justin.beckwith@gmail.com>",
-    "Michael McDonald <mcdonald@firebase.com>",
-    "Sean McBreen <seanmcb@google.com>",
-    "Steren <steren.giannini@gmail.com>",
-    "Steve Perry <steveperry-53@users.noreply.github.com>",
-    "chenyumic <chenyumic@google.com>",
-    "renovate[bot] <renovate[bot]@users.noreply.github.com>",
-    "shollyman <shollyman@google.com>"
-  ],
   "scripts": {
-    "lint": "semistandard \"**/*.js\"",
+    "lint": "eslint '**/*.js'",
     "ava": "ava -s -t 30s --tap \"**/!(datastore).test.js\"",
     "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
@@ -75,8 +47,12 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "ava": "^0.25.0",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "prettier": "^1.15.1",
     "proxyquire": "^2.0.0",
-    "semistandard": "^12.0.1",
     "sinon": "^7.0.0",
     "supertest": "^3.0.0"
   }

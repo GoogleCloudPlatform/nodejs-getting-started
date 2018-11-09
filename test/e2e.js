@@ -28,14 +28,14 @@ const steps = [
 
   // Worker steps
   require(`../6-pubsub/test/config.worker`),
-  require(`../7-gce/test/config.worker`)
+  require(`../7-gce/test/config.worker`),
 ];
 
-function tryToFinish (numTests, steps, done) {
+function tryToFinish(numTests, steps, done) {
   let doneCount = 0;
   let errCount = 0;
   let err = ``;
-  steps.forEach((config) => {
+  steps.forEach(config => {
     if (config.done) {
       doneCount++;
     }
@@ -52,7 +52,7 @@ function tryToFinish (numTests, steps, done) {
   if (doneCount === numTests) {
     console.log(`All tests complete!`);
   } else {
-    console.log(`${(numTests - doneCount)} deployments remaining...`);
+    console.log(`${numTests - doneCount} deployments remaining...`);
   }
 
   if (errCount) {
@@ -62,24 +62,33 @@ function tryToFinish (numTests, steps, done) {
   }
 }
 
-before((done) => {
+before(done => {
   // Delete existing versions
-  async.each(steps, (config, cb) => {
-    console.log(`Deletion queued for version ${config.test}...`);
-    utils.deleteVersion(config.test, config.cwd, () => {
-      console.log(`Deleted version ${config.test}!`);
-      cb();
-    });
-  }, done);
+  async.each(
+    steps,
+    (config, cb) => {
+      console.log(`Deletion queued for version ${config.test}...`);
+      utils.deleteVersion(config.test, config.cwd, () => {
+        console.log(`Deleted version ${config.test}!`);
+        cb();
+      });
+    },
+    done
+  );
 });
 
-it(`should deploy all steps`, (done) => {
+it(`should deploy all steps`, done => {
   let numTests = steps.length;
-  async.eachLimit(steps, 5, (config, cb) => {
-    utils.testDeploy(config, (err) => {
-      config.err = err;
-      config.done = true;
-      tryToFinish(numTests, steps, cb);
-    });
-  }, done);
+  async.eachLimit(
+    steps,
+    5,
+    (config, cb) => {
+      utils.testDeploy(config, err => {
+        config.err = err;
+        config.done = true;
+        tryToFinish(numTests, steps, cb);
+      });
+    },
+    done
+  );
 });

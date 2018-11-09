@@ -15,7 +15,8 @@
 
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const StackdriverTransport = require('@google-cloud/logging-winston').LoggingWinston;
+const StackdriverTransport = require('@google-cloud/logging-winston')
+  .LoggingWinston;
 
 const colorize = process.env.NODE_ENV !== 'production';
 
@@ -26,11 +27,11 @@ const requestLogger = expressWinston.logger({
     new StackdriverTransport(),
     new winston.transports.Console({
       json: false,
-      colorize: colorize
-    })
+      colorize: colorize,
+    }),
   ],
   expressFormat: true,
-  meta: false
+  meta: false,
 });
 // [END requests]
 
@@ -41,9 +42,9 @@ const errorLogger = expressWinston.errorLogger({
     new StackdriverTransport(),
     new winston.transports.Console({
       json: true,
-      colorize: colorize
-    })
-  ]
+      colorize: colorize,
+    }),
+  ],
 });
 // [END errors]
 
@@ -56,5 +57,5 @@ module.exports = {
   log: winston.log,
   verbose: winston.verbose,
   debug: winston.debug,
-  silly: winston.silly
+  silly: winston.silly,
 };

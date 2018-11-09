@@ -20,42 +20,44 @@ const sinon = require(`sinon`);
 const test = require(`ava`);
 const utils = require(`@google-cloud/nodejs-repo-tools`);
 
-test.serial.cb(`should return number of processed books`, (t) => {
-  utils.getRequest(testConfig)
+test.serial.cb(`should return number of processed books`, t => {
+  utils
+    .getRequest(testConfig)
     .get(`/`)
     .expect(200)
-    .expect((response) => {
+    .expect(response => {
       t.regex(response.text, /This worker has processed/);
     })
     .end(t.end);
 });
 
-test.serial.cb(`should do a health check`, (t) => {
-  utils.getRequest(testConfig)
+test.serial.cb(`should do a health check`, t => {
+  utils
+    .getRequest(testConfig)
     .get(`/_ah/health`)
     .expect(200)
-    .expect((response) => {
+    .expect(response => {
       t.is(response.text, `ok`);
     })
     .end(t.end);
 });
 
-test.serial.cb(`should process a book`, (t) => {
+test.serial.cb(`should process a book`, t => {
   const appConfig = require(`../config`);
   const loggingStub = {
     error: sinon.stub(),
     info: sinon.stub(),
-    warn: sinon.stub()
+    warn: sinon.stub(),
   };
   const stubs = {
     './lib/logging': loggingStub,
     '@google-cloud/trace-agent': {
       start: sinon.stub(),
-      '@noCallThru': true
+      '@noCallThru': true,
     },
     '@google-cloud/debug-agent': {
-      '@noCallThru': true
-    }
+      '@noCallThru': true,
+    },
   };
   stubs[`./books/model-${appConfig.get('DATA_BACKEND')}`] = {
     read: (bookId, cb) => {
@@ -63,12 +65,12 @@ test.serial.cb(`should process a book`, (t) => {
     },
     update: (bookId, book, queueBook, cb) => {
       cb();
-    }
+    },
   };
   const worker = proxyquire(path.join(__dirname, `../worker`), stubs).mocks;
   const processBook = worker.processBook;
 
-  processBook(1, (err, bookId) => {
+  processBook(1, err => {
     if (err) {
       return t.end(err);
     }
