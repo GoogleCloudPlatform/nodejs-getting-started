@@ -1,4 +1,3 @@
-[![Travis badge][travis-badge]][travis-link]
 # Getting started with Node.js on Google Cloud Platform
 
 This repository contains the complete sample code for the
@@ -40,8 +39,6 @@ npm test
 
 * See [LICENSE](LICENSE)
 
-[travis-badge]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started.svg
-[travis-link]: https://travis-ci.org/GoogleCloudPlatform/nodejs-getting-started
 [coveralls-badge]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started/coverage.svg?branch=master
 [coveralls-link]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started?branch=master
 [getting-started]: https://cloud.google.com/nodejs/getting-started/tutorial-app
