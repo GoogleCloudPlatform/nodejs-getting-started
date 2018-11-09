@@ -43,9 +43,7 @@
     "ava": "ava -s -t 30s --tap \"**/!(datastore).test.js\"",
     "test": "npm run lint && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
-    "e2e": "mocha test/e2e.js -t 1800000",
-    "unify": "node scripts/unify",
-    "update-dependencies": "./scripts/update-dependencies.sh"
+    "e2e": "mocha test/e2e.js -t 1800000"
   },
   "dependencies": {
     "@google-cloud/datastore": "^2.0.0",
@@ -77,7 +75,6 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "ava": "^0.25.0",
-    "npm-check-updates": "^2.13.0",
     "proxyquire": "^2.0.0",
     "semistandard": "^12.0.1",
     "sinon": "^7.0.0",
