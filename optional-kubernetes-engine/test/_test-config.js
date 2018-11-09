@@ -30,6 +30,6 @@ module.exports = {
   env: {
     PORT: PORT,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
-    TOPIC_NAME: `book-process-queue-${TESTNAME}`
-  }
+    TOPIC_NAME: `book-process-queue-${TESTNAME}`,
+  },
 };

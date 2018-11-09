@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
 
 app.use(logging.errorLogger);
 
-function subscribe () {
+function subscribe() {
   // Subscribe to Cloud Pub/Sub and receive messages to process books.
   // The subscription will continue to listen for messages until the process
   // is killed.
@@ -77,38 +77,41 @@ if (module === require.main) {
 
 // Processes a book by reading its existing data, attempting to find
 // more information, and updating the database with the new information.
-function processBook (bookId, callback) {
-  waterfall([
-    // Load the current data
-    (cb) => {
-      model.read(bookId, cb);
-    },
-    // Find the information from Google
-    findBookInfo,
-    // Save the updated data
-    (updated, cb) => {
-      model.update(updated.id, updated, false, cb);
-    }
-  ], (err) => {
-    if (err) {
-      logging.error(`Error occurred`, err);
-      if (callback) {
-        callback(err);
+function processBook(bookId, callback) {
+  waterfall(
+    [
+      // Load the current data
+      cb => {
+        model.read(bookId, cb);
+      },
+      // Find the information from Google
+      findBookInfo,
+      // Save the updated data
+      (updated, cb) => {
+        model.update(updated.id, updated, false, cb);
+      },
+    ],
+    err => {
+      if (err) {
+        logging.error(`Error occurred`, err);
+        if (callback) {
+          callback(err);
+        }
+        return;
       }
-      return;
+      logging.info(`Updated book ${bookId}`);
+      bookCount += 1;
+      if (callback) {
+        callback();
+      }
     }
-    logging.info(`Updated book ${bookId}`);
-    bookCount += 1;
-    if (callback) {
-      callback();
-    }
-  });
+  );
 }
 
 // Tries to find additional information about a book and updates
 // the book's data. Also uploads a cover image to Cloud Storage
 // if available.
-function findBookInfo (book, cb) {
+function findBookInfo(book, cb) {
   queryBooksApi(book.title, (err, r) => {
     if (!err && !r.items) {
       err = 'Not found';
@@ -136,21 +139,22 @@ function findBookInfo (book, cb) {
       top.volumeInfo.imageLinks.smallThumbnail;
     const imageName = `${book.id}.jpg`;
 
-    images.downloadAndUploadImage(
-      imageUrl, imageName, (err, publicUrl) => {
-        if (!err) {
-          book.imageUrl = publicUrl;
-        }
-        cb(null, book);
-      });
+    images.downloadAndUploadImage(imageUrl, imageName, (err, publicUrl) => {
+      if (!err) {
+        book.imageUrl = publicUrl;
+      }
+      cb(null, book);
+    });
   });
 }
 
 // Calls out to the Google Books API to get additional
 // information about a given book.
-function queryBooksApi (query, cb) {
+function queryBooksApi(query, cb) {
   request(
-    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`,
+    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+      query
+    )}`,
     (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
         cb(err || `Response returned ${resp.statusCode}`);
@@ -164,7 +168,7 @@ function queryBooksApi (query, cb) {
 app.mocks = {
   processBook: processBook,
   findBookInfo: findBookInfo,
-  queryBooksApi: queryBooksApi
+  queryBooksApi: queryBooksApi,
 };
 
 // Proxyquire requires this *exact* line, hence the "app.mocks" above

@@ -43,14 +43,14 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   secret: config.get('SECRET'),
-  signed: true
+  signed: true,
 };
 
 // In production use the App Engine Memcache instance to store session data,
 // otherwise fallback to the default MemoryStore in development.
 if (config.get('NODE_ENV') === 'production' && config.get('MEMCACHE_URL')) {
   sessionConfig.store = new MemcachedStore({
-    hosts: [config.get('MEMCACHE_URL')]
+    hosts: [config.get('MEMCACHE_URL')],
   });
 }
 
@@ -87,7 +87,7 @@ app.use((req, res) => {
 });
 
 // Basic error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   /* jshint unused:false */
   // If our routes specified a specific response, then send that. Otherwise,
   // send a generic message so as not to leak anything.

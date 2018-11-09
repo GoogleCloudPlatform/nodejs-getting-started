@@ -28,10 +28,10 @@ module.exports = {
   msg: `This worker has processed`,
   port: PORT,
   env: {
-    TOPIC_NAME: `book-process-queue-${TESTNAME}`
+    TOPIC_NAME: `book-process-queue-${TESTNAME}`,
   },
   version: VERSION,
-  project: PROJECT_ID
+  project: PROJECT_ID,
 };
 
 if (process.env.E2E_TESTS) {
