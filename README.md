@@ -39,8 +39,6 @@ npm test
 
 * See [LICENSE](LICENSE)
 
-[coveralls-badge]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started/coverage.svg?branch=master
-[coveralls-link]: https://codecov.io/github/GoogleCloudPlatform/nodejs-getting-started?branch=master
 [getting-started]: https://cloud.google.com/nodejs/getting-started/tutorial-app
 [step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
 [step-1-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/1-hello-world
