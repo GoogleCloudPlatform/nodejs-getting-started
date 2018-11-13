@@ -38,8 +38,8 @@ gcloud config set project $GCLOUD_PROJECT
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# Use Node 8
-nvm install 8
+# Use Node 10
+nvm install 10
 
 # Install Node dependencies
 yarn global add @google-cloud/nodejs-repo-tools
@@ -53,7 +53,7 @@ find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CRE
 cloud_sql_proxy -instances="${GCLOUD_PROJECT}:us-central1:integration-test-instance"=tcp:3306 &
 
 # Install dependencies (for running the tests, not the apps themselves)
-yarn install
+npm install
 
 # Test all steps locally
 npm test

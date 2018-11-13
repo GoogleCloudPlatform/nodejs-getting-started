@@ -17,7 +17,7 @@ const express = require('express');
 const images = require('../lib/images');
 const oauth2 = require('../lib/oauth2');
 
-function getModel () {
+function getModel() {
   return require(`./model-${require('../config').get('DATA_BACKEND')}`);
 }
 
@@ -46,7 +46,7 @@ router.get('/', (req, res, next) => {
     }
     res.render('books/list.pug', {
       books: entities,
-      nextPageToken: cursor
+      nextPageToken: cursor,
     });
   });
 });
@@ -59,14 +59,14 @@ router.get('/mine', oauth2.required, (req, res, next) => {
     req.user.id,
     10,
     req.query.pageToken,
-    (err, entities, cursor, apiResponse) => {
+    (err, entities, cursor) => {
       if (err) {
         next(err);
         return;
       }
       res.render('books/list.pug', {
         books: entities,
-        nextPageToken: cursor
+        nextPageToken: cursor,
       });
     }
   );
@@ -81,7 +81,7 @@ router.get('/mine', oauth2.required, (req, res, next) => {
 router.get('/add', (req, res) => {
   res.render('books/form.pug', {
     book: {},
-    action: 'Add'
+    action: 'Add',
   });
 });
 
@@ -137,7 +137,7 @@ router.get('/:book/edit', (req, res, next) => {
     }
     res.render('books/form.pug', {
       book: entity,
-      action: 'Edit'
+      action: 'Edit',
     });
   });
 });
@@ -182,7 +182,7 @@ router.get('/:book', (req, res, next) => {
       return;
     }
     res.render('books/view.pug', {
-      book: entity
+      book: entity,
     });
   });
 });
@@ -193,7 +193,7 @@ router.get('/:book', (req, res, next) => {
  * Delete a book.
  */
 router.get('/:book/delete', (req, res, next) => {
-  getModel().delete(req.params.book, (err) => {
+  getModel().delete(req.params.book, err => {
     if (err) {
       next(err);
       return;

@@ -24,10 +24,10 @@ module.exports = {
   cmd: `app`,
   port: PORT,
   env: {
-    PORT: PORT
+    PORT: PORT,
   },
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,
   project: process.env.GCLOUD_PROJECT,
-  msg: `Bookshelf`
+  msg: `Bookshelf`,
 };

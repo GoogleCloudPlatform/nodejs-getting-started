@@ -3,9 +3,9 @@
 FROM gcr.io/google_appengine/nodejs
 
 # Check to see if the the version included in the base runtime satisfies
-# '>=0.12.7', if not then do an npm install of the latest available
+# '>=8.12.0', if not then do an npm install of the latest available
 # version that satisfies it.
-RUN /usr/local/bin/install_node '>=0.12.7'
+RUN /usr/local/bin/install_node '>=8.12.0'
 COPY . /app/
 
 # You have to specify "--unsafe-perm" with npm install

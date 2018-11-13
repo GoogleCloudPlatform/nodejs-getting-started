@@ -1,4 +1,4 @@
-// Copyright 2017, Google, Inc.
+// Copyright 2018, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,33 +19,34 @@ const sinon = require(`sinon`);
 const test = require(`ava`);
 const utils = require(`@google-cloud/nodejs-repo-tools`);
 
-test.cb(`should redirect / to /books`, (t) => {
-  utils.getRequest(testConfig)
+test.cb(`should redirect / to /books`, t => {
+  utils
+    .getRequest(testConfig)
     .get(`/`)
     .expect(302)
-    .expect((response) => {
+    .expect(response => {
       t.regex(response.text, /Redirecting to \/books/);
     })
     .end(t.end);
 });
 
-test(`should check config`, (t) => {
+test(`should check config`, t => {
   const nconfMock = {
     argv: sinon.stub().returnsThis(),
     env: sinon.stub().returnsThis(),
     file: sinon.stub().returnsThis(),
     defaults: sinon.stub().returnsThis(),
-    get: function (setting) {
+    get: function(setting) {
       return this[setting];
-    }
+    },
   };
 
-  function getMsg (setting) {
+  function getMsg(setting) {
     return `You must set ${setting} as an environment variable or in config.json!`;
   }
 
   const testFunc = () => {
-    proxyquire(`../config`, { nconf: nconfMock });
+    proxyquire(`../config`, {nconf: nconfMock});
   };
 
   nconfMock.DATA_BACKEND = `datastore`;

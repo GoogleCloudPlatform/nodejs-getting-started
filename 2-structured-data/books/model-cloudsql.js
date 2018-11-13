@@ -20,20 +20,24 @@ const config = require('../config');
 const options = {
   user: config.get('MYSQL_USER'),
   password: config.get('MYSQL_PASSWORD'),
-  database: 'bookshelf'
+  database: 'bookshelf',
 };
 
-if (config.get('INSTANCE_CONNECTION_NAME') && config.get('NODE_ENV') === 'production') {
+if (
+  config.get('INSTANCE_CONNECTION_NAME') &&
+  config.get('NODE_ENV') === 'production'
+) {
   options.socketPath = `/cloudsql/${config.get('INSTANCE_CONNECTION_NAME')}`;
 }
 
 const connection = mysql.createConnection(options);
 
 // [START list]
-function list (limit, token, cb) {
+function list(limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   connection.query(
-    'SELECT * FROM `books` LIMIT ? OFFSET ?', [limit, token],
+    'SELECT * FROM `books` LIMIT ? OFFSET ?',
+    [limit, token],
     (err, results) => {
       if (err) {
         cb(err);
@@ -47,7 +51,7 @@ function list (limit, token, cb) {
 // [END list]
 
 // [START create]
-function create (data, cb) {
+function create(data, cb) {
   connection.query('INSERT INTO `books` SET ?', data, (err, res) => {
     if (err) {
       cb(err);
@@ -58,13 +62,15 @@ function create (data, cb) {
 }
 // [END create]
 
-function read (id, cb) {
+function read(id, cb) {
   connection.query(
-    'SELECT * FROM `books` WHERE `id` = ?', id, (err, results) => {
+    'SELECT * FROM `books` WHERE `id` = ?',
+    id,
+    (err, results) => {
       if (!err && !results.length) {
         err = {
           code: 404,
-          message: 'Not found'
+          message: 'Not found',
         };
       }
       if (err) {
@@ -72,23 +78,23 @@ function read (id, cb) {
         return;
       }
       cb(null, results[0]);
-    });
+    }
+  );
 }
 
 // [START update]
-function update (id, data, cb) {
-  connection.query(
-    'UPDATE `books` SET ? WHERE `id` = ?', [data, id], (err) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-      read(id, cb);
-    });
+function update(id, data, cb) {
+  connection.query('UPDATE `books` SET ? WHERE `id` = ?', [data, id], err => {
+    if (err) {
+      cb(err);
+      return;
+    }
+    read(id, cb);
+  });
 }
 // [END update]
 
-function _delete (id, cb) {
+function _delete(id, cb) {
   connection.query('DELETE FROM `books` WHERE `id` = ?', id, cb);
 }
 
@@ -98,7 +104,7 @@ module.exports = {
   create: create,
   read: read,
   update: update,
-  delete: _delete
+  delete: _delete,
 };
 
 if (module === require.main) {
@@ -107,7 +113,8 @@ if (module === require.main) {
 
   console.log(
     `Running this script directly will allow you to initialize your mysql database.
-    This script will not modify any existing tables.`);
+    This script will not modify any existing tables.`
+  );
 
   prompt.get(['user', 'password'], (err, result) => {
     if (err) {
@@ -117,10 +124,15 @@ if (module === require.main) {
   });
 }
 
-function createSchema (config) {
-  const connection = mysql.createConnection(extend({
-    multipleStatements: true
-  }, config));
+function createSchema(config) {
+  const connection = mysql.createConnection(
+    extend(
+      {
+        multipleStatements: true,
+      },
+      config
+    )
+  );
 
   connection.query(
     `CREATE DATABASE IF NOT EXISTS \`bookshelf\`
@@ -137,7 +149,7 @@ function createSchema (config) {
       \`createdBy\` VARCHAR(255) NULL,
       \`createdById\` VARCHAR(255) NULL,
     PRIMARY KEY (\`id\`));`,
-    (err) => {
+    err => {
       if (err) {
         throw err;
       }

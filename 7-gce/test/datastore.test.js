@@ -15,9 +15,12 @@
 
 const test = require(`ava`);
 
-if (require(`../config`).get(`DATA_BACKEND`) === `datastore` || process.env.TEST_DATASTORE) {
+if (
+  require(`../config`).get(`DATA_BACKEND`) === `datastore` ||
+  process.env.TEST_DATASTORE
+) {
   require(`./_api-tests`)(`datastore`);
   require(`./_crud-tests`)(`datastore`);
 } else {
-  test(`Skipping Cloud Datastore tests...`, (t) => t.pass());
+  test(`Skipping Cloud Datastore tests...`, t => t.pass());
 }

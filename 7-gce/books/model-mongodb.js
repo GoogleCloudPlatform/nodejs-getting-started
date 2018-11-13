@@ -20,7 +20,7 @@ const background = require('../lib/background');
 
 let collection;
 
-function fromMongo (item) {
+function fromMongo(item) {
   if (Array.isArray(item) && item.length) {
     item = item[0];
   }
@@ -29,30 +29,33 @@ function fromMongo (item) {
   return item;
 }
 
-function toMongo (item) {
+function toMongo(item) {
   delete item.id;
   return item;
 }
 
-function getCollection (cb) {
+function getCollection(cb) {
   if (collection) {
     setImmediate(() => {
       cb(null, collection);
     });
     return;
   }
-  MongoClient.connect(config.get('MONGO_URL'), (err, client) => {
-    if (err) {
-      cb(err);
-      return;
+  MongoClient.connect(
+    config.get('MONGO_URL'),
+    (err, client) => {
+      if (err) {
+        cb(err);
+        return;
+      }
+      const db = client.db(config.get('MONGO_DB_NAME'));
+      collection = db.collection(config.get('MONGO_COLLECTION'));
+      cb(null, collection);
     }
-    const db = client.db(config.get('MONGO_DB_NAME'));
-    collection = db.collection(config.get('MONGO_COLLECTION'));
-    cb(null, collection);
-  });
+  );
 }
 
-function list (limit, token, cb) {
+function list(limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   if (isNaN(token)) {
     cb(new Error('invalid token'));
@@ -63,7 +66,8 @@ function list (limit, token, cb) {
       cb(err);
       return;
     }
-    collection.find({})
+    collection
+      .find({})
       .skip(token)
       .limit(limit)
       .toArray((err, results) => {
@@ -78,7 +82,7 @@ function list (limit, token, cb) {
   });
 }
 
-function listBy (userId, limit, token, cb) {
+function listBy(userId, limit, token, cb) {
   token = token ? parseInt(token, 10) : 0;
   if (isNaN(token)) {
     cb(new Error('invalid token'));
@@ -89,7 +93,8 @@ function listBy (userId, limit, token, cb) {
       cb(err);
       return;
     }
-    collection.find({ createdById: userId })
+    collection
+      .find({createdById: userId})
       .skip(token)
       .limit(limit)
       .toArray((err, results) => {
@@ -104,7 +109,7 @@ function listBy (userId, limit, token, cb) {
   });
 }
 
-function create (data, queueBook, cb) {
+function create(data, queueBook, cb) {
   getCollection((err, collection) => {
     if (err) {
       cb(err);
@@ -124,42 +129,45 @@ function create (data, queueBook, cb) {
   });
 }
 
-function read (id, cb) {
+function read(id, cb) {
   getCollection((err, collection) => {
     if (err) {
       cb(err);
       return;
     }
-    collection.findOne({
-      _id: new ObjectID(id)
-    }, (err, result) => {
-      if (!err && !result) {
-        err = {
-          code: 404,
-          message: 'Not found'
-        };
-        return;
+    collection.findOne(
+      {
+        _id: new ObjectID(id),
+      },
+      (err, result) => {
+        if (!err && !result) {
+          err = {
+            code: 404,
+            message: 'Not found',
+          };
+          return;
+        }
+        if (err) {
+          cb(err);
+          return;
+        }
+        cb(null, fromMongo(result));
       }
-      if (err) {
-        cb(err);
-        return;
-      }
-      cb(null, fromMongo(result));
-    });
+    );
   });
 }
 
-function update (id, data, queueBook, cb) {
+function update(id, data, queueBook, cb) {
   getCollection((err, collection) => {
     if (err) {
       cb(err);
       return;
     }
     collection.update(
-      { _id: new ObjectID(id) },
-      { '$set': toMongo(data) },
-      { w: 1 },
-      (err) => {
+      {_id: new ObjectID(id)},
+      {$set: toMongo(data)},
+      {w: 1},
+      err => {
         if (err) {
           cb(err);
           return;
@@ -173,15 +181,18 @@ function update (id, data, queueBook, cb) {
   });
 }
 
-function _delete (id, cb) {
+function _delete(id, cb) {
   getCollection((err, collection) => {
     if (err) {
       cb(err);
       return;
     }
-    collection.remove({
-      _id: new ObjectID(id)
-    }, cb);
+    collection.remove(
+      {
+        _id: new ObjectID(id),
+      },
+      cb
+    );
   });
 }
 
@@ -191,5 +202,5 @@ module.exports = {
   update: update,
   delete: _delete,
   list: list,
-  listBy: listBy
+  listBy: listBy,
 };

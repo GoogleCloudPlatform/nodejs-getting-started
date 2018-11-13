@@ -1,4 +1,4 @@
-// Copyright 2017, Google, Inc.
+// Copyright 2018, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +15,8 @@
 
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const StackdriverTransport = require('@google-cloud/logging-winston').LoggingWinston;
+const StackdriverTransport = require('@google-cloud/logging-winston')
+  .LoggingWinston;
 
 const colorize = process.env.NODE_ENV !== 'production';
 
@@ -25,11 +26,11 @@ const requestLogger = expressWinston.logger({
     new StackdriverTransport(),
     new winston.transports.Console({
       json: false,
-      colorize: colorize
-    })
+      colorize: colorize,
+    }),
   ],
   expressFormat: true,
-  meta: false
+  meta: false,
 });
 
 // Logger to capture any top-level errors and output json diagnostic info.
@@ -38,9 +39,9 @@ const errorLogger = expressWinston.errorLogger({
     new StackdriverTransport(),
     new winston.transports.Console({
       json: true,
-      colorize: colorize
-    })
-  ]
+      colorize: colorize,
+    }),
+  ],
 });
 
 module.exports = {
@@ -52,5 +53,5 @@ module.exports = {
   log: winston.log,
   verbose: winston.verbose,
   debug: winston.debug,
-  silly: winston.silly
+  silly: winston.silly,
 };

@@ -22,36 +22,54 @@
 rm -rf */*.log
 rm -rf *-*.yaml
 
-# TODO(franzih): Make these work again
-exit 0
+export NODE_ENV=development
+export DATA_BACKEND="mongodb"
 
-# export NODE_ENV=development
-# export DATA_BACKEND="mongodb"
+# Configure gcloud
+export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
+gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
+gcloud config set project $GCLOUD_PROJECT
 
-# # Configure gcloud
-# export GCLOUD_PROJECT=nodejs-getting-started-tests
-# export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
-# gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-# gcloud config set project $GCLOUD_PROJECT
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# # Install Node dependencies
-# yarn global add @google-cloud/nodejs-repo-tools
-# cd github/nodejs-getting-started
+# Use Node 10
+nvm install 10
 
-# # Copy secrets into subdirectories
-# find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json" \;
-# find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
+cd github/nodejs-getting-started/
 
-# # Fail on error
-# set -e;
+# Copy secrets into subdirectories
+find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json" \;
+find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
 
-# # Install dependencies (for running the tests, not the apps themselves)
-# yarn install
+# Test samples for Compute Engine (7-gce)
+cd 7-gce
 
-# # Test all steps locally
-# npm test
+# Fail on error
+set -e;
 
-# # Exit on error
-# if [[ $? -ne 0 ]]; then
-#   exit $?
-# fi
+# Install dependencies (for running the tests, not the apps themselves)
+npm install
+
+# Test all steps locally
+npm test
+
+# Exit on error
+if [[ $? -ne 0 ]]; then
+  exit $?
+fi
+
+# Test samples for Kubernetes Engine (optional-kubernetes-engine)
+cd ../optional-kubernetes-engine
+
+# Install dependencies (for running the tests, not the apps themselves)
+npm install
+
+# Test all steps locally
+npm test
+
+# Exit on error
+if [[ $? -ne 0 ]]; then
+  exit $?
+fi

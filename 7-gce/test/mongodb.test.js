@@ -15,9 +15,12 @@
 
 const test = require(`ava`);
 
-if (require(`../config`).get(`DATA_BACKEND`) === `mongodb` || process.env.TEST_MONGODB) {
+if (
+  require(`../config`).get(`DATA_BACKEND`) === `mongodb` ||
+  process.env.TEST_MONGODB
+) {
   require(`./_api-tests`)(`mongodb`);
   require(`./_crud-tests`)(`mongodb`);
 } else {
-  test(`Skipping MongoDB tests...`, (t) => t.pass());
+  test(`Skipping MongoDB tests...`, t => t.pass());
 }

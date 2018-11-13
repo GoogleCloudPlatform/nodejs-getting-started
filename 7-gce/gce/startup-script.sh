@@ -19,6 +19,7 @@ export HOME=/root
 
 # Talk to the metadata server to get the project id
 PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
+REPOSITORY="[YOUR-REPOSITORY]"
 
 # Install logging monitor. The monitor will automatically pick up logs sent to
 # syslog.
@@ -44,15 +45,17 @@ nvm use 8
 # git requires $HOME and it's not set during the startup script.
 export HOME=/root
 git config --global credential.helper gcloud.sh
-git clone https://source.developers.google.com/p/$PROJECTID/r/gce-bookshelf /opt/app
-
-# Decrypt the config.json file
-gcloud kms decrypt --location=global --keyring=[YOUR_KEY_RING] --key=[YOUR_KEY_NAME] --plaintext-file=config.json --ciphertext-file=config.json.enc
+git clone https://source.developers.google.com/p/${PROJECTID}/r/${REPOSITORY} /opt/app
 
 # Install app dependencies
 cd /opt/app/7-gce
 npm install --unsafe-perm
 npm rebuild grpc
+
+# Decrypt the config.json file, if necessary
+if [ -f config.json.enc ]; then
+  gcloud kms decrypt --location=global --keyring=[YOUR_KEY_RING] --key=[YOUR_KEY_NAME] --plaintext-file=config.json --ciphertext-file=config.json.enc
+fi
 
 # Create a nodeapp user. The application will run as this user.
 useradd -m -d /home/nodeapp nodeapp
