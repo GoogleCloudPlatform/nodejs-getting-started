@@ -44,7 +44,7 @@ test.beforeEach(t => {
     createTopic: sinon.stub().callsArgWith(1, null, mocks.topic),
     topic: sinon.stub().returns(mocks.topic),
   };
-  mocks.Pubsub = sinon.stub().returns(mocks.pubsub);
+  mocks.Pubsub = {PubSub: sinon.stub().returns(mocks.pubsub)};
   mocks.logging = {
     info: sinon.stub(),
     error: sinon.stub(),
