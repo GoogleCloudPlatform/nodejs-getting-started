@@ -28,6 +28,6 @@ module.exports = {
   },
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,
-  project: process.env.GCLOUD_PROJECT,
+  project: process.env.GOOGLE_CLOUD_PROJECT,
   msg: `Bookshelf`,
 };

@@ -19,7 +19,7 @@ const config = require('../config');
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
 const storage = Storage({
-  projectId: config.get('GCLOUD_PROJECT'),
+  projectId: config.get('GOOGLE_CLOUD_PROJECT'),
 });
 const bucket = storage.bucket(CLOUD_BUCKET);
 

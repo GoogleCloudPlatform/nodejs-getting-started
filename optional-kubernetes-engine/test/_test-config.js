@@ -26,7 +26,7 @@ module.exports = {
   port: PORT,
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,
-  project: process.env.GCLOUD_PROJECT,
+  project: process.env.GOOGLE_CLOUD_PROJECT,
   env: {
     PORT: PORT,
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,

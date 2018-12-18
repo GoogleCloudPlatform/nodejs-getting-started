@@ -14,7 +14,7 @@
 'use strict';
 
 const path = require(`path`);
-const PROJECT_ID = process.env.GCLOUD_PROJECT;
+const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT;
 const TESTNAME = `7-gce`;
 const PORT = 8092;
 const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;

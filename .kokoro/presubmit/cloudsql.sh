@@ -29,10 +29,10 @@ export NODE_ENV=development
 export DATA_BACKEND="cloudsql"
 
 # Configure gcloud
-export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GOOGLE_CLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project $GCLOUD_PROJECT
+gcloud config set project $GOOGLE_CLOUD_PROJECT
 
 # Load the Node version manager
 export NVM_DIR="$HOME/.nvm"
@@ -50,7 +50,7 @@ find . -name package.json -maxdepth 2 -execdir sh -c "cp ${KOKORO_GFILE_DIR}/sec
 find . -name package.json -maxdepth 2 -execdir sh -c "cp $GOOGLE_APPLICATION_CREDENTIALS key.json" \;
 
 # Start SQL proxy
-cloud_sql_proxy -instances="${GCLOUD_PROJECT}:us-central1:integration-test-instance"=tcp:3306 &
+cloud_sql_proxy -instances="${GOOGLE_CLOUD_PROJECT}:us-central1:integration-test-instance"=tcp:3306 &
 
 # Install dependencies (for running the tests, not the apps themselves)
 npm install

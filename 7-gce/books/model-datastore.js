@@ -18,7 +18,7 @@ const config = require('../config');
 const background = require('../lib/background');
 
 const ds = Datastore({
-  projectId: config.get('GCLOUD_PROJECT'),
+  projectId: config.get('GOOGLE_CLOUD_PROJECT'),
 });
 const kind = 'Book';
 

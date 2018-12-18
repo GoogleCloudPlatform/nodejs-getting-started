@@ -56,16 +56,16 @@ trap cleanup EXIT
 set -e;
 
 # Configure gcloud
-export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GOOGLE_CLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project $GCLOUD_PROJECT
+gcloud config set project $GOOGLE_CLOUD_PROJECT
 
 # Extract secrets
 export MYSQL_USER=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-user.json)
 export MYSQL_PASSWORD=$(cat ${KOKORO_GFILE_DIR}/secrets-mysql-password.json)
 export MONGO_URL=$(cat ${KOKORO_GFILE_DIR}/secrets-mongo-url.json)
-export INSTANCE_CONNECTION_NAME="${GCLOUD_PROJECT}:us-central1:integration-test-instance"
+export INSTANCE_CONNECTION_NAME="${GOOGLE_CLOUD_PROJECT}:us-central1:integration-test-instance"
 
 
 # Load the Node version manager
@@ -87,12 +87,12 @@ cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 yarn install
 
 # Build and deploy Docker images
-docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .
-gcloud docker -- push gcr.io/${GCLOUD_PROJECT}/bookshelf
+docker build -t gcr.io/${GOOGLE_CLOUD_PROJECT}/bookshelf .
+gcloud docker -- push gcr.io/${GOOGLE_CLOUD_PROJECT}/bookshelf
 
 # Substitute required variables
 # Use sed, as @google-cloud/nodejs-repo-tools doesn't support K8s deployments
-sed -i.bak "s/\[GCLOUD_PROJECT\]/${GCLOUD_PROJECT}/g" bookshelf-*.yaml
+sed -i.bak "s/\[GOOGLE_CLOUD_PROJECT\]/${GOOGLE_CLOUD_PROJECT}/g" bookshelf-*.yaml
 sed -i.bak "s/\[INSTANCE_CONNECTION_NAME\]/${INSTANCE_CONNECTION_NAME}/g" bookshelf-*.yaml
 
 # Create and connect to the required K8s cluster

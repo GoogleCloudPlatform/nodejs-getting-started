@@ -18,7 +18,7 @@ const config = require('../config');
 
 // [START config]
 const ds = Datastore({
-  projectId: config.get('GCLOUD_PROJECT'),
+  projectId: config.get('GOOGLE_CLOUD_PROJECT'),
 });
 const kind = 'Book';
 // [END config]

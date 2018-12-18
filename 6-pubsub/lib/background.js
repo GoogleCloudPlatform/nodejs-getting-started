@@ -20,7 +20,7 @@ const logging = require('./logging');
 const topicName = config.get('TOPIC_NAME');
 
 const pubsub = new Pubsub({
-  projectId: config.get('GCLOUD_PROJECT'),
+  projectId: config.get('GOOGLE_CLOUD_PROJECT'),
 });
 
 // This configuration will automatically create the topic if

@@ -35,8 +35,8 @@ spec:
     spec:
       containers:
       - name: bookshelf-app
-        # Replace [GCLOUD_PROJECT] with your project ID or use `make template`.
-        image: gcr.io/[GCLOUD_PROJECT]/bookshelf
+        # Replace [GOOGLE_CLOUD_PROJECT] with your project ID or use `make template`.
+        image: gcr.io/[GOOGLE_CLOUD_PROJECT]/bookshelf
         # This setting makes nodes pull the docker image every time before
         # starting the pod. This is useful when debugging, but should be turned
         # off in production.
@@ -49,7 +49,7 @@ spec:
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: /var/run/secret/cloud.google.com/secrets-key.json
           - name: PROJECT_ID
-            value: [GCLOUD_PROJECT]
+            value: [GOOGLE_CLOUD_PROJECT]
           - name: MYSQL_USER
             valueFrom:
               secretKeyRef:

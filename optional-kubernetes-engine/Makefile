@@ -1,4 +1,4 @@
-GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
+GOOGLE_CLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
 
 .PHONY: all
 all: deploy
@@ -13,20 +13,20 @@ create-cluster:
 
 .PHONY: create-bucket
 create-bucket:
-	gsutil mb gs://$(GCLOUD_PROJECT)
-    gsutil defacl set public-read gs://$(GCLOUD_PROJECT)
+	gsutil mb gs://$(GOOGLE_CLOUD_PROJECT)
+    gsutil defacl set public-read gs://$(GOOGLE_CLOUD_PROJECT)
 
 .PHONY: build
 build:
-	docker build -t gcr.io/$(GCLOUD_PROJECT)/bookshelf .
+	docker build -t gcr.io/$(GOOGLE_CLOUD_PROJECT)/bookshelf .
 
 .PHONY: push
 push: build
-	gcloud docker push gcr.io/$(GCLOUD_PROJECT)/bookshelf
+	gcloud docker push gcr.io/$(GOOGLE_CLOUD_PROJECT)/bookshelf
 
 .PHONY: template
 template:
-	sed -i ".tmpl" "s/\[GCLOUD_PROJECT\]/$(GCLOUD_PROJECT)/g" bookshelf-*.yaml
+	sed -i ".tmpl" "s/\[GOOGLE_CLOUD_PROJECT\]/$(GOOGLE_CLOUD_PROJECT)/g" bookshelf-*.yaml
 
 .PHONY: create-service
 create-service:

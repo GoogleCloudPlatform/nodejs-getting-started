@@ -17,7 +17,7 @@ const Datastore = require('@google-cloud/datastore');
 const config = require('../config');
 
 const ds = Datastore({
-  projectId: config.get('GCLOUD_PROJECT'),
+  projectId: config.get('GOOGLE_CLOUD_PROJECT'),
 });
 const kind = 'Book';
 
