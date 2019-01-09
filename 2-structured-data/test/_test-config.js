@@ -13,15 +13,15 @@
 
 'use strict';
 
-const path = require(`path`);
+const path = require('path');
 
-const TESTNAME = `2-structured-data`;
+const TESTNAME = '2-structured-data';
 const PORT = 8082;
 
 module.exports = {
   test: TESTNAME,
-  cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `app`,
+  cwd: path.resolve(path.join(__dirname, '../')),
+  cmd: 'app',
   port: PORT,
   env: {
     PORT: PORT,
@@ -29,5 +29,5 @@ module.exports = {
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,
   project: process.env.GCLOUD_PROJECT,
-  msg: `Bookshelf`,
+  msg: 'Bookshelf',
 };

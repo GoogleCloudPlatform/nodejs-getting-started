@@ -13,24 +13,26 @@
 
 'use strict';
 
-const testConfig = require(`./_test-config`);
-const proxyquire = require(`proxyquire`).noPreserveCache();
-const sinon = require(`sinon`);
-const test = require(`ava`);
-const utils = require(`@google-cloud/nodejs-repo-tools`);
+const testConfig = require('./_test-config');
+const proxyquire = require('proxyquire').noPreserveCache();
+const sinon = require('sinon');
+const assert = require('assert');
+const utils = require('@google-cloud/nodejs-repo-tools');
 
-test.cb(`should redirect / to /books`, t => {
-  utils
+it('should redirect / to /books', async () => {
+  await utils
     .getRequest(testConfig)
-    .get(`/`)
+    .get('/')
     .expect(302)
     .expect(response => {
-      t.regex(response.text, /Redirecting to \/books/);
-    })
-    .end(t.end);
+      assert.strictEqual(
+        new RegExp(/Redirecting to \/books/).test(response.text),
+        true
+      );
+    });
 });
 
-test(`should check config`, t => {
+it('should check config', () => {
   const nconfMock = {
     argv: sinon.stub().returnsThis(),
     env: sinon.stub().returnsThis(),
@@ -46,23 +48,23 @@ test(`should check config`, t => {
   }
 
   const testFunc = () => {
-    proxyquire(`../config`, {nconf: nconfMock});
+    proxyquire('../config', {nconf: nconfMock});
   };
 
-  nconfMock.DATA_BACKEND = `datastore`;
+  nconfMock.DATA_BACKEND = 'datastore';
 
-  t.throws(testFunc, Error, getMsg(`GCLOUD_PROJECT`));
-  nconfMock.GCLOUD_PROJECT = `project`;
+  assert.throws(testFunc, Error, getMsg('GCLOUD_PROJECT'));
+  nconfMock.GCLOUD_PROJECT = 'project';
 
-  t.notThrows(testFunc);
+  assert.doesNotThrow(testFunc);
 
-  nconfMock.DATA_BACKEND = `cloudsql`;
+  nconfMock.DATA_BACKEND = 'cloudsql';
 
-  t.throws(testFunc, Error, getMsg(`MYSQL_USER`));
-  nconfMock.MYSQL_USER = `user`;
+  assert.throws(testFunc, Error, getMsg('MYSQL_USER'));
+  nconfMock.MYSQL_USER = 'user';
 
-  t.throws(testFunc, Error, getMsg(`MYSQL_PASSWORD`));
-  nconfMock.MYSQL_PASSWORD = `password`;
+  assert.throws(testFunc, Error, getMsg('MYSQL_PASSWORD'));
+  nconfMock.MYSQL_PASSWORD = 'password';
 
-  t.notThrows(testFunc);
+  assert.doesNotThrow(testFunc);
 });

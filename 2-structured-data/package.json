@@ -24,8 +24,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js",
+    "test": "repo-tools test app && mocha test/*.test.js --timeout 30000",
+    "e2e": "repo-tools test deploy && E2E_TESTS=True mocha test/*.test.js --timeout 30000",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "init-cloudsql": "node books/model-cloudsql.js"
   },
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
-    "ava": "0.25.0",
+    "mocha": "^5.2.0",
     "proxyquire": "2.1.0",
     "sinon": "^7.0.0"
   }
