@@ -13,19 +13,19 @@
 
 'use strict';
 
-const proxyquire = require(`proxyquire`).noPreserveCache();
-const sinon = require(`sinon`);
-const test = require(`ava`);
+const proxyquire = require('proxyquire').noPreserveCache();
+const sinon = require('sinon');
+const assert = require('assert');
 
 let background;
 const mocks = {};
 
-test.beforeEach(t => {
+beforeEach(() => {
   // Mock dependencies used by background.js
   mocks.config = {
     GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
-    SUBSCRIPTION_NAME: `shared-worker-subscription`,
-    TOPIC_NAME: `book-process-queue`,
+    SUBSCRIPTION_NAME: 'shared-worker-subscription',
+    TOPIC_NAME: 'book-process-queue',
   };
   mocks.config.get = function(key) {
     return this[key];
@@ -50,16 +50,20 @@ test.beforeEach(t => {
     error: sinon.stub(),
   };
   // Load background.js with provided mocks
-  background = proxyquire(`../lib/background`, {
+  background = proxyquire('../lib/background', {
     '@google-cloud/pubsub': mocks.Pubsub,
     '../config': mocks.config,
     './logging': mocks.logging,
   });
 
-  t.true(mocks.Pubsub.calledOnce, `Pubsub() should have been called once`);
+  assert.strictEqual(
+    mocks.Pubsub.calledOnce,
+    'Pubsub() should have been called once',
+    true
+  );
 });
 
-test.serial(`should queue a book and log message`, t => {
+it('should queue a book and log message', () => {
   // Setup
   const testBookId = 1;
 
@@ -67,50 +71,54 @@ test.serial(`should queue a book and log message`, t => {
   background.queueBook(testBookId);
 
   // Assertions
-  t.true(
+  assert.strictEqual(
     mocks.pubsub.createTopic.calledOnce,
-    `pubsub.createTopic() should have been called once`
+    true,
+    'pubsub.createTopic() should have been called once'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.createTopic.firstCall.args[0],
-    `book-process-queue`,
-    `pubsub.createTopic() should have been called with the right arguments`
+    'book-process-queue',
+    'pubsub.createTopic() should have been called with the right arguments'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.topic.callCount,
     0,
-    `pubsub.topic() should NOT have been called`
+    'pubsub.topic() should NOT have been called'
   );
-  t.true(
+  assert.strictEqual(
     mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
+    true,
+    'topic.publisher() should have been called once'
   );
-  t.true(
+  assert.strictEqual(
     mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    true,
+    'publisher.publish() should have been called once'
   );
-  t.deepEqual(
+  assert.deepStrictEqual(
     mocks.publisher.publish.firstCall.args[0],
     Buffer.from(
       JSON.stringify({
-        action: `processBook`,
+        action: 'processBook',
         bookId: testBookId,
       })
     ),
-    `publisher.publish() should have been called with the right arguments`
+    'publisher.publish() should have been called with the right arguments'
   );
-  t.true(
+  assert.strictEqual(
     mocks.logging.info.calledOnce,
-    `logging.info() should have been called`
+    true,
+    'logging.info() should have been called'
   );
-  t.is(
+  assert.strictEqual(
     mocks.logging.info.firstCall.args[0],
     `Book ${testBookId} queued for background processing`,
-    `logging.info() should have been called with the right arguments`
+    'logging.info() should have been called with the right arguments'
   );
 });
 
-test.serial(`should queue a book and log message even if topic exists`, t => {
+it('should queue a book and log message even if topic exists', () => {
   // Setup
   const testBookId = 1;
   mocks.pubsub.createTopic = sinon.stub().callsArgWith(1, {
@@ -121,128 +129,138 @@ test.serial(`should queue a book and log message even if topic exists`, t => {
   background.queueBook(testBookId);
 
   // Assertions
-  t.true(
+  assert.strictEqual(
     mocks.pubsub.createTopic.calledOnce,
-    `pubsub.createTopic() should have been called once`
+    true,
+    'pubsub.createTopic() should have been called once'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.createTopic.firstCall.args[0],
-    `book-process-queue`,
-    `pubsub.createTopic() should have been called with the right arguments`
+    'book-process-queue',
+    'pubsub.createTopic() should have been called with the right arguments'
   );
-  t.true(
+  assert.strictEqual(
     mocks.pubsub.topic.calledOnce,
-    `pubsub.topic() should have been called once`
+    true,
+    'pubsub.topic() should have been called once'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.topic.firstCall.args[0],
-    `book-process-queue`,
-    `pubsub.topic() should have been called with the right arguments`
+    'book-process-queue',
+    'pubsub.topic() should have been called with the right arguments'
   );
-  t.true(
+  assert.strictEqual(
     mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
+    true,
+    'topic.publisher() should have been called once'
   );
-  t.true(
+  assert.strictEqual(
     mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    true,
+    'publisher.publish() should have been called once'
   );
-  t.deepEqual(
+  assert.deepStrictEqual(
     mocks.publisher.publish.firstCall.args[0],
     Buffer.from(
       JSON.stringify({
-        action: `processBook`,
+        action: 'processBook',
         bookId: testBookId,
       })
     ),
-    `publisher.publish() should have been called with the right arguments`
+    'publisher.publish() should have been called with the right arguments'
   );
-  t.true(
+  assert.strictEqual(
     mocks.logging.info.calledOnce,
-    `logging.info() should have been called`
+    true,
+    'logging.info() should have been called'
   );
-  t.is(
+  assert.strictEqual(
     mocks.logging.info.firstCall.args[0],
     `Book ${testBookId} queued for background processing`,
-    `logging.info() should have been called with the right arguments`
+    'logging.info() should have been called with the right arguments'
   );
 });
 
-test.serial(`should log error if cannot get topic`, t => {
+it('should log error if cannot get topic', () => {
   // Setup
   const testBookId = 1;
-  const testErrorMsg = `test error`;
+  const testErrorMsg = 'test error';
   mocks.pubsub.createTopic = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
   background.queueBook(testBookId);
 
   // Assertions
-  t.true(
+  assert.strictEqual(
     mocks.pubsub.createTopic.calledOnce,
-    `pubsub.createTopic() should have been called once`
+    true,
+    'pubsub.createTopic() should have been called once'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.createTopic.firstCall.args[0],
-    `book-process-queue`,
-    `pubsub.createTopic() should have been called with the right arguments`
+    'book-process-queue',
+    'pubsub.createTopic() should have been called with the right arguments'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.topic.callCount,
     0,
-    `pubsub.topic() should NOT have been called`
+    'pubsub.topic() should NOT have been called'
   );
-  t.is(
+  assert.strictEqual(
     mocks.topic.publisher.callCount,
     0,
-    `topic.publisher() should NOT have been called`
+    'topic.publisher() should NOT have been called'
   );
-  t.is(
+  assert.strictEqual(
     mocks.publisher.publish.callCount,
     0,
-    `publisher.publish() should NOT have been called`
+    'publisher.publish() should NOT have been called'
   );
-  t.is(
+  assert.strictEqual(
     mocks.logging.info.callCount,
     0,
-    `logging.info() should NOT have been called`
+    'logging.info() should NOT have been called'
   );
-  t.true(
+  assert.strictEqual(
     mocks.logging.error.calledOnce,
-    `logging.error() should have been called`
+    true,
+    'logging.error() should have been called'
   );
 });
 
-test.serial(`should log error if cannot publish message`, t => {
+it('should log error if cannot publish message', () => {
   // Setup
   const testBookId = 1;
-  const testErrorMsg = `test error`;
+  const testErrorMsg = 'test error';
   mocks.publisher.publish = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
   background.queueBook(testBookId);
 
   // Assertions
-  t.true(
+  assert.strictEqual(
     mocks.pubsub.createTopic.calledOnce,
-    `pubsub.createTopic() should have been called once`
+    true,
+    'pubsub.createTopic() should have been called once'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.createTopic.firstCall.args[0],
-    `book-process-queue`,
-    `pubsub.createTopic() should have been called with the right arguments`
+    'book-process-queue',
+    'pubsub.createTopic() should have been called with the right arguments'
   );
-  t.is(
+  assert.strictEqual(
     mocks.pubsub.topic.callCount,
     0,
-    `pubsub.topic() should NOT have been called`
+    'pubsub.topic() should NOT have been called'
   );
-  t.true(
+  assert.strictEqual(
     mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
+    true,
+    'topic.publisher() should have been called once'
   );
-  t.true(
+  assert.strictEqual(
     mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    true,
+    'publisher.publish() should have been called once'
   );
 });
