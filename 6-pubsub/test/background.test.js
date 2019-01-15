@@ -58,8 +58,8 @@ beforeEach(() => {
 
   assert.strictEqual(
     mocks.Pubsub.calledOnce,
-    'Pubsub() should have been called once',
-    true
+    true,
+    'Pubsub() should have been called once'
   );
 });
 
