@@ -13,14 +13,14 @@
 
 'use strict';
 
-const test = require(`ava`);
+const assert = require('assert');
 
 if (
-  require(`../config`).get(`DATA_BACKEND`) === `cloudsql` ||
+  require('../config').get('DATA_BACKEND') === 'cloudsql' ||
   process.env.TEST_CLOUDSQL
 ) {
-  require(`./_api-tests`)(`cloudsql`);
-  require(`./_crud-tests`)(`cloudsql`);
+  require('./_api-tests')('cloudsql');
+  require('./_crud-tests')('cloudsql');
 } else {
-  test(`Skipping Cloud SQL tests...`, t => t.pass());
+  it('Skipping Cloud SQL tests...', () => assert.ok(true));
 }
