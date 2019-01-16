@@ -13,17 +13,17 @@
 
 'use strict';
 
-const path = require(`path`);
-const test = `optional-kubernetes-engine-worker`;
+const path = require('path');
+const test = 'optional-kubernetes-engine-worker';
 const port = 8093;
 
 module.exports = {
   test: test,
   url: `http://localhost:${port}`,
-  yaml: `worker.yaml`,
-  cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `worker`,
-  msg: `This worker has processed`,
+  yaml: 'worker.yaml',
+  cwd: path.resolve(path.join(__dirname, '../')),
+  cmd: 'worker',
+  msg: 'This worker has processed',
   port: port,
   env: {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${test}`,

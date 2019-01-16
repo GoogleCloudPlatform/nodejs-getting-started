@@ -13,10 +13,10 @@
 
 'use strict';
 
-const test = require(`ava`);
-const sinon = require(`sinon`);
-const request = require(`supertest`);
-const proxyquire = require(`proxyquire`).noPreserveCache();
+const assert = require('assert');
+const sinon = require('sinon');
+const request = require('supertest');
+const proxyquire = require('proxyquire').noPreserveCache();
 
 const getPassportMock = () => {
   return {
@@ -30,83 +30,82 @@ const getPassportMock = () => {
     serializeUser: sinon.stub(),
     deserializeUser: sinon.stub(),
     authenticate: sinon.stub().returns((req, res, next) => {
-      req.session.oauth2return = `/another/path`;
+      req.session.oauth2return = '/another/path';
       next();
     }),
   };
 };
 
-test.cb(`should start authorization`, t => {
+it('should start authorization', async () => {
   const passportMock = getPassportMock();
   passportMock.authenticate = sinon.stub().returns((req, res) => {
-    t.is(req.session.oauth2return, `/some/path`);
-    res.redirect(`/auth/google/callback?code=foo`);
+    assert.strictEqual(req.session.oauth2return, '/some/path');
+    res.redirect('/auth/google/callback?code=foo');
   });
-  const app = proxyquire(`../app`, {
+  const app = proxyquire('../app', {
     passport: passportMock,
-    './lib/oauth2': proxyquire(`../lib/oauth2`, {
+    './lib/oauth2': proxyquire('../lib/oauth2', {
       passport: passportMock,
     }),
   });
-  request(app)
-    .get(`/auth/login?return=%2Fsome%2Fpath`)
+  await request(app)
+    .get('/auth/login?return=%2Fsome%2Fpath')
     .expect(302)
     .expect(response => {
       const text = response.text;
-      t.regex(text, /Redirecting to \/auth\/google\/callback\?code=foo/);
-      t.true(passportMock.initialize.calledOnce);
-      t.true(passportMock.session.calledOnce);
-      t.true(passportMock.use.calledOnce);
-      t.true(passportMock.serializeUser.calledOnce);
-      t.true(passportMock.deserializeUser.calledOnce);
-      t.true(passportMock.authenticate.calledTwice);
-      t.is(passportMock.authenticate.firstCall.args[0], `google`);
-      t.deepEqual(passportMock.authenticate.firstCall.args[1], {
-        scope: [`email`, `profile`],
+      assert.strictEqual(new RegExp(/Redirecting to \/auth\/google\/callback\?code=foo/).test(text), true);
+      assert.strictEqual(passportMock.initialize.calledOnce, true);
+      assert.strictEqual(passportMock.session.calledOnce, true);
+      assert.strictEqual(passportMock.use.calledOnce, true);
+      assert.strictEqual(passportMock.serializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.deserializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.authenticate.calledTwice, true);
+      assert.strictEqual(passportMock.authenticate.firstCall.args[0], 'google');
+      assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
+        scope: ['email', 'profile'],
       });
-      t.is(passportMock.authenticate.secondCall.args[0], `google`);
-      t.is(passportMock.authenticate.secondCall.args[1], undefined);
-    })
-    .end(t.end);
+      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
+      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+    });
 });
 
-test.cb(`should finish authorization`, t => {
+it('should finish authorization', async () => {
   const passportMock = getPassportMock();
-  const oauth2 = proxyquire(`../lib/oauth2`, {
+  const oauth2 = proxyquire('../lib/oauth2', {
     passport: passportMock,
   });
-  const app = proxyquire(`../app`, {
+  const app = proxyquire('../app', {
     passport: passportMock,
     './lib/oauth2': oauth2,
   });
-  request(app)
-    .get(`/auth/google/callback?code=foo`)
+  await request(app)
+    .get('/auth/google/callback?code=foo')
     .expect(302)
     .expect(response => {
       const text = response.text;
-      t.regex(text, /Redirecting to \/another\/path/);
-      t.true(passportMock.initialize.calledOnce);
-      t.true(passportMock.session.calledOnce);
-      t.true(passportMock.use.calledOnce);
-      t.true(passportMock.serializeUser.calledOnce);
-      t.true(passportMock.deserializeUser.calledOnce);
-      t.true(passportMock.authenticate.calledTwice);
-      t.is(passportMock.authenticate.firstCall.args[0], `google`);
-      t.deepEqual(passportMock.authenticate.firstCall.args[1], {
-        scope: [`email`, `profile`],
+      assert.strictEqual(new RegExp(/Redirecting to \/another\/path/).test(text), true);
+      assert.strictEqual(passportMock.initialize.calledOnce, true);
+      assert.strictEqual(passportMock.session.calledOnce, true);
+      assert.strictEqual(passportMock.use.calledOnce, true);
+      assert.strictEqual(passportMock.serializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.deserializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.authenticate.calledTwice, true);
+      assert.strictEqual(passportMock.authenticate.firstCall.args[0], 'google');
+      assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
+        scope: ['email', 'profile'],
       });
-      t.is(passportMock.authenticate.secondCall.args[0], `google`);
-      t.is(passportMock.authenticate.secondCall.args[1], undefined);
-      t.deepEqual(
+      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
+      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+      assert.deepStrictEqual(
         oauth2.extractProfile({
-          photos: [{value: `image.jpg`}],
+          photos: [{value: 'image.jpg'}],
           id: 1,
-          displayName: `Joe Developer`,
+          displayName: 'Joe Developer',
         }),
         {
           id: 1,
-          displayName: `Joe Developer`,
-          image: `image.jpg`,
+          displayName: 'Joe Developer',
+          image: 'image.jpg',
         }
       );
       const serializeUser = passportMock.serializeUser.firstCall.args[0];
@@ -114,54 +113,52 @@ test.cb(`should finish authorization`, t => {
       const user = {};
       const obj = {};
       serializeUser(user, (err, _user) => {
-        t.is(err, null);
-        t.is(_user, user);
+        assert.strictEqual(err, null);
+        assert.strictEqual(_user, user);
       });
       deserializeUser(obj, (err, _obj) => {
-        t.is(err, null);
-        t.is(_obj, obj);
+        assert.strictEqual(err, null);
+        assert.strictEqual(_obj, obj);
       });
-    })
-    .end(t.end);
+    });
 });
 
-test.cb(`should logout`, t => {
+it('should logout', async () => {
   const passportMock = getPassportMock();
-  const app = proxyquire(`../app`, {
+  const app = proxyquire('../app', {
     passport: passportMock,
-    './lib/oauth2': proxyquire(`../lib/oauth2`, {
+    './lib/oauth2': proxyquire('../lib/oauth2', {
       passport: passportMock,
     }),
   });
-  request(app)
-    .get(`/auth/logout`)
+  await request(app)
+    .get('/auth/logout')
     .expect(302)
     .expect(response => {
       const text = response.text;
-      t.regex(text, /Redirecting to \//);
-      t.true(passportMock.initialize.calledOnce);
-      t.true(passportMock.session.calledOnce);
-      t.true(passportMock.use.calledOnce);
-      t.true(passportMock.serializeUser.calledOnce);
-      t.true(passportMock.deserializeUser.calledOnce);
-      t.true(passportMock.authenticate.calledTwice);
-      t.is(passportMock.authenticate.firstCall.args[0], `google`);
-      t.deepEqual(passportMock.authenticate.firstCall.args[1], {
-        scope: [`email`, `profile`],
+      assert.strictEqual(new RegExp(/Redirecting to \//).test(text), true);
+      assert.strictEqual(passportMock.initialize.calledOnce, true);
+      assert.strictEqual(passportMock.session.calledOnce, true);
+      assert.strictEqual(passportMock.use.calledOnce, true);
+      assert.strictEqual(passportMock.serializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.deserializeUser.calledOnce, true);
+      assert.strictEqual(passportMock.authenticate.calledTwice, true);
+      assert.strictEqual(passportMock.authenticate.firstCall.args[0], 'google');
+      assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
+        scope: ['email', 'profile'],
       });
-      t.is(passportMock.authenticate.secondCall.args[0], `google`);
-      t.is(passportMock.authenticate.secondCall.args[1], undefined);
-    })
-    .end(t.end);
+      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
+      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+    });
 });
 
-test(`should require authentication`, t => {
+it('should require authentication', () => {
   const passportMock = getPassportMock();
-  const oauth2 = proxyquire(`../lib/oauth2`, {
+  const oauth2 = proxyquire('../lib/oauth2', {
     passport: passportMock,
   });
   const req = {
-    originalUrl: `/some/path`,
+    originalUrl: '/some/path',
     user: {},
     session: {},
   };
@@ -170,27 +167,27 @@ test(`should require authentication`, t => {
   };
   const next = sinon.stub();
   oauth2.required(req, res, next);
-  t.true(next.calledOnce);
+  assert.strictEqual(next.calledOnce, true);
 
   req.user = undefined;
   oauth2.required(req, res, next);
-  t.true(next.calledOnce);
-  t.is(req.session.oauth2return, req.originalUrl);
-  t.true(res.redirect.calledOnce);
-  t.is(res.redirect.firstCall.args[0], `/auth/login`);
+  assert.strictEqual(next.calledOnce, true);
+  assert.strictEqual(req.session.oauth2return, req.originalUrl);
+  assert.strictEqual(res.redirect.calledOnce, true);
+  assert.strictEqual(res.redirect.firstCall.args[0], '/auth/login');
 });
 
-test(`should add template variables`, t => {
+it('should add template variables', () => {
   const passportMock = getPassportMock();
-  const oauth2 = proxyquire(`../lib/oauth2`, {
+  const oauth2 = proxyquire('../lib/oauth2', {
     passport: passportMock,
   });
   const req = {
-    originalUrl: `/some/path`,
+    originalUrl: '/some/path',
     user: {
       id: 1,
-      displayName: `Joe Developer`,
-      image: `image.jpg`,
+      displayName: 'Joe Developer',
+      image: 'image.jpg',
     },
   };
   const res = {
@@ -198,13 +195,13 @@ test(`should add template variables`, t => {
   };
   const next = sinon.stub();
   oauth2.template(req, res, next);
-  t.true(next.calledOnce);
-  t.is(res.locals.profile, req.user);
-  t.is(
+  assert.strictEqual(next.calledOnce, true);
+  assert.strictEqual(res.locals.profile, req.user);
+  assert.strictEqual(
     res.locals.login,
     `/auth/login?return=${encodeURIComponent(req.originalUrl)}`
   );
-  t.is(
+  assert.strictEqual(
     res.locals.logout,
     `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`
   );
