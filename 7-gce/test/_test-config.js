@@ -13,16 +13,16 @@
 
 'use strict';
 
-const path = require(`path`);
+const path = require('path');
 
-const TESTNAME = `7-gce`;
+const TESTNAME = '7-gce';
 const PORT = 8087;
 
 module.exports = {
   test: TESTNAME,
-  cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `app`,
-  msg: `Bookshelf`,
+  cwd: path.resolve(path.join(__dirname, '../')),
+  cmd: 'app',
+  msg: 'Bookshelf',
   port: PORT,
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,

@@ -13,19 +13,19 @@
 
 'use strict';
 
-const path = require(`path`);
+const path = require('path');
 const PROJECT_ID = process.env.GCLOUD_PROJECT;
-const TESTNAME = `7-gce`;
+const TESTNAME = '7-gce';
 const PORT = 8092;
 const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;
 
 module.exports = {
   test: TESTNAME,
   url: `http://localhost:${PORT}`,
-  yaml: `worker.yaml`,
-  cwd: path.resolve(path.join(__dirname, `../`)),
-  cmd: `worker`,
-  msg: `This worker has processed`,
+  yaml: 'worker.yaml',
+  cwd: path.resolve(path.join(__dirname, '../')),
+  cmd: 'worker',
+  msg: 'This worker has processed',
   port: PORT,
   env: {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,

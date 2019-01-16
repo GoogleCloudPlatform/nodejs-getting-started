@@ -13,37 +13,35 @@
 
 'use strict';
 
-const testConfig = require(`./_test-config.worker`);
-const path = require(`path`);
-const proxyquire = require(`proxyquire`);
-const sinon = require(`sinon`);
-const test = require(`ava`);
-const utils = require(`@google-cloud/nodejs-repo-tools`);
+const testConfig = require('./_test-config.worker');
+const path = require('path');
+const proxyquire = require('proxyquire');
+const sinon = require('sinon');
+const assert = require('assert');
+const utils = require('@google-cloud/nodejs-repo-tools');
 
-test.serial.cb(`should return number of processed books`, t => {
-  utils
+it('should return number of processed books', async () => {
+  await utils
     .getRequest(testConfig)
-    .get(`/`)
+    .get('/')
     .expect(200)
     .expect(response => {
-      t.regex(response.text, /This worker has processed/);
-    })
-    .end(t.end);
+      assert.strictEqual(new RegExp(/This worker has processed/).test(response.text), true);
+    });
 });
 
-test.serial.cb(`should do a health check`, t => {
-  utils
+it('should do a health check', async () => {
+  await utils
     .getRequest(testConfig)
-    .get(`/_ah/health`)
+    .get('/_ah/health')
     .expect(200)
     .expect(response => {
-      t.is(response.text, `ok`);
-    })
-    .end(t.end);
+      assert.strictEqual(response.text, 'ok');
+    });
 });
 
-test.serial.cb(`should process a book`, t => {
-  const appConfig = require(`../config`);
+it('should process a book', () => {
+  const appConfig = require('../config');
   const loggingStub = {
     error: sinon.stub(),
     info: sinon.stub(),
@@ -67,15 +65,14 @@ test.serial.cb(`should process a book`, t => {
       cb();
     },
   };
-  const worker = proxyquire(path.join(__dirname, `../worker`), stubs).mocks;
+  const worker = proxyquire(path.join(__dirname, '../worker'), stubs).mocks;
   const processBook = worker.processBook;
 
   processBook(1, err => {
     if (err) {
-      return t.end(err);
+      return err;
     }
-    t.true(loggingStub.info.calledOnce);
-    t.is(loggingStub.info.firstCall.args[0], `Updated book 1`);
-    t.end();
+    assert.strictEqual(loggingStub.info.calledOnce, true);
+    assert.strictEqual(loggingStub.info.firstCall.args[0], 'Updated book 1');
   });
 });

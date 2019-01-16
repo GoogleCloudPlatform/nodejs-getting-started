@@ -13,14 +13,14 @@
 
 'use strict';
 
-const test = require(`ava`);
+const assert = require('assert');
 
 if (
-  require(`../config`).get(`DATA_BACKEND`) === `mongodb` ||
+  require('../config').get('DATA_BACKEND') === 'mongodb' ||
   process.env.TEST_MONGODB
 ) {
-  require(`./_api-tests`)(`mongodb`);
-  require(`./_crud-tests`)(`mongodb`);
+  require('./_api-tests')('mongodb');
+  require('./_crud-tests')('mongodb');
 } else {
-  test(`Skipping MongoDB tests...`, t => t.pass());
+  it('Skipping MongoDB tests...', () => assert.ok(true));
 }
