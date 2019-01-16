@@ -53,7 +53,12 @@ it('should start authorization', async () => {
     .expect(302)
     .expect(response => {
       const text = response.text;
-      assert.strictEqual(new RegExp(/Redirecting to \/auth\/google\/callback\?code=foo/).test(text), true);
+      assert.strictEqual(
+        new RegExp(/Redirecting to \/auth\/google\/callback\?code=foo/).test(
+          text
+        ),
+        true
+      );
       assert.strictEqual(passportMock.initialize.calledOnce, true);
       assert.strictEqual(passportMock.session.calledOnce, true);
       assert.strictEqual(passportMock.use.calledOnce, true);
@@ -64,8 +69,14 @@ it('should start authorization', async () => {
       assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
         scope: ['email', 'profile'],
       });
-      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
-      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[0],
+        'google'
+      );
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[1],
+        undefined
+      );
     });
 });
 
@@ -83,7 +94,10 @@ it('should finish authorization', async () => {
     .expect(302)
     .expect(response => {
       const text = response.text;
-      assert.strictEqual(new RegExp(/Redirecting to \/another\/path/).test(text), true);
+      assert.strictEqual(
+        new RegExp(/Redirecting to \/another\/path/).test(text),
+        true
+      );
       assert.strictEqual(passportMock.initialize.calledOnce, true);
       assert.strictEqual(passportMock.session.calledOnce, true);
       assert.strictEqual(passportMock.use.calledOnce, true);
@@ -94,8 +108,14 @@ it('should finish authorization', async () => {
       assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
         scope: ['email', 'profile'],
       });
-      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
-      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[0],
+        'google'
+      );
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[1],
+        undefined
+      );
       assert.deepStrictEqual(
         oauth2.extractProfile({
           photos: [{value: 'image.jpg'}],
@@ -147,8 +167,14 @@ it('should logout', async () => {
       assert.deepStrictEqual(passportMock.authenticate.firstCall.args[1], {
         scope: ['email', 'profile'],
       });
-      assert.strictEqual(passportMock.authenticate.secondCall.args[0], 'google');
-      assert.strictEqual(passportMock.authenticate.secondCall.args[1], undefined);
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[0],
+        'google'
+      );
+      assert.strictEqual(
+        passportMock.authenticate.secondCall.args[1],
+        undefined
+      );
     });
 });
 

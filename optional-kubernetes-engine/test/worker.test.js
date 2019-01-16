@@ -27,7 +27,10 @@ if (!process.env.SKIP_WORKER_HTTP_TESTS) {
       .get('/')
       .expect(200)
       .expect(response => {
-        assert.strictEqual(new RegExp(/This worker has processed/).test(response.text), true);
+        assert.strictEqual(
+          new RegExp(/This worker has processed/).test(response.text),
+          true
+        );
       });
   });
 
