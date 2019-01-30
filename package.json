@@ -14,7 +14,7 @@
     "lint": "eslint '**/*.js'",
     "ava": "ava -s -t 30s --tap \"**/!(4-auth)/test/!(datastore).test.js\"",
     "mocha": "mocha \"**/4-auth/test/!(datastore).test.js\"  --timeout=30000",
-    "test": "npm run mocha && npm run ava",
+    "test": "npm run lint && npm run mocha && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "e2e": "mocha test/e2e.js -t 1800000"
   },
