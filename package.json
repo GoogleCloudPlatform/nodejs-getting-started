@@ -48,7 +48,7 @@
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "ava": "^0.25.0",
     "eslint": "^5.9.0",
-    "eslint-config-prettier": "^3.1.0",
+    "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "prettier": "^1.15.1",
