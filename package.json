@@ -12,8 +12,9 @@
   "private": true,
   "scripts": {
     "lint": "eslint '**/*.js'",
-    "ava": "ava -s -t 30s --tap \"**/!(datastore).test.js\"",
-    "test": "npm run lint && npm run ava",
+    "ava": "ava -s -t 30s --tap \"**/!(5-logging)/test/!(datastore).test.js\"",
+    "mocha": "mocha \"**/5-logging/test/!(datastore).test.js\"  --timeout=30000",
+    "test": "npm run lint && npm run mocha && npm run ava",
     "cover": "nyc --cache npm test; nyc report --reporter=html",
     "e2e": "mocha test/e2e.js -t 1800000"
   },
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "ava": "^0.25.0",
+    "mocha": "^5.2.0",
     "eslint": "^5.9.0",
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-node": "^8.0.0",
