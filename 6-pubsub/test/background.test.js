@@ -51,7 +51,7 @@ test.beforeEach(t => {
   };
   // Load background.js with provided mocks
   background = proxyquire(`../lib/background`, {
-    '@google-cloud/pubsub': mocks.Pubsub,
+    '@google-cloud/pubsub': {PubSub: mocks.Pubsub},
     '../config': mocks.config,
     './logging': mocks.logging,
   });

@@ -29,7 +29,7 @@
     "@google-cloud/datastore": "1.4.2",
     "@google-cloud/debug-agent": "3.0.1",
     "@google-cloud/logging-winston": "^0.8.1",
-    "@google-cloud/pubsub": "0.20.1",
+    "@google-cloud/pubsub": "^0.21.0",
     "@google-cloud/storage": "1.6.0",
     "@google-cloud/trace-agent": "3.5.2",
     "async": "2.6.0",
