@@ -33,12 +33,9 @@ test.beforeEach(t => {
   mocks.subscription = {
     on: sinon.stub(),
   };
-  mocks.publisher = {
-    publish: sinon.stub().callsArgWith(1, null),
-  };
   mocks.topic = {
     createSubscription: sinon.stub().callsArgWith(1, null, mocks.subscription),
-    publisher: sinon.stub().returns(mocks.publisher),
+    publish: sinon.stub().callsArgWith(1, null),
   };
   mocks.pubsub = {
     createTopic: sinon.stub().callsArgWith(1, null, mocks.topic),
@@ -82,22 +79,18 @@ test.serial(`should queue a book and log message`, t => {
     `pubsub.topic() should NOT have been called`
   );
   t.true(
-    mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
-  );
-  t.true(
-    mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    mocks.topic.publish.calledOnce,
+    `topic.publish() should have been called once`
   );
   t.deepEqual(
-    mocks.publisher.publish.firstCall.args[0],
+    mocks.topic.publish.firstCall.args[0],
     Buffer.from(
       JSON.stringify({
         action: `processBook`,
         bookId: testBookId,
       })
     ),
-    `publisher.publish() should have been called with the right arguments`
+    `topic.publish() should have been called with the right arguments`
   );
   t.true(
     mocks.logging.info.calledOnce,
@@ -140,22 +133,18 @@ test.serial(`should queue a book and log message even if topic exists`, t => {
     `pubsub.topic() should have been called with the right arguments`
   );
   t.true(
-    mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
-  );
-  t.true(
-    mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    mocks.topic.publish.calledOnce,
+    `topic.publish() should have been called once`
   );
   t.deepEqual(
-    mocks.publisher.publish.firstCall.args[0],
+    mocks.topic.publish.firstCall.args[0],
     Buffer.from(
       JSON.stringify({
         action: `processBook`,
         bookId: testBookId,
       })
     ),
-    `publisher.publish() should have been called with the right arguments`
+    `topic.publish() should have been called with the right arguments`
   );
   t.true(
     mocks.logging.info.calledOnce,
@@ -193,14 +182,9 @@ test.serial(`should log error if cannot get topic`, t => {
     `pubsub.topic() should NOT have been called`
   );
   t.is(
-    mocks.topic.publisher.callCount,
+    mocks.topic.publish.callCount,
     0,
-    `topic.publisher() should NOT have been called`
-  );
-  t.is(
-    mocks.publisher.publish.callCount,
-    0,
-    `publisher.publish() should NOT have been called`
+    `topic.publish() should NOT have been called`
   );
   t.is(
     mocks.logging.info.callCount,
@@ -217,7 +201,7 @@ test.serial(`should log error if cannot publish message`, t => {
   // Setup
   const testBookId = 1;
   const testErrorMsg = `test error`;
-  mocks.publisher.publish = sinon.stub().callsArgWith(1, testErrorMsg);
+  mocks.topic.publish = sinon.stub().callsArgWith(1, testErrorMsg);
 
   // Run target functionality
   background.queueBook(testBookId);
@@ -238,11 +222,7 @@ test.serial(`should log error if cannot publish message`, t => {
     `pubsub.topic() should NOT have been called`
   );
   t.true(
-    mocks.topic.publisher.calledOnce,
-    `topic.publisher() should have been called once`
-  );
-  t.true(
-    mocks.publisher.publish.calledOnce,
-    `publisher.publish() should have been called once`
+    mocks.topic.publish.calledOnce,
+    `topic.publish() should have been called once`
   );
 });
