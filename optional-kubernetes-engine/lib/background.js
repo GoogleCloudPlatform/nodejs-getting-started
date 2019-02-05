@@ -13,14 +13,14 @@
 
 'use strict';
 
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 const config = require('../config');
 const logging = require('./logging');
 
 const topicName = config.get('TOPIC_NAME');
 const subscriptionName = config.get('SUBSCRIPTION_NAME');
 
-const pubsub = new Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT'),
 });
 
