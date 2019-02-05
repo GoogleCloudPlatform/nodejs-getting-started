@@ -20,9 +20,7 @@ const logging = require('./logging');
 const topicName = config.get('TOPIC_NAME');
 const subscriptionName = config.get('SUBSCRIPTION_NAME');
 
-const pubsub = new PubSub({
-  projectId: config.get('GCLOUD_PROJECT'),
-});
+const pubsub = new PubSub();
 
 // This configuration will automatically create the topic if
 // it doesn't yet exist. Usually, you'll want to make sure
