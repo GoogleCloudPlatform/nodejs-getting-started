@@ -23,7 +23,6 @@ const mocks = {};
 test.beforeEach(t => {
   // Mock dependencies used by background.js
   mocks.config = {
-    GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
     SUBSCRIPTION_NAME: `shared-worker-subscription`,
     TOPIC_NAME: `book-process-queue`,
   };

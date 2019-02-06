@@ -20,9 +20,7 @@ const logging = require('./logging');
 
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-const storage = Storage({
-  projectId: config.get('GCLOUD_PROJECT'),
-});
+const storage = Storage();
 const bucket = storage.bucket(CLOUD_BUCKET);
 
 // Downloads a given image (by URL) and then uploads it to

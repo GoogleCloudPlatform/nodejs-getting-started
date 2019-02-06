@@ -43,8 +43,6 @@ and deploying this sample.
 
         cp config-default.json config.json
 
-    * Set `GCLOUD_PROJECT` in `config.json` to your Google Cloud Platform
-      project ID.
     * Set `DATA_BACKEND` in `config.json` to one of `"datastore"`, `"cloudsql"`,
       or `"mongodb"`.
     * Set `CLOUD_BUCKET` in `config.json` to the name of your Google Cloud

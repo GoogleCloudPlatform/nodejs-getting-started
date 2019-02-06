@@ -25,7 +25,6 @@ nconf
   .env([
     'CLOUD_BUCKET',
     'DATA_BACKEND',
-    'GCLOUD_PROJECT',
     'MEMCACHE_URL',
     'MEMCACHE_USERNAME',
     'MEMCACHE_PASSWORD',
@@ -52,9 +51,6 @@ nconf
     // configuration.
     DATA_BACKEND: 'datastore',
 
-    // This is the id of your project in the Google Cloud Developers Console.
-    GCLOUD_PROJECT: '',
-
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
@@ -69,7 +65,6 @@ nconf
   });
 
 // Check for required settings
-checkConfig('GCLOUD_PROJECT');
 checkConfig('CLOUD_BUCKET');
 checkConfig('OAUTH2_CLIENT_ID');
 checkConfig('OAUTH2_CLIENT_SECRET');

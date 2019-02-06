@@ -14,10 +14,10 @@
 'use strict';
 
 const path = require(`path`);
-const PROJECT_ID = process.env.GCLOUD_PROJECT;
 const TESTNAME = `7-gce`;
 const PORT = 8092;
 const VERSION = `${process.env.GAE_VERSION || TESTNAME}`;
+const PROJECT_ID = process.env.GCLOUD_PROJECT;
 
 module.exports = {
   test: TESTNAME,
@@ -32,7 +32,6 @@ module.exports = {
     TOPIC_NAME: `book-process-queue-${TESTNAME}`,
   },
   version: VERSION,
-  project: PROJECT_ID,
 };
 
 if (process.env.E2E_TESTS) {
