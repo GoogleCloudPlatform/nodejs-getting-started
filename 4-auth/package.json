@@ -30,7 +30,7 @@
     "init-cloudsql": "node books/model-cloudsql.js"
   },
   "dependencies": {
-    "@google-cloud/datastore": "2.0.0",
+    "@google-cloud/datastore": "^3.1.0",
     "@google-cloud/storage": "1.7.0",
     "body-parser": "1.18.3",
     "connect-memjs": "0.2.1",
