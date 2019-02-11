@@ -76,7 +76,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 8
 
 # Install Node dependencies
-yarn global add @google-cloud/nodejs-repo-tools
+npm install -g @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 
 # Copy secrets
@@ -84,7 +84,7 @@ cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
 # Install dependencies (for running the tests, not the apps themselves)
-yarn install
+npm install
 
 # Build and deploy Docker images
 docker build -t gcr.io/${GCLOUD_PROJECT}/bookshelf .

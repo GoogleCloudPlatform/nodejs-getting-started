@@ -14,11 +14,8 @@
 'use strict';
 
 const Datastore = require('@google-cloud/datastore');
-const config = require('../config');
 
-const ds = Datastore({
-  projectId: config.get('GCLOUD_PROJECT'),
-});
+const ds = Datastore();
 const kind = 'Book';
 
 // Translates from Datastore's entity format to

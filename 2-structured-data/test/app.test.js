@@ -53,8 +53,6 @@ it('should check config', () => {
 
   nconfMock.DATA_BACKEND = 'datastore';
 
-  assert.throws(testFunc, Error, getMsg('GCLOUD_PROJECT'));
-  nconfMock.GCLOUD_PROJECT = 'project';
 
   assert.doesNotThrow(testFunc);
 
