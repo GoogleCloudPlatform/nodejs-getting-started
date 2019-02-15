@@ -13,10 +13,10 @@
 
 'use strict';
 
-const Datastore = require('@google-cloud/datastore');
+const {Datastore} = require('@google-cloud/datastore');
 
 // [START config]
-const ds = Datastore();
+const ds = new Datastore();
 const kind = 'Book';
 // [END config]
 

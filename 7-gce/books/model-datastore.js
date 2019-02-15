@@ -13,10 +13,10 @@
 
 'use strict';
 
-const Datastore = require('@google-cloud/datastore');
+const {Datastore} = require('@google-cloud/datastore');
 const background = require('../lib/background');
 
-const ds = Datastore();
+const ds = new Datastore();
 const kind = 'Book';
 
 // Translates from Datastore's entity format to
