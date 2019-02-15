@@ -43,7 +43,7 @@
     "express-session": "1.15.6",
     "express-winston": "2.5.0",
     "grpc": "^1.11.3",
-    "lodash": "4.17.5",
+    "lodash": "4.17.11",
     "multer": "1.3.0",
     "mysql": "2.15.0",
     "nconf": "0.10.0",
