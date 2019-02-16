@@ -25,7 +25,6 @@ nconf
   .env([
     'CLOUD_BUCKET',
     'DATA_BACKEND',
-    'MEMCACHE_URL',
     'MONGO_URL',
     'MONGO_COLLECTION',
     'MONGO_DB_NAME',
@@ -33,6 +32,9 @@ nconf
     'MYSQL_PASSWORD',
     'INSTANCE_CONNECTION_NAME',
     'NODE_ENV',
+    'OAUTH2_CLIENT_ID',
+    'OAUTH2_CLIENT_SECRET',
+    'OAUTH2_CALLBACK',
     'PORT',
     'SECRET',
     'SUBSCRIPTION_NAME',
@@ -51,9 +53,6 @@ nconf
     // configuration.
     DATA_BACKEND: 'datastore',
 
-    // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: 'localhost:11211',
-
     // MongoDB connection string
     // https://docs.mongodb.org/manual/reference/connection-string/
     MONGO_URL: 'mongodb://localhost:27017',
@@ -62,6 +61,9 @@ nconf
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
+    OAUTH2_CLIENT_ID: '',
+    OAUTH2_CLIENT_SECRET: '',
+    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
     PORT: 8080,
 
     // Set this a secret string of your choosing
