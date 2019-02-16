@@ -33,9 +33,6 @@ nconf
     'MYSQL_PASSWORD',
     'INSTANCE_CONNECTION_NAME',
     'NODE_ENV',
-    'OAUTH2_CLIENT_ID',
-    'OAUTH2_CLIENT_SECRET',
-    'OAUTH2_CALLBACK',
     'PORT',
     'SECRET',
     'SUBSCRIPTION_NAME',
@@ -65,10 +62,6 @@ nconf
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
 
-    OAUTH2_CLIENT_ID: '',
-    OAUTH2_CLIENT_SECRET: '',
-    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
-
     PORT: 8080,
 
     // Set this a secret string of your choosing
@@ -80,8 +73,6 @@ nconf
 
 // Check for required settings
 checkConfig('CLOUD_BUCKET');
-checkConfig('OAUTH2_CLIENT_ID');
-checkConfig('OAUTH2_CLIENT_SECRET');
 
 if (nconf.get('DATA_BACKEND') === 'cloudsql') {
   checkConfig('MYSQL_USER');

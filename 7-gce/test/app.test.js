@@ -54,12 +54,6 @@ test(`should check config`, t => {
   t.throws(testFunc, Error, getMsg(`CLOUD_BUCKET`));
   nconfMock.CLOUD_BUCKET = `bucket`;
 
-  t.throws(testFunc, Error, getMsg(`OAUTH2_CLIENT_ID`));
-  nconfMock.OAUTH2_CLIENT_ID = `foo`;
-
-  t.throws(testFunc, Error, getMsg(`OAUTH2_CLIENT_SECRET`));
-  nconfMock.OAUTH2_CLIENT_SECRET = `bar`;
-
   t.notThrows(testFunc);
 
   nconfMock.DATA_BACKEND = `cloudsql`;
