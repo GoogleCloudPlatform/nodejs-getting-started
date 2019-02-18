@@ -19,8 +19,8 @@ ZONE=us-central1-f
 
 GROUP=frontend-group
 TEMPLATE=$GROUP-tmpl
-MACHINE_TYPE=f1-micro
-IMAGE=debian-8
+MACHINE_TYPE=g1-small
+IMAGE=debian-9
 STARTUP_SCRIPT=startup-script.sh
 SCOPES="userinfo-email,cloud-platform"
 TAGS=http-server
@@ -41,7 +41,8 @@ SERVICE=frontend-web-service
 
 # [START create_template]
 gcloud compute instance-templates create $TEMPLATE \
-  --image $IMAGE \
+  --image-family $IMAGE \
+  --image-project=debian-cloud \
   --machine-type $MACHINE_TYPE \
   --scopes $SCOPES \
   --metadata-from-file startup-script=$STARTUP_SCRIPT \
@@ -98,13 +99,15 @@ gcloud compute http-health-checks create ah-health-check \
 # [START create_backend_service]
 gcloud compute backend-services create $SERVICE \
   --http-health-checks ah-health-check \
-  --port 8080
+  --port-name http \
+  --global
 # [END create_backend_service]
 
 # [START add_backend_service]
 gcloud compute backend-services add-backend $SERVICE \
   --instance-group $GROUP \
-  --zone $ZONE
+  --instance-group-zone $ZONE \
+  --global
 # [END add_backend_service]
 
 # Create a URL map and web Proxy. The URL map will send all requests to the
@@ -126,7 +129,7 @@ gcloud compute target-http-proxies create $SERVICE-proxy \
 gcloud compute forwarding-rules create $SERVICE-http-rule \
   --global \
   --target-http-proxy $SERVICE-proxy \
-  --port-range 80
+  --ports 80
 # [END create_forwarding_rule]
 
 #
