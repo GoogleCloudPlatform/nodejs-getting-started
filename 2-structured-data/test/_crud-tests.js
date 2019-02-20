@@ -48,7 +48,7 @@ module.exports = DATA_BACKEND => {
       });
   });
 
-  it.skip('should handle error', async () => {
+  it('should handle error', async () => {
     await getRequest(testConfig)
       .get('/books')
       .query({pageToken: 'badrequest'})
