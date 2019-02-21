@@ -25,9 +25,6 @@ nconf
   .env([
     'CLOUD_BUCKET',
     'DATA_BACKEND',
-    'MEMCACHE_URL',
-    'MEMCACHE_USERNAME',
-    'MEMCACHE_PASSWORD',
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'INSTANCE_CONNECTION_NAME',
@@ -51,9 +48,6 @@ nconf
     // If you are unsure, use datastore as it requires no additional
     // configuration.
     DATA_BACKEND: 'datastore',
-
-    // Connection url for the Memcache instance used to store session data
-    MEMCACHE_URL: 'localhost:11211',
 
     MYSQL_USER: '',
     MYSQL_PASSWORD: '',
