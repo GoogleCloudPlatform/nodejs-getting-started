@@ -32,7 +32,7 @@
   "dependencies": {
     "@google-cloud/datastore": "^3.1.0",
     "body-parser": "1.18.3",
-    "express": "4.16.4",
+    "express": "^4.16.4",
     "lodash": "4.17.11",
     "mysql": "2.16.0",
     "nconf": "0.10.0",

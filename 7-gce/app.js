@@ -22,10 +22,11 @@ if (process.env.NODE_ENV === 'production') {
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
-const MemcachedStore = require('connect-memcached')(session);
 const passport = require('passport');
 const config = require('./config');
 const logging = require('./lib/logging');
+const {Datastore} = require('@google-cloud/datastore');
+const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 
 const app = express();
 
@@ -44,15 +45,10 @@ const sessionConfig = {
   saveUninitialized: false,
   secret: config.get('SECRET'),
   signed: true,
+  store: new DatastoreStore({
+    dataset: new Datastore({kind: 'express-sessions'}),
+  }),
 };
-
-// In production use the App Engine Memcache instance to store session data,
-// otherwise fallback to the default MemoryStore in development.
-if (config.get('NODE_ENV') === 'production' && config.get('MEMCACHE_URL')) {
-  sessionConfig.store = new MemcachedStore({
-    hosts: [config.get('MEMCACHE_URL')],
-  });
-}
 
 app.use(session(sessionConfig));
 
