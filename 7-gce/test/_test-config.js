@@ -31,4 +31,5 @@ module.exports = {
     SUBSCRIPTION_NAME: `shared-worker-subscription-${TESTNAME}`,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`,
   },
+  project: process.env.GCLOUD_PROJECT, // needed for e2e URL
 };
