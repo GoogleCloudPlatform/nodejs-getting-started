@@ -36,7 +36,7 @@
     "@google-cloud/logging-winston": "^0.11.0",
     "@google-cloud/pubsub": "^0.25.0",
     "@google-cloud/storage": "1.6.0",
-    "@google-cloud/trace-agent": "3.5.2",
+    "@google-cloud/trace-agent": "3.6.0",
     "async": "2.6.2",
     "body-parser": "1.18.2",
     "express": "^4.16.2",
