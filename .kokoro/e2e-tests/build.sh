@@ -29,7 +29,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 10
 
 export NODE_ENV=development
-export E2E_TESTS=true # test the deployed app
+export E2E_TESTS=true # test the deployed app, used by repo-tools.getRequest()
 
 # Register post-test cleanup
 export GAE_VERSION=${BOOKSHELF_DIRECTORY:0:1}-${DATA_BACKEND}
@@ -54,13 +54,15 @@ function cleanup {
 trap cleanup EXIT
 
 # Configure gcloud
+# Export the project as repo-tools e2e tests rely on it:
+# `https://${opts.version}-dot-${opts.project}.appspot.com`.
 export GCLOUD_PROJECT=nodejs-getting-started-tests
 export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project $GCLOUD_PROJECT
 
 # Install Node dependencies
-yarn global add @google-cloud/nodejs-repo-tools
+npm i -g @google-cloud/nodejs-repo-tools
 cd github/nodejs-getting-started/${BOOKSHELF_DIRECTORY}
 
 # Copy secrets
@@ -68,7 +70,7 @@ cp ${KOKORO_GFILE_DIR}/secrets-config.json config.json
 cp $GOOGLE_APPLICATION_CREDENTIALS key.json
 
 # Install dependencies (for running the tests, not the apps themselves)
-yarn install
+npm install
 
 # Deploy a single step
 gcloud app deploy --version $GAE_VERSION --no-promote # nodejs-repo-tools doesn't support specifying versions, so deploy manually
