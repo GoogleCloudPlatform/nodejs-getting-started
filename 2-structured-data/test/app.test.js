@@ -53,7 +53,6 @@ it('should check config', () => {
 
   nconfMock.DATA_BACKEND = 'datastore';
 
-
   assert.doesNotThrow(testFunc);
 
   nconfMock.DATA_BACKEND = 'cloudsql';
