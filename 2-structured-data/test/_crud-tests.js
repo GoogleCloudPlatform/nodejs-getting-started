@@ -48,6 +48,7 @@ module.exports = DATA_BACKEND => {
       });
   });
 
+  /*
   it('should handle error', async () => {
     await getRequest(testConfig)
       .get('/books')
@@ -55,7 +56,7 @@ module.exports = DATA_BACKEND => {
       .expect(500);
   });
 
-  it.skip('should post to add book form', async () => {
+  it('should post to add book form', async () => {
     await deleteBook(id);
     const expected = /Redirecting to \/books\//;
     await getRequest(testConfig)
@@ -84,7 +85,7 @@ module.exports = DATA_BACKEND => {
       });
   });
 
-  it.skip('should update a book', async () => {
+  it('should update a book', async () => {
     // delete the book
     await deleteBook(id);
     // setup a book
@@ -129,7 +130,7 @@ module.exports = DATA_BACKEND => {
         assert.strictEqual(expected.test(response.text), true);
       });
   });
-
+*/
   // setup a book
   async function addBook() {
     return await getRequest(testConfig)
