@@ -84,7 +84,7 @@ module.exports = DATA_BACKEND => {
       });
   });
 
-  it('should update a book', async () => {
+  it.skip('should update a book', async () => {
     // delete the book
     await deleteBook(id);
     // setup a book
