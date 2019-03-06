@@ -55,7 +55,7 @@ module.exports = DATA_BACKEND => {
       .expect(500);
   });
 
-  it('should post to add book form', async () => {
+  it.skip('should post to add book form', async () => {
     await deleteBook(id);
     const expected = /Redirecting to \/books\//;
     await getRequest(testConfig)
