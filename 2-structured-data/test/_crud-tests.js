@@ -48,7 +48,6 @@ module.exports = DATA_BACKEND => {
       });
   });
 
-  /*
   it('should handle error', async () => {
     await getRequest(testConfig)
       .get('/books')
@@ -130,7 +129,7 @@ module.exports = DATA_BACKEND => {
         assert.strictEqual(expected.test(response.text), true);
       });
   });
-*/
+
   // setup a book
   async function addBook() {
     return await getRequest(testConfig)
