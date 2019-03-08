@@ -13,11 +13,11 @@
 
 'use strict';
 
-const Datastore = require('@google-cloud/datastore');
+const {Datastore} = require('@google-cloud/datastore');
 const config = require('../config');
 const background = require('../lib/background');
 
-const ds = Datastore({
+const ds = new Datastore({
   projectId: config.get('GCLOUD_PROJECT'),
 });
 const kind = 'Book';

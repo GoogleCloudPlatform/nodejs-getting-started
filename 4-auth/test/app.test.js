@@ -53,10 +53,8 @@ it('should check config', () => {
 
   nconfMock.DATA_BACKEND = 'datastore';
 
-  assert.throws(testFunc, Error, getMsg('GCLOUD_PROJECT'));
-  nconfMock.GCLOUD_PROJECT = 'project';
-
   assert.throws(testFunc, Error, getMsg(`CLOUD_BUCKET`));
+
   nconfMock.CLOUD_BUCKET = `bucket`;
 
   assert.throws(testFunc, Error, getMsg(`OAUTH2_CLIENT_ID`));

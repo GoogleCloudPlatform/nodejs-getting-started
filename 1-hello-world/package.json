@@ -29,11 +29,11 @@
     "cover": "nyc --cache npm test; nyc report --reporter=html"
   },
   "dependencies": {
-    "express": "4.16.4"
+    "express": "^4.16.4"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
-    "ava": "0.25.0",
+    "ava": "^0.25.0",
     "supertest": "^3.3.0"
   }
 }
