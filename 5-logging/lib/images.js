@@ -18,9 +18,7 @@ const config = require('../config');
 
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
 
-const storage = Storage({
-  projectId: config.get('GCLOUD_PROJECT'),
-});
+const storage = Storage();
 const bucket = storage.bucket(CLOUD_BUCKET);
 
 // Returns the public, anonymously accessable URL to a given Cloud Storage

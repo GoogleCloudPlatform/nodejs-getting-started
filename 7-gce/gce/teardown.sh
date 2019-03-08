@@ -30,7 +30,7 @@ gcloud compute target-http-proxies delete $SERVICE-proxy
 
 gcloud compute url-maps delete $SERVICE-map 
 
-gcloud compute backend-services delete $SERVICE 
+gcloud compute backend-services delete $SERVICE --global
 
 gcloud compute http-health-checks delete ah-health-check
 

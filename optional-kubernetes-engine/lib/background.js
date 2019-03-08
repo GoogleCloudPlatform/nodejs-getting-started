@@ -13,14 +13,14 @@
 
 'use strict';
 
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 const config = require('../config');
 const logging = require('./logging');
 
 const topicName = config.get('TOPIC_NAME');
 const subscriptionName = config.get('SUBSCRIPTION_NAME');
 
-const pubsub = new Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT'),
 });
 
@@ -105,8 +105,7 @@ function queueBook(bookId) {
       bookId: bookId,
     };
 
-    const publisher = topic.publisher();
-    publisher.publish(Buffer.from(JSON.stringify(data)), err => {
+    topic.publish(Buffer.from(JSON.stringify(data)), err => {
       if (err) {
         logging.error('Error occurred while queuing background task', err);
       } else {

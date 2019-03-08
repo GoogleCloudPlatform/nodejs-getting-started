@@ -26,9 +26,9 @@ module.exports = {
   port: PORT,
   url: `http://localhost:${PORT}`,
   version: process.env.GAE_VERSION || TESTNAME,
-  project: process.env.GCLOUD_PROJECT,
   env: {
     PORT: PORT,
     TOPIC_NAME: `book-process-queue-${TESTNAME}`,
   },
+  project: process.env.GCLOUD_PROJECT, // needed for e2e URL
 };
