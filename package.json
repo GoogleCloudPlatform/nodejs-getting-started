@@ -54,6 +54,6 @@
     "prettier": "^1.15.1",
     "proxyquire": "^2.0.0",
     "sinon": "^7.0.0",
-    "supertest": "^3.0.0"
+    "supertest": "^4.0.0"
   }
 }
