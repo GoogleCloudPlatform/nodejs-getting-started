@@ -16,14 +16,11 @@
 const getRequest = require(`@google-cloud/nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
 
-module.exports = DATA_BACKEND => {
-  let originalDataBackend, id, testConfig, appConfig;
+module.exports = () => {
+  let id, testConfig;
 
   test.before(() => {
     testConfig = require(`./_test-config`);
-    appConfig = require(`../config`);
-    originalDataBackend = appConfig.get(`DATA_BACKEND`);
-    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
   });
 
   test.serial.cb(`should create a book`, t => {
@@ -61,9 +58,5 @@ module.exports = DATA_BACKEND => {
         t.is(response.text, `OK`);
       })
       .end(t.end);
-  });
-
-  test.always.after(() => {
-    appConfig.set(`DATA_BACKEND`, originalDataBackend);
   });
 };

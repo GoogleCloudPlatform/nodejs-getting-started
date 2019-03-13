@@ -41,25 +41,9 @@ test(`should check config`, t => {
     },
   };
 
-  function getMsg(setting) {
-    return `You must set ${setting} as an environment variable or in config.json!`;
-  }
-
   const testFunc = () => {
     proxyquire(`../config`, {nconf: nconfMock});
   };
-
-  nconfMock.DATA_BACKEND = `datastore`;
-
-  t.notThrows(testFunc);
-
-  nconfMock.DATA_BACKEND = `cloudsql`;
-
-  t.throws(testFunc, Error, getMsg(`MYSQL_USER`));
-  nconfMock.MYSQL_USER = `user`;
-
-  t.throws(testFunc, Error, getMsg(`MYSQL_PASSWORD`));
-  nconfMock.MYSQL_PASSWORD = `password`;
 
   t.notThrows(testFunc);
 });
