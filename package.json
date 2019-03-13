@@ -37,7 +37,7 @@
     "mysql": "^2.15.0",
     "nconf": "^0.10.0",
     "passport": "^0.4.0",
-    "passport-google-oauth20": "^1.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "prompt": "^1.0.0",
     "pug": "^2.0.3",
     "request": "^2.83.0",
