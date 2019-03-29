@@ -41,18 +41,15 @@ function getCollection(cb) {
     });
     return;
   }
-  MongoClient.connect(
-    config.get('MONGO_URL'),
-    (err, client) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-      const db = client.db(config.get('MONGO_DB_NAME'));
-      collection = db.collection(config.get('MONGO_COLLECTION'));
-      cb(null, collection);
+  MongoClient.connect(config.get('MONGO_URL'), (err, client) => {
+    if (err) {
+      cb(err);
+      return;
     }
-  );
+    const db = client.db(config.get('MONGO_DB_NAME'));
+    collection = db.collection(config.get('MONGO_COLLECTION'));
+    cb(null, collection);
+  });
 }
 
 function list(limit, token, cb) {

@@ -7,16 +7,16 @@ deploying these samples.
 
 The code for each tutorial is in an individual folder in this repository.
 
-Tutorial | Folder | Build Status
----------|--------|-------------
-[Hello world][step-1] | [1-hello-world][step-1-code] | ![Build Status][ci-badge-tests-1]
-[Structured data][step-2] | [2-structured-data][step-2-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-2] ![Datastore Build Status][ci-badge-datastore-2] ![MongoDB Build Status][ci-badge-mongodb-2]
-[Cloud Storage][step-3] | [3-binary-data][step-3-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-3] ![Datastore Build Status][ci-badge-datastore-3] ![MongoDB Build Status][ci-badge-mongodb-3]
-[Authenticating users][step-4] | [4-auth][step-4-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-4] ![Datastore Build Status][ci-badge-datastore-4] ![MongoDB Build Status][ci-badge-mongodb-4]
-[Logging app events][step-5] | [5-logging][step-5-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-5] ![Datastore Build Status][ci-badge-datastore-5] ![MongoDB Build Status][ci-badge-mongodb-5]
-[Using Cloud Pub/Sub][step-6] | [6-pubsub][step-6-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-6] ![Datastore Build Status][ci-badge-datastore-6] ![MongoDB Build Status][ci-badge-mongodb-6]
-[Deploying to Google Compute Engine][step-7] | [7-gce][step-7-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-7] ![Datastore Build Status][ci-badge-datastore-7] ![MongoDB Build Status][ci-badge-mongodb-7]
-[Deploying to Google Kubernetes Engine][step-optional] | [optional-kubernetes-engine][step-optional-code] | ![Cloud SQL Build Status][ci-badge-cloudsql-optional] ![Datastore Build Status][ci-badge-datastore-optional] ![MongoDB Build Status][ci-badge-mongodb-optional]
+Tutorial | Folder 
+---------|--------
+[Hello world][step-1] | [1-hello-world][step-1-code]
+[Structured data][step-2] | [2-structured-data][step-2-code]
+[Cloud Storage][step-3] | [3-binary-data][step-3-code]
+[Authenticating users][step-4] | [4-auth][step-4-code]
+[Logging app events][step-5] | [5-logging][step-5-code]
+[Using Cloud Pub/Sub][step-6] | [6-pubsub][step-6-code]
+[Deploying to Google Compute Engine][step-7] | [7-gce][step-7-code]
+[Deploying to Google Kubernetes Engine][step-optional] | [optional-kubernetes-engine][step-optional-code]
 
 ## Contributing changes
 
