@@ -43,7 +43,6 @@ test.serial.cb(`should do a health check`, t => {
 });
 
 test.serial.cb(`should process a book`, t => {
-  const appConfig = require(`../config`);
   const loggingStub = {
     error: sinon.stub(),
     info: sinon.stub(),
@@ -59,7 +58,7 @@ test.serial.cb(`should process a book`, t => {
       '@noCallThru': true,
     },
   };
-  stubs[`./books/model-${appConfig.get('DATA_BACKEND')}`] = {
+  stubs['./books/model-datastore'] = {
     read: (bookId, cb) => {
       cb(null, {});
     },

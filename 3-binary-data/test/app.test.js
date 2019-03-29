@@ -49,20 +49,8 @@ test(`should check config`, t => {
     proxyquire(`../config`, {nconf: nconfMock});
   };
 
-  nconfMock.DATA_BACKEND = `datastore`;
-
   t.throws(testFunc, Error, getMsg(`CLOUD_BUCKET`));
   nconfMock.CLOUD_BUCKET = `bucket`;
-
-  t.notThrows(testFunc);
-
-  nconfMock.DATA_BACKEND = `cloudsql`;
-
-  t.throws(testFunc, Error, getMsg(`MYSQL_USER`));
-  nconfMock.MYSQL_USER = `user`;
-
-  t.throws(testFunc, Error, getMsg(`MYSQL_PASSWORD`));
-  nconfMock.MYSQL_PASSWORD = `password`;
 
   t.notThrows(testFunc);
 });

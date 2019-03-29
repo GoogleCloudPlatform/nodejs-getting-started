@@ -16,14 +16,11 @@
 const getRequest = require(`@google-cloud/nodejs-repo-tools`).getRequest;
 const test = require(`ava`);
 
-module.exports = DATA_BACKEND => {
-  let originalDataBackend, id, testConfig, appConfig;
+module.exports = () => {
+  let id, testConfig;
 
   test.before(() => {
     testConfig = require(`./_test-config`);
-    appConfig = require(`../config`);
-    originalDataBackend = appConfig.get(`DATA_BACKEND`);
-    appConfig.set(`DATA_BACKEND`, DATA_BACKEND);
   });
 
   // setup a book
@@ -174,8 +171,6 @@ module.exports = DATA_BACKEND => {
 
   // clean up
   test.always.after.cb(t => {
-    appConfig.set(`DATA_BACKEND`, originalDataBackend);
-
     if (id) {
       getRequest(testConfig)
         .delete(`/api/books/${id}`)

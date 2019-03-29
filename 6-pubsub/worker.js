@@ -27,8 +27,7 @@ const config = require('./config');
 
 const logging = require('./lib/logging');
 const images = require('./lib/images');
-
-const model = require(`./books/model-${config.get('DATA_BACKEND')}`);
+const model = require('./books/model-datastore');
 
 // When running on Google App Engine Managed VMs, the worker needs
 // to respond to HTTP requests and can optionally supply a health check.
