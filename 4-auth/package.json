@@ -25,9 +25,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "repo-tools test app && ava -t 30s --tap test/*.test.js",
-    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js",
-    "cover": "nyc --cache npm test; nyc report --reporter=html",
-    "init-cloudsql": "node books/model-cloudsql.js"
+    "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js"
   },
   "dependencies": {
     "@google-cloud/connect-datastore": "^2.0.1",
@@ -38,7 +36,6 @@
     "express-session": "^1.15.6",
     "lodash": "^4.17.11",
     "multer": "^1.4.1",
-    "mysql": "^2.16.0",
     "nconf": "^0.10.0",
     "npm": "^6.8.0",
     "passport": "^0.4.0",

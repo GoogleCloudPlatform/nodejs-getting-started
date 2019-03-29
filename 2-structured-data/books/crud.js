@@ -15,10 +15,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
-function getModel() {
-  return require(`./model-${require('../config').get('DATA_BACKEND')}`);
-}
+const model = require('./model-datastore');
 
 const router = express.Router();
 
@@ -37,7 +34,7 @@ router.use((req, res, next) => {
  * Display a page of books (up to ten at a time).
  */
 router.get('/', (req, res, next) => {
-  getModel().list(10, req.query.pageToken, (err, entities, cursor) => {
+  model.list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
       next(err);
       return;
@@ -73,7 +70,7 @@ router.post('/add', (req, res, next) => {
   const data = req.body;
 
   // Save the data to the database.
-  getModel().create(data, (err, savedData) => {
+  model.create(data, (err, savedData) => {
     if (err) {
       next(err);
       return;
@@ -89,7 +86,7 @@ router.post('/add', (req, res, next) => {
  * Display a book for editing.
  */
 router.get('/:book/edit', (req, res, next) => {
-  getModel().read(req.params.book, (err, entity) => {
+  model.read(req.params.book, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -109,7 +106,7 @@ router.get('/:book/edit', (req, res, next) => {
 router.post('/:book/edit', (req, res, next) => {
   const data = req.body;
 
-  getModel().update(req.params.book, data, (err, savedData) => {
+  model.update(req.params.book, data, (err, savedData) => {
     if (err) {
       next(err);
       return;
@@ -124,7 +121,7 @@ router.post('/:book/edit', (req, res, next) => {
  * Display a book.
  */
 router.get('/:book', (req, res, next) => {
-  getModel().read(req.params.book, (err, entity) => {
+  model.read(req.params.book, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -141,7 +138,7 @@ router.get('/:book', (req, res, next) => {
  * Delete a book.
  */
 router.get('/:book/delete', (req, res, next) => {
-  getModel().delete(req.params.book, err => {
+  model.delete(req.params.book, err => {
     if (err) {
       next(err);
       return;

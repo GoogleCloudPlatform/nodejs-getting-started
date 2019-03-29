@@ -24,10 +24,6 @@ nconf
   // 2. Environment variables
   .env([
     'CLOUD_BUCKET',
-    'DATA_BACKEND',
-    'MYSQL_USER',
-    'MYSQL_PASSWORD',
-    'INSTANCE_CONNECTION_NAME',
     'NODE_ENV',
     'OAUTH2_CLIENT_ID',
     'OAUTH2_CLIENT_SECRET',
@@ -41,15 +37,6 @@ nconf
   .defaults({
     // Typically you will create a bucket with the same name as your project ID.
     CLOUD_BUCKET: '',
-
-    // dataBackend can be 'datastore' or 'cloudsql'. Be sure to
-    // configure the appropriate settings for each storage engine below.
-    // If you are unsure, use datastore as it requires no additional
-    // configuration.
-    DATA_BACKEND: 'datastore',
-
-    MYSQL_USER: '',
-    MYSQL_PASSWORD: '',
 
     OAUTH2_CLIENT_ID: '',
     OAUTH2_CLIENT_SECRET: '',
@@ -65,14 +52,6 @@ nconf
 checkConfig('CLOUD_BUCKET');
 checkConfig('OAUTH2_CLIENT_ID');
 checkConfig('OAUTH2_CLIENT_SECRET');
-
-if (nconf.get('DATA_BACKEND') === 'cloudsql') {
-  checkConfig('MYSQL_USER');
-  checkConfig('MYSQL_PASSWORD');
-  if (nconf.get('NODE_ENV') === 'production') {
-    checkConfig('INSTANCE_CONNECTION_NAME');
-  }
-}
 
 function checkConfig(setting) {
   if (!nconf.get(setting)) {
