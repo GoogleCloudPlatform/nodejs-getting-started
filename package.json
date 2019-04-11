@@ -13,9 +13,7 @@
   "scripts": {
     "lint": "eslint '**/*.js'",
     "ava": "ava -s -t 30s --tap \"**/*.test.js\"",
-    "test": "npm run lint && npm run ava",
-    "cover": "nyc --cache npm test; nyc report --reporter=html",
-    "e2e": "mocha test/e2e.js -t 1800000"
+    "test": "npm run lint && npm run ava"
   },
   "dependencies": {
     "@google-cloud/connect-datastore": "^2.0.1",
