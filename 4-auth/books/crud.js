@@ -16,7 +16,7 @@
 const express = require('express');
 const images = require('../lib/images');
 const oauth2 = require('../lib/oauth2');
-const model = require('./model-datastore');
+const model = require('./firestore');
 
 const router = express.Router();
 

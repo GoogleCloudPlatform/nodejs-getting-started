@@ -16,7 +16,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const images = require('../lib/images');
-const model = require('./model-datastore');
+const model = require('./firestore');
 
 const router = express.Router();
 

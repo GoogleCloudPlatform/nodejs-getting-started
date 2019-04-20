@@ -15,7 +15,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('./model-datastore');
+const model = require('./firestore');
 
 const router = express.Router();
 
