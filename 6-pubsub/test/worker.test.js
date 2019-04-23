@@ -58,7 +58,7 @@ test.serial.cb(`should process a book`, t => {
       '@noCallThru': true,
     },
   };
-  stubs['./books/model-datastore'] = {
+  stubs['./books/firestore'] = {
     read: (bookId, cb) => {
       cb(null, {});
     },
