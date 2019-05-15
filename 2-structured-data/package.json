@@ -29,7 +29,7 @@
     "cover": "nyc --cache npm test; nyc report --reporter=html"
   },
   "dependencies": {
-    "@google-cloud/datastore": "^3.1.0",
+    "@google-cloud/datastore": "^4.0.0",
     "body-parser": "1.19.0",
     "express": "^4.16.4",
     "lodash": "^4.17.11",

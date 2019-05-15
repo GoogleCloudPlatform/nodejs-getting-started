@@ -28,7 +28,7 @@
     "e2e": "repo-tools test deploy && E2E_TESTS=True ava -t 30s --tap test/*.test.js"
   },
   "dependencies": {
-    "@google-cloud/datastore": "^3.1.0",
+    "@google-cloud/datastore": "^4.0.0",
     "@google-cloud/storage": "^1.7.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
