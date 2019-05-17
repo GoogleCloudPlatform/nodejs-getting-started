@@ -1,6 +1,6 @@
 # 7 - Deploying to Google Compute Engine
 
-![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore] ![MongoDB Build Status][ci-badge-mongodb]
+![Cloud SQL Build Status][ci-badge-cloudsql] ![Datastore Build Status][ci-badge-datastore]
 
 [ci-badge-datastore]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-datastore.svg
 [ci-badge-cloudsql]: https://storage.googleapis.com/nodejs-getting-started-tests-badges/7-cloudsql.svg
