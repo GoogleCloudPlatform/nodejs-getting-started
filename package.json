@@ -16,7 +16,7 @@
     "test": "npm run lint && npm run ava"
   },
   "dependencies": {
-    "@google-cloud/connect-datastore": "^2.0.1",
+    "@google-cloud/connect-datastore": "^3.0.0",
     "@google-cloud/datastore": "^4.0.0",
     "@google-cloud/debug-agent": "^3.0.0",
     "@google-cloud/logging-winston": "^0.11.0",
