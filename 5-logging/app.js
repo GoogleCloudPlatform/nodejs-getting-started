@@ -50,7 +50,8 @@ const sessionConfig = {
   secret: config.get('SECRET'),
   signed: true,
   store: new DatastoreStore({
-    dataset: new Datastore({kind: 'express-sessions'}),
+    dataset: new Datastore(),
+    kind: 'express-sessions',
   }),
 };
 
