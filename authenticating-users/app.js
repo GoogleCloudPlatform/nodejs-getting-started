@@ -83,20 +83,20 @@ async function validate_assertion(assertion) {
 
 app.get('/', (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-
-  try {
-    const info = await validate_assertion(assertion);
+  validate_assertion(assertion).then((info) => {
     res
       .status(200)
       .send('Hello ' + info.email)
       .end();
-  } catch(error) {
+  }).catch((error) => {
+    console.log(error);
+
     res
       .status(200)
       .send('Hello None')
       .end();
-  }
-}
+  });
+});
 
 // Start the server
 const PORT = process.env.PORT || 8080;
