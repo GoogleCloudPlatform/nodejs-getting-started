@@ -16,44 +16,44 @@
 'use strict';
 
 const express = require('express');
-const got = require('got')
+const got = require('got');
 const jwt = require('jsonwebtoken');
 
 const app = express();
 
 // Cache externally fetched information for future invocations
-let CERTS;
-let AUDIENCE;
+let certs;
+let aud;
 
-async function certs() {
-  if (!CERTS) {
+async function certificates() {
+  if (!certs) {
     let response = await got('https://www.gstatic.com/iap/verify/public_key');
-    CERTS = JSON.parse(response.body)
+    certs = JSON.parse(response.body);
   }
 
-  return CERTS;
+  return certs;
 }
 
 async function get_metadata(itemName) {
-  const endpoint = 'http://metadata.google.internal'
-  const path = '/computeMetadata/v1/project/'
-  const url = endpoint + path + itemName
+  const endpoint = 'http://metadata.google.internal';
+  const path = '/computeMetadata/v1/project/';
+  const url = endpoint + path + itemName;
 
   let response = await got(url, {
     headers: {'Metadata-Flavor': 'Google'}
   });
-  return response.body;  
+  return response.body;
 }
 
 async function audience() {
-  if (!AUDIENCE) {
+  if (!aud) {
     let project_number = await get_metadata('numeric-project-id');
     let project_id = await get_metadata('project-id');
 
-    AUDIENCE = '/projects/' + project_number + '/apps/' + project_id;
+    aud = '/projects/' + project_number + '/apps/' + project_id;
   }
 
-  return AUDIENCE;
+  return aud;
 }
 
 async function validate_assertion(assertion) {
@@ -83,20 +83,20 @@ async function validate_assertion(assertion) {
 
 app.get('/', (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-  validate_assertion(assertion).then((info) => {
+
+  try {
+    const info = await validate_assertion(assertion);
     res
       .status(200)
       .send('Hello ' + info.email)
       .end();
-  }).catch((error) => {
-    console.log(error);
-
+  } catch(error) {
     res
       .status(200)
       .send('Hello None')
       .end();
-  });
-});
+  }
+}
 
 // Start the server
 const PORT = process.env.PORT || 8080;
