@@ -14,7 +14,7 @@
   },
   "scripts": {
     "deploy": "gcloud app deploy",
-    "start": "nodejs app.js",
+    "start": "node app.js",
     "system-test": "mocha --exit test/*.test.js",
     "test": "npm run system-test",
     "e2e-test": "repo-tools test deploy"

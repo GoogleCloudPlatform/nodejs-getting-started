@@ -64,8 +64,8 @@ async function validate_assertion(assertion) {
   const keyId = header.kid;
 
   // Fetch the current certificates and verify the signature on the assertion
-  const certificates = await certs();
-  const payload = jwt.verify(assertion, certificates[keyId]);
+  const certs = await certificates();
+  const payload = jwt.verify(assertion, certs[keyId]);
 
   // Check that the assertion's audience matches ours
   const aud = await audience();
