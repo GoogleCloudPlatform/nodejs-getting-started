@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
   console.log(req.session.id);
   if (!req.session.views) {
     req.session.views = 0;
-    req.session.color = colors[Math.floor(Math.random() * 5)];
+    req.session.color = colors[Math.floor(Math.random() * colors.length)];
   }
   const views = req.session.views++;
   res.send(`<body bgcolor=${req.session.color}>Views ${views}</body>`);
