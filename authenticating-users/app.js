@@ -43,7 +43,7 @@ async function get_metadata(itemName) {
   const url = endpoint + path + itemName;
 
   let response = await got(url, {
-    headers: {'Metadata-Flavor': 'Google'}
+    headers: {'Metadata-Flavor': 'Google'},
   });
   return response.body;
 }
@@ -81,8 +81,8 @@ async function validate_assertion(assertion) {
 
   // Return the two relevant pieces of information
   return {
-    'email': payload.email,
-    'sub': payload.sub,
+    email: payload.email,
+    sub: payload.sub,
   };
 }
 // [END getting_started_auth_audience]
@@ -90,22 +90,23 @@ async function validate_assertion(assertion) {
 // [START getting_started_auth_front_controller]
 app.get('/', (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-  validate_assertion(assertion).then((info) => {
-    res
-      .status(200)
-      .send('Hello ' + info.email)
-      .end();
-  }).catch((error) => {
-    console.log(error);
+  validate_assertion(assertion)
+    .then(info => {
+      res
+        .status(200)
+        .send('Hello ' + info.email)
+        .end();
+    })
+    .catch(error => {
+      console.log(error);
 
-    res
-      .status(200)
-      .send('Hello None')
-      .end();
-  });
+      res
+        .status(200)
+        .send('Hello None')
+        .end();
+    });
 });
 // [END getting_started_auth_front_controller]
-
 
 // Start the server
 const PORT = process.env.PORT || 8080;
