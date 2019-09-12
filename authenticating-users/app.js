@@ -15,6 +15,7 @@
 
 'use strict';
 
+// [START getting_started_auth_all]
 const express = require('express');
 const got = require('got');
 const jwt = require('jsonwebtoken');
@@ -25,6 +26,7 @@ const app = express();
 let certs;
 let aud;
 
+// [START getting_started_auth_certs]
 async function certificates() {
   if (!certs) {
     let response = await got('https://www.gstatic.com/iap/verify/public_key');
@@ -33,6 +35,7 @@ async function certificates() {
 
   return certs;
 }
+// [END getting_started_auth_certs]
 
 async function get_metadata(itemName) {
   const endpoint = 'http://metadata.google.internal';
@@ -40,11 +43,12 @@ async function get_metadata(itemName) {
   const url = endpoint + path + itemName;
 
   let response = await got(url, {
-    headers: {'Metadata-Flavor': 'Google'}
+    headers: {'Metadata-Flavor': 'Google'},
   });
   return response.body;
 }
 
+// [START getting_started_auth_metadata]
 async function audience() {
   if (!aud) {
     let project_number = await get_metadata('numeric-project-id');
@@ -55,7 +59,9 @@ async function audience() {
 
   return aud;
 }
+// [END getting_started_auth_metadata]
 
+// [START getting_started_auth_audience]
 async function validate_assertion(assertion) {
   // Decode the header to determine which certificate signed the assertion
   const encodedHeader = assertion.split('.')[0];
@@ -75,28 +81,32 @@ async function validate_assertion(assertion) {
 
   // Return the two relevant pieces of information
   return {
-    'email': payload.email,
-    'sub': payload.sub,
+    email: payload.email,
+    sub: payload.sub,
   };
-
 }
+// [END getting_started_auth_audience]
 
+// [START getting_started_auth_front_controller]
 app.get('/', (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-  validate_assertion(assertion).then((info) => {
-    res
-      .status(200)
-      .send('Hello ' + info.email)
-      .end();
-  }).catch((error) => {
-    console.log(error);
+  validate_assertion(assertion)
+    .then(info => {
+      res
+        .status(200)
+        .send('Hello ' + info.email)
+        .end();
+    })
+    .catch(error => {
+      console.log(error);
 
-    res
-      .status(200)
-      .send('Hello None')
-      .end();
-  });
+      res
+        .status(200)
+        .send('Hello None')
+        .end();
+    });
 });
+// [END getting_started_auth_front_controller]
 
 // Start the server
 const PORT = process.env.PORT || 8080;
@@ -104,5 +114,7 @@ app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
 });
+
+// [END getting_started_auth_all]
 
 module.exports = app;

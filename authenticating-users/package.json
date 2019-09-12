@@ -13,11 +13,9 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "deploy": "gcloud app deploy",
     "start": "node app.js",
     "system-test": "mocha --exit test/*.test.js",
-    "test": "npm run system-test",
-    "e2e-test": "repo-tools test deploy"
+    "test": "npm run system-test"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -25,17 +23,7 @@
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^3.3.0",
     "mocha": "^6.1.4",
     "supertest": "^4.0.2"
-  },
-  "cloud-repo-tools": {
-    "test": {
-      "app": {
-        "msg": "Hello, world!"
-      }
-    },
-    "requiresKeyFile": true,
-    "requiresProjectId": true
   }
 }
