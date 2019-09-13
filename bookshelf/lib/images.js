@@ -13,13 +13,14 @@
 
 'use strict';
 
+const CLOUD_BUCKET = 'my-bucket-bookshelf';
+
 // [START bookshelf_cloud_storage_client]
 const Storage = require('@google-cloud/storage');
 
-const CLOUD_BUCKET = 'my-bucket-bookshelf';
-
 const storage = Storage();
 const bucket = storage.bucket(CLOUD_BUCKET);
+// [END bookshelf_cloud_storage_client]
 
 // Returns the public, anonymously accessible URL to a given Cloud Storage
 // object.
@@ -66,7 +67,6 @@ function sendUploadToGCS(req, res, next) {
   stream.end(req.file.buffer);
 }
 // [END process]
-// [END bookshelf_cloud_storage_client]
 
 // Multer handles parsing multipart/form-data requests.
 // This instance is configured to store images in memory.
