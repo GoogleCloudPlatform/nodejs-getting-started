@@ -16,7 +16,7 @@
 // [START bookshelf_cloud_storage_client]
 const Storage = require('@google-cloud/storage');
 
-const CLOUD_BUCKET = 'my-bucket';
+const CLOUD_BUCKET = 'my-bucket-bookshelf';
 
 const storage = Storage();
 const bucket = storage.bucket(CLOUD_BUCKET);
