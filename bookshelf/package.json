@@ -17,12 +17,8 @@
     "@google-cloud/storage": "^1.7.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "lodash": "^4.17.11",
     "multer": "^1.4.1",
-    "nconf": "^0.10.0",
-    "prompt": "^1.0.0",
-    "pug": "^2.0.3",
-    "uglify-js": "^3.4.9"
+    "pug": "^2.0.3"
   },
   "devDependencies": {
   }
