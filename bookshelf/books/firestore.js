@@ -13,10 +13,14 @@
 
 'use strict';
 
+// [START bookshelf_firestore_client]
 const Firestore = require('@google-cloud/firestore');
 
 const db = new Firestore();
 const collection = 'Book';
+
+// [END bookshelf_firestore_client]
+
 
 // Lists all books in the database sorted alphabetically by title.
 // The callback is invoked with ``(err, books, nextPageToken)``.
@@ -60,6 +64,7 @@ function create(data, cb) {
   update(null, data, cb);
 }
 
+// [START bookshelf_firestore_client_get_book]
 function read(id, cb) {
   db.collection(collection).doc(id).get()
     .then(doc => {
@@ -74,6 +79,7 @@ function read(id, cb) {
       cb(err);
     });
 }
+// [END bookshelf_firestore_client_get_book]
 
 function _delete(id, cb) {
   db.collection(collection).doc(id).delete().then(() => cb()).catch(cb);

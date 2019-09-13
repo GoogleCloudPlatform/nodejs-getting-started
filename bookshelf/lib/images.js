@@ -13,6 +13,7 @@
 
 'use strict';
 
+// [START bookshelf_cloud_storage_client]
 const Storage = require('@google-cloud/storage');
 
 const CLOUD_BUCKET = 'my-bucket';
@@ -65,6 +66,7 @@ function sendUploadToGCS(req, res, next) {
   stream.end(req.file.buffer);
 }
 // [END process]
+// [END bookshelf_cloud_storage_client]
 
 // Multer handles parsing multipart/form-data requests.
 // This instance is configured to store images in memory.
