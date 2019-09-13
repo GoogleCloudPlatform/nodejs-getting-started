@@ -1,0 +1,30 @@
+{
+  "name": "nodejs-getting-started",
+  "description": "End to end sample for running Node.js applications on Google Cloud Platform",
+  "license": "Apache-2.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": ">=10"
+  },
+  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "node app.js", 
+    "lint": "eslint '**/*.js'"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^1.0.0",
+    "@google-cloud/storage": "^1.7.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "multer": "^1.4.1",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.0"
+  }
+}
