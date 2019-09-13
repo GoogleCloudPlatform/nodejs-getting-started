@@ -14,7 +14,7 @@
 'use strict';
 
 // [START bookshelf_firestore_client]
-const Firestore = require('@google-cloud/firestore');
+const {Firestore} = require('@google-cloud/firestore');
 
 const db = new Firestore();
 const collection = 'Book';
