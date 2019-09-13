@@ -21,7 +21,6 @@ const collection = 'Book';
 
 // [END bookshelf_firestore_client]
 
-
 // Lists all books in the database sorted alphabetically by title.
 // The callback is invoked with ``(err, books, nextPageToken)``.
 function list(limit, token, cb) {
@@ -38,12 +37,16 @@ function list(limit, token, cb) {
       snapshot.forEach(doc => {
         let book = doc.data();
         book.id = doc.id;
-        res.push(book)
+        res.push(book);
       });
-      snapshot.query.offset(limit).get().then(q => {
-        cb(null, res, q.empty ? false : res[res.length - 1].title);
-      });
-    }).catch(cb);
+      snapshot.query
+        .offset(limit)
+        .get()
+        .then(q => {
+          cb(null, res, q.empty ? false : res[res.length - 1].title);
+        });
+    })
+    .catch(cb);
 }
 
 // Creates a new book or updates an existing book with new data.
@@ -56,8 +59,11 @@ function update(id, data, cb) {
   }
 
   data.id = ref.id;
-  data = { ...data };
-  ref.set(data).then(() => cb(null, data)).catch(cb);
+  data = {...data};
+  ref
+    .set(data)
+    .then(() => cb(null, data))
+    .catch(cb);
 }
 
 function create(data, cb) {
@@ -66,11 +72,13 @@ function create(data, cb) {
 
 // [START bookshelf_firestore_client_get_book]
 function read(id, cb) {
-  db.collection(collection).doc(id).get()
+  db.collection(collection)
+    .doc(id)
+    .get()
     .then(doc => {
       if (!doc.exists) {
         console.log('No such document!');
-        cb('No such document!')
+        cb('No such document!');
       } else {
         cb(null, doc.data());
       }
@@ -82,7 +90,11 @@ function read(id, cb) {
 // [END bookshelf_firestore_client_get_book]
 
 function _delete(id, cb) {
-  db.collection(collection).doc(id).delete().then(() => cb()).catch(cb);
+  db.collection(collection)
+    .doc(id)
+    .delete()
+    .then(() => cb())
+    .catch(cb);
 }
 
 module.exports = {
