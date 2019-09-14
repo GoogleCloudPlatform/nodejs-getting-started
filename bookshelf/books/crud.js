@@ -16,7 +16,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const images = require('../lib/images');
-const model = require('./firestore');
+const db = require('./firestore');
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.use((req, res, next) => {
  * Display a page of books (up to ten at a time).
  */
 router.get('/', (req, res, next) => {
-  model.list(10, req.query.pageToken, (err, entities, cursor) => {
+  db.list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
       next(err);
       return;
@@ -79,7 +79,7 @@ router.post(
     }
 
     // Save the data to the database.
-    model.create(data, (err, savedData) => {
+    db.create(data, (err, savedData) => {
       if (err) {
         next(err);
         return;
@@ -96,7 +96,7 @@ router.post(
  * Display a book for editing.
  */
 router.get('/:book/edit', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
+  db.read(req.params.book, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -126,7 +126,7 @@ router.post(
       req.body.imageUrl = req.file.cloudStoragePublicUrl;
     }
 
-    model.update(req.params.book, data, (err, savedData) => {
+    db.update(req.params.book, data, (err, savedData) => {
       if (err) {
         next(err);
         return;
@@ -142,7 +142,7 @@ router.post(
  * Display a book.
  */
 router.get('/:book', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
+  db.read(req.params.book, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -159,7 +159,7 @@ router.get('/:book', (req, res, next) => {
  * Delete a book.
  */
 router.get('/:book/delete', (req, res, next) => {
-  model.delete(req.params.book, err => {
+  db.delete(req.params.book, err => {
     if (err) {
       next(err);
       return;

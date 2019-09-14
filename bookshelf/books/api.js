@@ -15,7 +15,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('./firestore');
+const db = require('./firestore');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.use(bodyParser.json());
  * Retrieve a page of books (up to ten at a time).
  */
 router.get('/', (req, res, next) => {
-  model.list(10, req.query.pageToken, (err, entities, cursor) => {
+  db.list(10, req.query.pageToken, (err, entities, cursor) => {
     if (err) {
       next(err);
       return;
@@ -46,7 +46,7 @@ router.get('/', (req, res, next) => {
  * Create a new book.
  */
 router.post('/', (req, res, next) => {
-  model.create(req.body, (err, entity) => {
+  db.create(req.body, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -61,7 +61,7 @@ router.post('/', (req, res, next) => {
  * Retrieve a book.
  */
 router.get('/:book', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
+  db.read(req.params.book, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -76,7 +76,7 @@ router.get('/:book', (req, res, next) => {
  * Update a book.
  */
 router.put('/:book', (req, res, next) => {
-  model.update(req.params.book, req.body, (err, entity) => {
+  db.update(req.params.book, req.body, (err, entity) => {
     if (err) {
       next(err);
       return;
@@ -91,7 +91,7 @@ router.put('/:book', (req, res, next) => {
  * Delete a book.
  */
 router.delete('/:book', (req, res, next) => {
-  model.delete(req.params.book, err => {
+  db.delete(req.params.book, err => {
     if (err) {
       next(err);
       return;
