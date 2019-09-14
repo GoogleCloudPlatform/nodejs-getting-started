@@ -138,14 +138,4 @@ router.get('/:book/delete', async (req, res) => {
   res.redirect(req.baseUrl);
 });
 
-/**
- * Errors on "/books/*" routes.
- */
-router.use((err, req, res, next) => {
-  // Format error and forward to generic error handler for logging and
-  // responding to the request
-  err.response = err.message;
-  next(err);
-});
-
 module.exports = router;
