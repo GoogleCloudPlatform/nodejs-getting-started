@@ -63,6 +63,9 @@ async function audience() {
 
 // [START getting_started_auth_audience]
 async function validate_assertion(assertion) {
+  if (!assertion) {
+    return {};
+  }
   // Decode the header to determine which certificate signed the assertion
   const encodedHeader = assertion.split('.')[0];
   const decodedHeader = Buffer.from(encodedHeader, 'base64').toString('utf8');
