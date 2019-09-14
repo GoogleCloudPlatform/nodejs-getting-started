@@ -53,3 +53,5 @@ const server = app.listen(port, () => {
   const port = server.address().port;
   console.log(`App listening on port ${port}`);
 });
+
+module.exports = app;
