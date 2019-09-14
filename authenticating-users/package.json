@@ -15,7 +15,8 @@
   "scripts": {
     "start": "node app.js",
     "system-test": "mocha --exit test/*.test.js",
-    "test": "npm run system-test"
+    "test": "npm run lint && npm run system-test",
+    "lint": "eslint '**/*.js'"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -23,6 +24,10 @@
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "mocha": "^6.1.4",
     "supertest": "^4.0.2"
   }

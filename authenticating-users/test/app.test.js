@@ -11,6 +11,6 @@ describe('GET /', () => {
     it('should get Hello None', done => {
       request(app)
         .get('/')
-        .expect('Hello None', done);
+        .expect('Hello undefined', done);
     });
 });
