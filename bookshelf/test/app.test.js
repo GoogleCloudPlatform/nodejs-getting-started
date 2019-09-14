@@ -2,7 +2,7 @@ const app = require('../app');
 
 const request = require('supertest');
 
-describe('Request have valid status codes', () => {
+describe('Requests have valid status codes', () => {
   it('should get 302', done => {
     request(app)
       .get('/')

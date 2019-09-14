@@ -34,7 +34,6 @@ app.use(
 const colors = ['red', 'blue', 'green', 'yellow', 'pink'];
 
 app.get('/', (req, res) => {
-  console.log(req.session.id);
   if (!req.session.views) {
     req.session.views = 0;
     req.session.color = colors[Math.floor(Math.random() * colors.length)];
@@ -47,3 +46,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
 });
+
+module.exports = app;
