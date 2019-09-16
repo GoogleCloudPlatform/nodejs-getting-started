@@ -19,3 +19,16 @@ describe('Requests have valid status codes', () => {
       .expect(200, done);
   });
 });
+
+describe('Should have logs and errors endpoints as described in docs for Stackdriver', () => {
+  it('should have logs endpoints', done => {
+    request(app)
+      .get('/logs')
+      .expect(200, done);
+  }),
+    it('should have errors endpoint', done => {
+      request(app)
+        .get('/errors')
+        .expect(500, done);
+    });
+});
