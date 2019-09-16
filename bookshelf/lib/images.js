@@ -13,7 +13,8 @@
 
 'use strict';
 
-const CLOUD_BUCKET = 'my-bucket-bookshelf';
+const GCLOUD_PROJECT = process.env['GCLOUD_PROJECT'];
+const CLOUD_BUCKET = GCLOUD_PROJECT + '_bucket';
 
 // [START bookshelf_cloud_storage_client]
 const Storage = require('@google-cloud/storage');
