@@ -15,7 +15,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('./firestore');
+const db = require('./firestore');
 
 const router = express.Router();
 
@@ -27,16 +27,11 @@ router.use(bodyParser.json());
  *
  * Retrieve a page of books (up to ten at a time).
  */
-router.get('/', (req, res, next) => {
-  model.list(10, req.query.pageToken, (err, entities, cursor) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json({
-      items: entities,
-      nextPageToken: cursor,
-    });
+router.get('/', async (req, res) => {
+  const {books, nextPageToken} = await db.list(10, req.query.pageToken);
+  res.json({
+    items: books,
+    nextPageToken,
   });
 });
 
@@ -45,14 +40,9 @@ router.get('/', (req, res, next) => {
  *
  * Create a new book.
  */
-router.post('/', (req, res, next) => {
-  model.create(req.body, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
+router.post('/', async (req, res) => {
+  const book = await db.create(req.body);
+  res.json(book);
 });
 
 /**
@@ -60,14 +50,9 @@ router.post('/', (req, res, next) => {
  *
  * Retrieve a book.
  */
-router.get('/:book', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
+router.get('/:book', async (req, res) => {
+  const book = await db.read(req.params.book);
+  res.json(book);
 });
 
 /**
@@ -75,14 +60,9 @@ router.get('/:book', (req, res, next) => {
  *
  * Update a book.
  */
-router.put('/:book', (req, res, next) => {
-  model.update(req.params.book, req.body, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
+router.put('/:book', async (req, res) => {
+  const book = await db.update(req.params.book, req.body);
+  res.json(book);
 });
 
 /**
@@ -90,27 +70,9 @@ router.put('/:book', (req, res, next) => {
  *
  * Delete a book.
  */
-router.delete('/:book', (req, res, next) => {
-  model.delete(req.params.book, err => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.status(200).send('OK');
-  });
-});
-
-/**
- * Errors on "/api/books/*" routes.
- */
-router.use((err, req, res, next) => {
-  // Format error and forward to generic error handler for logging and
-  // responding to the request
-  err.response = {
-    message: err.message,
-    internalCode: err.code,
-  };
-  next(err);
+router.delete('/:book', async (req, res) => {
+  await db.delete(req.params.book);
+  res.status(200).send('OK');
 });
 
 module.exports = router;

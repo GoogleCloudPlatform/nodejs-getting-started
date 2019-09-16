@@ -22,35 +22,36 @@ const collection = 'Book';
 // [END bookshelf_firestore_client]
 
 // Lists all books in the database sorted alphabetically by title.
-// The callback is invoked with ``(err, books, nextPageToken)``.
-function list(limit, token, cb) {
-  db.collection(collection)
+async function list(limit, token) {
+  const snapshot = await db
+    .collection(collection)
     .orderBy('title')
     .startAfter(token || '')
     .limit(limit)
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        cb(null, [], false);
-      }
-      const res = [];
-      snapshot.forEach(doc => {
-        let book = doc.data();
-        book.id = doc.id;
-        res.push(book);
-      });
-      snapshot.query
-        .offset(limit)
-        .get()
-        .then(q => {
-          cb(null, res, q.empty ? false : res[res.length - 1].title);
-        });
-    })
-    .catch(cb);
+    .get();
+
+  if (snapshot.empty) {
+    return {
+      books: [],
+      nextPageToken: false,
+    };
+  }
+  const books = [];
+  snapshot.forEach(doc => {
+    let book = doc.data();
+    book.id = doc.id;
+    books.push(book);
+  });
+  const q = await snapshot.query.offset(limit).get();
+
+  return {
+    books,
+    nextPageToken: q.empty ? false : books[books.length - 1].title,
+  };
 }
 
 // Creates a new book or updates an existing book with new data.
-function update(id, data, cb) {
+async function update(id, data) {
   let ref;
   if (id === null) {
     ref = db.collection(collection).doc();
@@ -60,41 +61,33 @@ function update(id, data, cb) {
 
   data.id = ref.id;
   data = {...data};
-  ref
-    .set(data)
-    .then(() => cb(null, data))
-    .catch(cb);
+  await ref.set(data);
+  return data;
 }
 
-function create(data, cb) {
-  update(null, data, cb);
+async function create(data) {
+  return await update(null, data);
 }
 
 // [START bookshelf_firestore_client_get_book]
-function read(id, cb) {
-  db.collection(collection)
+async function read(id) {
+  const doc = await db
+    .collection(collection)
     .doc(id)
-    .get()
-    .then(doc => {
-      if (!doc.exists) {
-        console.log('No such document!');
-        cb('No such document!');
-      } else {
-        cb(null, doc.data());
-      }
-    })
-    .catch(err => {
-      cb(err);
-    });
+    .get();
+
+  if (!doc.exists) {
+    throw new Error('No such document!');
+  }
+  return doc.data();
 }
 // [END bookshelf_firestore_client_get_book]
 
-function _delete(id, cb) {
-  db.collection(collection)
+async function _delete(id) {
+  await db
+    .collection(collection)
     .doc(id)
-    .delete()
-    .then(() => cb())
-    .catch(cb);
+    .delete();
 }
 
 module.exports = {

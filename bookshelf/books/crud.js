@@ -16,7 +16,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const images = require('../lib/images');
-const model = require('./firestore');
+const db = require('./firestore');
 
 const router = express.Router();
 
@@ -34,16 +34,11 @@ router.use((req, res, next) => {
  *
  * Display a page of books (up to ten at a time).
  */
-router.get('/', (req, res, next) => {
-  model.list(10, req.query.pageToken, (err, entities, cursor) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.render('books/list.pug', {
-      books: entities,
-      nextPageToken: cursor,
-    });
+router.get('/', async (req, res) => {
+  let {books, nextPageToken} = await db.list(10, req.query.pageToken);
+  res.render('books/list.pug', {
+    books,
+    nextPageToken,
   });
 });
 
@@ -69,7 +64,7 @@ router.post(
   '/add',
   images.multer.single('image'),
   images.sendUploadToGCS,
-  (req, res, next) => {
+  async (req, res) => {
     let data = req.body;
 
     // Was an image uploaded? If so, we'll use its public URL
@@ -79,13 +74,8 @@ router.post(
     }
 
     // Save the data to the database.
-    model.create(data, (err, savedData) => {
-      if (err) {
-        next(err);
-        return;
-      }
-      res.redirect(`${req.baseUrl}/${savedData.id}`);
-    });
+    const savedData = await db.create(data);
+    res.redirect(`${req.baseUrl}/${savedData.id}`);
   }
 );
 // [END add]
@@ -95,16 +85,11 @@ router.post(
  *
  * Display a book for editing.
  */
-router.get('/:book/edit', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.render('books/form.pug', {
-      book: entity,
-      action: 'Edit',
-    });
+router.get('/:book/edit', async (req, res) => {
+  const book = await db.read(req.params.book);
+  res.render('books/form.pug', {
+    book,
+    action: 'Edit',
   });
 });
 
@@ -117,7 +102,7 @@ router.post(
   '/:book/edit',
   images.multer.single('image'),
   images.sendUploadToGCS,
-  (req, res, next) => {
+  async (req, res) => {
     let data = req.body;
 
     // Was an image uploaded? If so, we'll use its public URL
@@ -126,13 +111,8 @@ router.post(
       req.body.imageUrl = req.file.cloudStoragePublicUrl;
     }
 
-    model.update(req.params.book, data, (err, savedData) => {
-      if (err) {
-        next(err);
-        return;
-      }
-      res.redirect(`${req.baseUrl}/${savedData.id}`);
-    });
+    const savedData = await db.update(req.params.book, data);
+    res.redirect(`${req.baseUrl}/${savedData.id}`);
   }
 );
 
@@ -141,15 +121,10 @@ router.post(
  *
  * Display a book.
  */
-router.get('/:book', (req, res, next) => {
-  model.read(req.params.book, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.render('books/view.pug', {
-      book: entity,
-    });
+router.get('/:book', async (req, res) => {
+  const book = await db.read(req.params.book);
+  res.render('books/view.pug', {
+    book,
   });
 });
 
@@ -158,24 +133,9 @@ router.get('/:book', (req, res, next) => {
  *
  * Delete a book.
  */
-router.get('/:book/delete', (req, res, next) => {
-  model.delete(req.params.book, err => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.redirect(req.baseUrl);
-  });
-});
-
-/**
- * Errors on "/books/*" routes.
- */
-router.use((err, req, res, next) => {
-  // Format error and forward to generic error handler for logging and
-  // responding to the request
-  err.response = err.message;
-  next(err);
+router.get('/:book/delete', async (req, res) => {
+  await db.delete(req.params.book);
+  res.redirect(req.baseUrl);
 });
 
 module.exports = router;
