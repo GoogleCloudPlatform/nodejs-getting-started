@@ -29,9 +29,17 @@ app.get('/', (req, res) => {
   res.redirect('/books');
 });
 
-const port = process.env.PORT || 8080;
+app.get('/errors', () => {
+  throw new Error('Test exception');
+});
+
+app.get('/logs', (req, res) => {
+  console.log('Hey, you triggered a custom log entry. Good job!');
+  res.sendStatus(200);
+});
 
 // Start the server
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
