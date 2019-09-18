@@ -23,7 +23,7 @@
 const TOPIC_NAME = 'translate';
 
 const express = require('express');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 const {PubSub} = require('@google-cloud/pubsub');
 const {Firestore} = require('@google-cloud/firestore');
@@ -34,7 +34,7 @@ const port = process.env.PORT || 8080;
 const firestore = new Firestore();
 
 const pubsub = new PubSub();
-let topic = pubsub.topic(TOPIC_NAME);
+const topic = pubsub.topic(TOPIC_NAME);
 
 async function main() {
   app.set('views', __dirname);
@@ -75,14 +75,14 @@ function requestTranslation(req, res) {
   const language = req.body.lang;
   const original = req.body.v;
 
-  let acceptableLanguages = ['de', 'en', 'es', 'fr', 'ja', 'sw'];
+  const acceptableLanguages = ['de', 'en', 'es', 'fr', 'ja', 'sw'];
   if (!acceptableLanguages.includes(language)) {
     throw new Error(`Invalid language ${language}`);
   }
 
   console.log(`Translation requested: ${original} -> ${language}`);
 
-  let buffer = Buffer.from(JSON.stringify({language, original}));
+  const buffer = Buffer.from(JSON.stringify({language, original}));
   topic.publish(buffer);
   res.sendStatus(200);
 }
