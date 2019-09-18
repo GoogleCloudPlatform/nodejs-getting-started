@@ -93,20 +93,17 @@ async function validateAssertion(assertion) {
 // [START getting_started_auth_front_controller]
 app.get('/', async (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
+  let email = 'None';
   try {
     const info = await validateAssertion(assertion);
-    res
-      .status(200)
-      .send('Hello ' + info.email)
-      .end();
+    email = info.email
   } catch (error) {
     console.log(error);
-
-    res
-      .status(200)
-      .send('Hello None')
-      .end();
   }
+  res
+      .status(200)
+      .send(`Hello ${email}`)
+      .end();
 });
 
 // [END getting_started_auth_front_controller]
