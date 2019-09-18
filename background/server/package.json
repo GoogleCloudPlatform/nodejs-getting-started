@@ -2,9 +2,9 @@
   "name": "background",
   "private": true,
   "description": "This directory contains an example of doing background processing with App Engine, Cloud Pub/Sub, Cloud Functions, and Firestore.",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node main.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Google Inc.",

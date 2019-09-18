@@ -12,25 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START getting_started_background_translate_setup]
 
 // This file contains an async Cloud Function, translate, to translate text.
 // The function listens to Pub/Sub, does the translations, and stores the
 // result in Firestore.
 
-// Clients reused between function invocations.
+// [START getting_started_background_translate_init]
 const {Firestore} = require('@google-cloud/firestore');
 const {Translate} = require('@google-cloud/translate');
 
 const firestore = new Firestore();
 const translate = new Translate();
-
-// [END getting_started_background_translate_setup]
+// [END getting_started_background_translate_init]
 
 // [START getting_started_background_translate]
-
 // translate translates the given message and stores the result in Firestore.
-// Triggered by Pubsub message
+// Triggered by Pub/Sub message.
 exports.translate = async pubSubEvent => {
   const {language, original} = JSON.parse(
     Buffer.from(pubSubEvent.data, 'base64').toString()
@@ -49,7 +46,7 @@ exports.translate = async pubSubEvent => {
   );
   // [END getting_started_background_translate_string]
 
-  // Store tranlsation in firestore
+  // Store translation in firestore.
   await firestore
     .collection('translations')
     .doc()

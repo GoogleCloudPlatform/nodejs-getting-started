@@ -14,19 +14,18 @@
 
 // [START getting_started_background_app_main]
 
-// Command index is an HTTP app that displays all previous translations
+// This app is an HTTP app that displays all previous translations
 // (stored in Firestore) and has a form to request new translations. On form
 // submission, the request is sent to Pub/Sub to be processed in the background.
 
-// topicName is the Pub/Sub topic to publish requests to. The Cloud Function to
+// TOPIC_NAME is the Pub/Sub topic to publish requests to. The Cloud Function to
 // process translation requests should be subscribed to this topic.
 const TOPIC_NAME = 'translate';
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
-const {PubSub} = require('@google-cloud/pubsub');
-const {Firestore} = require('@google-cloud/firestore');
+const { PubSub } = require('@google-cloud/pubsub');
+const { Firestore } = require('@google-cloud/firestore');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -36,19 +35,16 @@ const firestore = new Firestore();
 const pubsub = new PubSub();
 const topic = pubsub.topic(TOPIC_NAME);
 
-async function main() {
-  app.set('views', __dirname);
-  app.set('view engine', 'html');
-  app.engine('html', require('hbs').__express);
+// Use handlebars.js for templating.
+app.set('views', __dirname);
+app.set('view engine', 'html');
+app.engine('html', require('hbs').__express);
 
-  app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.get('/', index);
-  app.post('/request-translation', requestTranslation);
-  app.listen(port, () => console.log(`Listening on port ${port}!`));
-}
-
-main().catch(err => console.log(err));
+app.get('/', index);
+app.post('/request-translation', requestTranslation);
+app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 // [END getting_started_background_app_main]
 
@@ -63,7 +59,7 @@ async function index(req, res) {
     translations.push(doc.data());
   });
 
-  res.render('index', {translations});
+  res.render('index', { translations });
 }
 
 // [END getting_started_background_app_list]
@@ -82,7 +78,7 @@ function requestTranslation(req, res) {
 
   console.log(`Translation requested: ${original} -> ${language}`);
 
-  const buffer = Buffer.from(JSON.stringify({language, original}));
+  const buffer = Buffer.from(JSON.stringify({ language, original }));
   topic.publish(buffer);
   res.sendStatus(200);
 }
