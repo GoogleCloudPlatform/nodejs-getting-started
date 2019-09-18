@@ -1,0 +1,14 @@
+{
+  "name": "background",
+  "private": true,
+  "description": "This directory contains an example of a Cloud Function.",
+  "main": "translate.js",
+  "author": "Google LLC",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google-cloud/firestore": "^2.3.0",
+    "@google-cloud/translate": "^4.1.3"
+  },
+  "devDependencies": {
+  }
+}

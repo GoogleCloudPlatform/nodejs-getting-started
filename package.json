@@ -1,0 +1,27 @@
+{
+  "name": "nodejs-getting-started",
+  "private": true,
+  "description": "End to end samples for running Node.js applications on Google Cloud Platform",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2"
+  },
+  "scripts": {
+    "lint": "eslint '**/*.js'",
+    "fix": "npm run lint -- --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoogleCloudPlatform/nodejs-getting-started.git"
+  },
+  "author": "Google LLC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/GoogleCloudPlatform/nodejs-getting-started/issues"
+  },
+  "homepage": "https://github.com/GoogleCloudPlatform/nodejs-getting-started#readme"
+}
