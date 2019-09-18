@@ -7,7 +7,7 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Google Inc.",
+  "author": "Google LLC",
   "license": "Apache-2.0",
   "dependencies": {
     "@google-cloud/firestore": "^2.3.0",

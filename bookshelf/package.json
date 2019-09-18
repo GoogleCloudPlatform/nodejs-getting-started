@@ -2,7 +2,7 @@
   "name": "nodejs-getting-started",
   "description": "End to end sample for running Node.js applications on Google Cloud Platform",
   "license": "Apache-2.0",
-  "author": "Google Inc.",
+  "author": "Google LLC",
   "engines": {
     "node": ">=10"
   },

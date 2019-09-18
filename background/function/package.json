@@ -3,7 +3,7 @@
   "private": true,
   "description": "This directory contains an example of a Cloud Function.",
   "main": "translate.js",
-  "author": "Google Inc.",
+  "author": "Google LLC",
   "license": "Apache-2.0",
   "dependencies": {
     "@google-cloud/firestore": "^2.3.0",
