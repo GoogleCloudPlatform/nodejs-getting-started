@@ -24,8 +24,8 @@ const TOPIC_NAME = 'translate';
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const { PubSub } = require('@google-cloud/pubsub');
-const { Firestore } = require('@google-cloud/firestore');
+const {PubSub} = require('@google-cloud/pubsub');
+const {Firestore} = require('@google-cloud/firestore');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -40,7 +40,7 @@ app.set('views', __dirname);
 app.set('view engine', 'html');
 app.engine('html', require('hbs').__express);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', index);
 app.post('/request-translation', requestTranslation);
@@ -59,7 +59,7 @@ async function index(req, res) {
     translations.push(doc.data());
   });
 
-  res.render('index', { translations });
+  res.render('index', {translations});
 }
 
 // [END getting_started_background_app_list]
@@ -78,7 +78,7 @@ function requestTranslation(req, res) {
 
   console.log(`Translation requested: ${original} -> ${language}`);
 
-  const buffer = Buffer.from(JSON.stringify({ language, original }));
+  const buffer = Buffer.from(JSON.stringify({language, original}));
   topic.publish(buffer);
   res.sendStatus(200);
 }

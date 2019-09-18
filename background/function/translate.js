@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // This file contains an async Cloud Function, translate, to translate text.
 // The function listens to Pub/Sub, does the translations, and stores the
 // result in Firestore.
