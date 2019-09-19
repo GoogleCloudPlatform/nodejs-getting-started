@@ -37,7 +37,7 @@ async function certificates() {
 }
 // [END getting_started_auth_certs]
 
-async function get_metadata(itemName) {
+async function getMetadata(itemName) {
   const endpoint = 'http://metadata.google.internal';
   const path = '/computeMetadata/v1/project/';
   const url = endpoint + path + itemName;
@@ -51,8 +51,8 @@ async function get_metadata(itemName) {
 // [START getting_started_auth_metadata]
 async function audience() {
   if (!aud) {
-    let project_number = await get_metadata('numeric-project-id');
-    let project_id = await get_metadata('project-id');
+    let project_number = await getMetadata('numeric-project-id');
+    let project_id = await getMetadata('project-id');
 
     aud = '/projects/' + project_number + '/apps/' + project_id;
   }
@@ -62,7 +62,7 @@ async function audience() {
 // [END getting_started_auth_metadata]
 
 // [START getting_started_auth_audience]
-async function validate_assertion(assertion) {
+async function validateAssertion(assertion) {
   if (!assertion) {
     return {};
   }
@@ -91,24 +91,21 @@ async function validate_assertion(assertion) {
 // [END getting_started_auth_audience]
 
 // [START getting_started_auth_front_controller]
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-  validate_assertion(assertion)
-    .then(info => {
-      res
-        .status(200)
-        .send('Hello ' + info.email)
-        .end();
-    })
-    .catch(error => {
-      console.log(error);
-
-      res
-        .status(200)
-        .send('Hello None')
-        .end();
-    });
+  let email = 'None';
+  try {
+    const info = await validateAssertion(assertion);
+    email = info.email
+  } catch (error) {
+    console.log(error);
+  }
+  res
+      .status(200)
+      .send(`Hello ${email}`)
+      .end();
 });
+
 // [END getting_started_auth_front_controller]
 
 // Start the server
