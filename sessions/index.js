@@ -31,15 +31,22 @@ app.use(
   })
 );
 
-const colors = ['red', 'blue', 'green', 'yellow', 'pink'];
+const greetings = [
+  'Hello World',
+  'Hallo Welt',
+  'Ciao Mondo',
+  'Salut le Monde',
+  'Hola Mundo',
+];
 
 app.get('/', (req, res) => {
   if (!req.session.views) {
     req.session.views = 0;
-    req.session.color = colors[Math.floor(Math.random() * colors.length)];
+    req.session.greeting =
+      greetings[Math.floor(Math.random() * greetings.length)];
   }
   const views = req.session.views++;
-  res.send(`<body bgcolor=${req.session.color}>Views ${views}</body>`);
+  res.send(`${views} views for ${req.session.greeting}`);
 });
 
 const port = process.env.PORT || 8080;
