@@ -96,14 +96,14 @@ app.get('/', async (req, res) => {
   let email = 'None';
   try {
     const info = await validateAssertion(assertion);
-    email = info.email
+    email = info.email;
   } catch (error) {
     console.log(error);
   }
   res
-      .status(200)
-      .send(`Hello ${email}`)
-      .end();
+    .status(200)
+    .send(`Hello ${email}`)
+    .end();
 });
 
 // [END getting_started_auth_front_controller]
