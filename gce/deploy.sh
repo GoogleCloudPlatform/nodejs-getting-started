@@ -39,7 +39,7 @@ SERVICE=frontend-web-service
 # This template will be used by the instance group
 # to create new instances.
 
-# [START create_template]
+# [START getting_started_create_template]
 gcloud compute instance-templates create $TEMPLATE \
   --image-family $IMAGE \
   --image-project=debian-cloud \
@@ -47,7 +47,7 @@ gcloud compute instance-templates create $TEMPLATE \
   --scopes $SCOPES \
   --metadata-from-file startup-script=$STARTUP_SCRIPT \
   --tags $TAGS
-# [END create_template]
+# [END getting_started_create_template]
 
 # Create the managed instance group.
 
