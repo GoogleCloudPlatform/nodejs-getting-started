@@ -41,19 +41,19 @@ npm test
 
 [getting-started]: https://cloud.google.com/nodejs/getting-started/tutorial-app
 [step-1]: https://cloud.google.com/nodejs/getting-started/hello-world
-[step-1-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/1-hello-world
+[step-1-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/1-hello-world
 [step-2]: https://cloud.google.com/nodejs/getting-started/using-structured-data
-[step-2-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/2-structured-data
+[step-2-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/2-structured-data
 [step-3]: https://cloud.google.com/nodejs/getting-started/using-cloud-storage
-[step-3-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/3-binary-data
+[step-3-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/3-binary-data
 [step-4]: https://cloud.google.com/nodejs/getting-started/authenticate-users
-[step-4-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/4-auth
+[step-4-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/4-auth
 [step-5]: https://cloud.google.com/nodejs/getting-started/logging-application-events
-[step-5-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/5-logging
+[step-5-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/5-logging
 [step-6]: https://cloud.google.com/nodejs/getting-started/using-pub-sub
-[step-6-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/6-pubsub
+[step-6-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/6-pubsub
 [step-7]: https://cloud.google.com/nodejs/getting-started/run-on-compute-engine
-[step-7-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/7-gce
+[step-7-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/steps/7-gce
 [step-optional]: https://cloud.google.com/nodejs/tutorials/bookshelf-on-kubernetes-engine
 [step-optional-code]: https://github.com/GoogleCloudPlatform/nodejs-getting-started/tree/master/optional-kubernetes-engine
 
