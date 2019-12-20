@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2018 Google LLC
+# Copyright 2018-2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 set -eo pipefail
 
 export NPM_CONFIG_PREFIX=/home/node/.npm-global
+
+cd github/nodejs-getting-started
 
 npm install
 
