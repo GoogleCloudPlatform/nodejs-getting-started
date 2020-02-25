@@ -14,7 +14,7 @@
     "test": "mocha --exit **/*.test.js"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^1.0.0",
+    "@google-cloud/firestore": "^3.0.0",
     "@google-cloud/storage": "^1.7.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
