@@ -16,7 +16,7 @@
     "express-session": "^1.16.2"
   },
   "devDependencies": {
-    "mocha": "^6.2.0",
+    "mocha": "^7.0.0",
     "supertest": "^4.0.2"
   }
 }

@@ -21,7 +21,7 @@
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
-    "mocha": "^6.1.4",
+    "mocha": "^7.0.0",
     "supertest": "^4.0.2"
   }
 }
