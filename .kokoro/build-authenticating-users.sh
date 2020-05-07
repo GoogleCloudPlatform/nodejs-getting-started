@@ -3,7 +3,7 @@
 # Fail on any error.
 set -e
 
-cd ~/gcp/nodejs-getting-started/authenticating-users
+cd github/nodejs-getting-started/authenticating-users
 
 npm install
 
