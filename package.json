@@ -4,7 +4,7 @@
   "description": "End to end samples for running Node.js applications on Google Cloud Platform",
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^6.3.0",
+    "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.0",
