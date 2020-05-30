@@ -55,7 +55,6 @@ directory=/opt/app/new-repo
 command=npm start
 autostart=true
 autorestart=true
-startretries=10
 user=nodeapp
 environment=HOME="/home/nodeapp",USER="nodeapp",NODE_ENV="production"
 stdout_logfile=syslog
