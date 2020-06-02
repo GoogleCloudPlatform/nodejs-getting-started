@@ -14,3 +14,4 @@
 # [START getting_started_background_config]
 runtime: nodejs10
 # [END getting_started_background_config]
+service: testservice

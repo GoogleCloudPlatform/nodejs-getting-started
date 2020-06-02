@@ -52,6 +52,7 @@ app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 // index lists the current translations.
 async function index(req, res) {
+  console.log('called');
   const translations = [];
   const querySnapshot = await firestore.collection('translations').get();
   querySnapshot.forEach(doc => {
@@ -83,3 +84,4 @@ function requestTranslation(req, res) {
   res.sendStatus(200);
 }
 // [END getting_started_background_app_request]
+module.exports = app;

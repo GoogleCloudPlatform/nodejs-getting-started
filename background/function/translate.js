@@ -17,8 +17,8 @@
 // result in Firestore.
 
 // [START getting_started_background_translate_init]
-const {Firestore} = require('@google-cloud/firestore');
-const {Translate} = require('@google-cloud/translate');
+const Firestore = require('@google-cloud/firestore');
+const {Translate} = require('@google-cloud/translate').v2;
 
 const firestore = new Firestore();
 const translate = new Translate();
