@@ -57,3 +57,33 @@ exports.translate = async pubSubEvent => {
     });
 };
 // [END getting_started_background_translate]
+
+exports[`translate-${process.env.unique_id}`] = async pubSubEvent => {
+  const {language, original} = JSON.parse(
+    Buffer.from(pubSubEvent.data, 'base64').toString()
+  );
+
+  // [START getting_started_background_translate_string]
+  const [
+    translated,
+    {
+      data: {translations},
+    },
+  ] = await translate.translate(original, language);
+  const originalLanguage = translations[0].detectedSourceLanguage;
+  console.log(
+    `Translated ${original} in ${originalLanguage} to ${translated} in ${language}.`
+  );
+  // [END getting_started_background_translate_string]
+
+  // Store translation in firestore.
+  await firestore
+    .collection('translations')
+    .doc()
+    .set({
+      language,
+      original,
+      translated,
+      originalLanguage,
+    });
+};

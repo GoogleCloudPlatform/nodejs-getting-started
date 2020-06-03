@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 // [START getting_started_background_app_main]
 
 // This app is an HTTP app that displays all previous translations
