@@ -1,5 +1,5 @@
 {
-  "name": "appengine-hello-world",
+  "name": "gce-hello-world",
   "description": "Simple Hello World Node.js sample for Google Compute Engine.",
   "version": "0.0.1",
   "private": true,
@@ -20,7 +20,9 @@
     "express": "^4.16.3"
   },
   "devDependencies": {
-    "mocha": "^7.0.0",
-    "supertest": "^4.0.2"
+    "mocha": "^7.2.0",
+    "uuid": "^8.1.0",
+    "chai": "^4.2.0",
+    "node-fetch": "^2.6.0"
   }
 }

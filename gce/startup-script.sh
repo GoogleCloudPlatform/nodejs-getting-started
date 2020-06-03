@@ -15,6 +15,7 @@
 # [START startup]
 set -v
 
+
 # Talk to the metadata server to get the project id
 PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
 REPOSITORY="new-repo"
@@ -38,7 +39,7 @@ ln -s /opt/nodejs/bin/npm /usr/bin/npm
 # git requires $HOME and it's not set during the startup script.
 export HOME=/root
 git config --global credential.helper gcloud.sh
-git clone https://source.developers.google.com/p/${PROJECTID}/r/${REPOSITORY} /opt/app
+git clone https://source.developers.google.com/p/${PROJECTID}/r/${REPOSITORY} /opt/app/new-repo
 
 # Install app dependencies
 cd /opt/app/new-repo
@@ -65,4 +66,3 @@ supervisorctl reread
 supervisorctl update
 
 # Application should now be running under supervisor
-# [END startup]

@@ -83,3 +83,4 @@ function requestTranslation(req, res) {
   res.sendStatus(200);
 }
 // [END getting_started_background_app_request]
+module.exports = app;
