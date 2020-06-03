@@ -1,0 +1,32 @@
+{
+  "name": "nodejs-getting-started",
+  "description": "End to end sample for running Node.js applications on Google Cloud Platform",
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "engines": {
+    "node": ">=10"
+  },
+  "repository": "https://github.com/GoogleCloudPlatform/nodejs-getting-started",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "node server/app.js",
+    "test": "mocha --exit **/*.test.js --timeout=50000"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^3.0.0",
+    "@google-cloud/pubsub": "1.7.3",
+    "@google-cloud/storage": "^4.0.0",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "mocha": "^7.0.0",
+    "supertest": "^4.0.2",
+    "chai": "^4.2.0",
+    "child_process": "^1.0.2",
+    "express": "^4.16.4",
+    "superagent": "^5.2.2",
+    "superagent-retry": "^0.6.0",
+    "uuid": "^8.1.0"
+  }
+}

@@ -1,4 +1,6 @@
-# Copyright 2019 Google LLC
+#!/bin/bash
+
+# Copyright 2018-2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,8 +13,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START getting_started_background_config]
-runtime: nodejs10
-# [END getting_started_background_config]
 
-service: testservice
+set -eo pipefail
+
+export NPM_CONFIG_PREFIX=/home/node/.npm-global
+
+cd github/nodejs-getting-started
+
+npm install
+
+npm run lint
