@@ -17,9 +17,9 @@ const GOOGLE_CLOUD_PROJECT = process.env['GOOGLE_CLOUD_PROJECT'];
 const CLOUD_BUCKET = GOOGLE_CLOUD_PROJECT + '_bucket';
 
 // [START bookshelf_cloud_storage_client]
-const Storage = require('@google-cloud/storage');
+const {Storage} = require('@google-cloud/storage');
 
-const storage = Storage();
+const storage = new Storage();
 const bucket = storage.bucket(CLOUD_BUCKET);
 // [END bookshelf_cloud_storage_client]
 
