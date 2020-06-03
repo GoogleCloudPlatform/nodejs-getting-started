@@ -8,7 +8,7 @@ const projectId = process.env.PROJECT_ID;
 const regionId = process.env.REGION_ID;
 const app = `https://testservice-dot-${projectId}.${regionId}.r.appspot.com`;
 const {expect} = require('chai');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 
 //in kokoro, need to set project id, auth, and region ID
 //use gcloud and firebase cli

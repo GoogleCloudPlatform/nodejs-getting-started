@@ -63,7 +63,6 @@ exports[`translate-${process.env.unique_id}`] = async pubSubEvent => {
     Buffer.from(pubSubEvent.data, 'base64').toString()
   );
 
-  // [START getting_started_background_translate_string]
   const [
     translated,
     {
@@ -74,7 +73,6 @@ exports[`translate-${process.env.unique_id}`] = async pubSubEvent => {
   console.log(
     `Translated ${original} in ${originalLanguage} to ${translated} in ${language}.`
   );
-  // [END getting_started_background_translate_string]
 
   // Store translation in firestore.
   await firestore
