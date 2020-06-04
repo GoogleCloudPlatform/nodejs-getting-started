@@ -1,6 +1,5 @@
 const cp = require('child_process');
 const path = require('path');
-const projectId = process.env.PROJECT_ID;
 const fetch = require('node-fetch');
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
@@ -16,7 +15,6 @@ describe('spin up gce instance', function() {
   const uniqueID = uuidv4().split('-')[0];
   before(() => {
     this.timeout(5000000);
-    cp.execSync(`gcloud config set project ${projectId}`);
     try {
       cp.execSync(
         `gcloud compute instances create my-app-instance-${uniqueID} \
