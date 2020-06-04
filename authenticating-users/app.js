@@ -54,7 +54,9 @@ async function validateAssertion(assertion) {
   const aud = await audience();
 
   // Fetch the current certificates and verify the signature on the assertion
+  // [START getting_started_auth_certs]
   const response = await oAuth2Client.getIapPublicKeys();
+  // [END getting_started_auth_certs]
   const ticket = await oAuth2Client.verifySignedJwtWithCertsAsync(
     assertion,
     response.pubkeys,
