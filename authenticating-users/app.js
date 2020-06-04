@@ -28,7 +28,7 @@ let aud;
 
 // [START getting_started_auth_metadata]
 async function audience() {
-  if (!aud && await metadata.isAvailable()) {
+  if (!aud && (await metadata.isAvailable())) {
     let project_number = await metadata.project('numeric-project-id');
     let project_id = await metadata.project('project-id');
 
@@ -48,7 +48,6 @@ async function validateAssertion(assertion) {
   const encodedHeader = assertion.split('.')[0];
   const decodedHeader = Buffer.from(encodedHeader, 'base64').toString('utf8');
   const header = JSON.parse(decodedHeader);
-  const keyId = header.kid;
 
   // Check that the assertion's audience matches ours
   const aud = await audience();
