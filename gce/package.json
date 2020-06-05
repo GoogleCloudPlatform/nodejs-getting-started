@@ -7,7 +7,7 @@
   "author": "Google Inc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git"
+    "url": "https://github.com/GoogleCloudPlatform/nodejs-getting-started.git"
   },
   "engines": {
     "node": ">=10"
