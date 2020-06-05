@@ -16,7 +16,7 @@
 
 set -eo pipefail
 
-export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GCLOUD_PROJECT=firestore-nodejs-getting-start
 export NODE_ENV=development
 
 cd github/nodejs-getting-started
