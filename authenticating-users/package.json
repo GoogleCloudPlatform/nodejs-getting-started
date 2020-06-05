@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "got": "^11.0.0",
-    "jsonwebtoken": "^8.5.1"
+    "gcp-metadata": "^4.1.0",
+    "google-auth-library": "^6.0.1"
   },
   "devDependencies": {
     "mocha": "^7.0.0",
