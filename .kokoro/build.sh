@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
       
-export GCLOUD_PROJECT=nodejs-getting-started-tests
+export GCLOUD_PROJECT='firestore-nodejs-getting-start'
 export REGION_ID='uc'
 
 
