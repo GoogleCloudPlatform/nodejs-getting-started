@@ -17,7 +17,7 @@
 set -eo pipefail
 
 export GCLOUD_PROJECT=nodejs-getting-started-tests
-export NPM_CONFIG_PREFIX=/home/node/.npm-global
+export NODE_ENV=development
 
 cd github/nodejs-getting-started
 
