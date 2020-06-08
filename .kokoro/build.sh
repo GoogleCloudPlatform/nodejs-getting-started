@@ -31,7 +31,7 @@ cd github/nodejs-getting-started/${PROJECT}
 npm install
 
 # Configure gcloud
-export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-key.json
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secret_manager/nodejs-getting-started-tests-firestore_service-account
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project $GCLOUD_PROJECT
 
