@@ -4,7 +4,7 @@ require('superagent-retry')(superagent);
 const request = require('supertest');
 const cp = require('child_process');
 const path = require('path');
-const projectId = process.env.PROJECT_ID;
+const projectId = process.env.GCLOUD_PROJECT;
 const regionId = process.env.REGION_ID;
 const app = `https://testservice-dot-${projectId}.${regionId}.r.appspot.com`;
 const {expect} = require('chai');
@@ -17,7 +17,6 @@ describe('behavior of cloud function', function() {
   this.timeout(240000);
   const uniqueID = uuidv4().split('-')[0];
   before(() => {
-    cp.execSync(`gcloud config set project ${projectId}`);
     cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
     cp.execSync(
       `gcloud functions deploy translate-${uniqueID} --allow-unauthenticated --set-env-vars=unique_id=${uniqueID} --runtime nodejs8 --trigger-topic translate`,

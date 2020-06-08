@@ -1,6 +1,5 @@
 const cp = require('child_process');
 const path = require('path');
-const projectId = process.env.PROJECT_ID;
 const fetch = require('node-fetch');
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
@@ -11,12 +10,11 @@ const {v4: uuidv4} = require('uuid');
 
 describe('spin up gce instance', function() {
   this.timeout(5000000);
-  this.retries(70);
+  this.retries(60);
 
   const uniqueID = uuidv4().split('-')[0];
   before(() => {
     this.timeout(5000000);
-    cp.execSync(`gcloud config set project ${projectId}`);
     try {
       cp.execSync(
         `gcloud compute instances create my-app-instance-${uniqueID} \
@@ -60,7 +58,6 @@ describe('spin up gce instance', function() {
       )
       .toString('utf8')
       .trim();
-    console.log(`http://${externalIP}:8080`);
     const response = await fetch(`http://${externalIP}:8080/`);
     const body = await response.text();
     expect(body).to.include('Hello, world!');
