@@ -10,7 +10,7 @@ const {v4: uuidv4} = require('uuid');
 
 describe('spin up gce instance', function() {
   this.timeout(5000000);
-  this.retries(70);
+  this.retries(50);
 
   const uniqueID = uuidv4().split('-')[0];
   before(() => {

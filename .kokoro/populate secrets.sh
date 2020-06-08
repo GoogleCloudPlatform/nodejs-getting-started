@@ -18,6 +18,8 @@ set -eo pipefail
 # Populates requested secrets set in SECRET_MANAGER_KEYS from service account:
 # kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com
 SECRET_LOCATION="${KOKORO_GFILE_DIR}/secret_manager"
+
+echo ${SECRET_LOCATION}
 mkdir -p ${SECRET_LOCATION}
 for key in $(echo ${SECRET_MANAGER_KEYS} | sed "s/,/ /g")
 do
