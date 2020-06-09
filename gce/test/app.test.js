@@ -62,6 +62,7 @@ describe('spin up gce instance', function() {
       )
       .toString('utf8')
       .trim();
+    console.log(`http://${externalIP}:8080/`);
     const response = await fetch(`http://${externalIP}:8080/`);
     const body = await response.text();
     expect(body).to.include('Hello, world!');
