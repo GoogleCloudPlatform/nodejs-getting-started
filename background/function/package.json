@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^3.0.0",
-    "@google-cloud/translate": "^5.3.0"
+    "@google-cloud/translate": "^6.0.0"
   },
   "devDependencies": {}
 }
