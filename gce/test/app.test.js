@@ -4,10 +4,6 @@ const projectId = process.env.PROJECT_ID;
 const fetch = require('node-fetch');
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
-//in kokoro, need to set project id, auth, and region ID
-//use gcloud and firebase cli
-
-//how to get cleanup to wait
 
 describe('spin up gce instance', function() {
   this.timeout(5000000);
@@ -44,12 +40,20 @@ describe('spin up gce instance', function() {
     }
   });
   after(() => {
-    cp.execSync(
-      `gcloud compute instances delete my-app-instance-${uniqueID} --zone=us-central1-f --delete-disks=all`
-    );
-    cp.execSync(
-      `gcloud compute firewall-rules delete default-allow-http-8080-${uniqueID}`
-    );
+    try {
+      cp.execSync(
+        `gcloud compute instances delete my-app-instance-${uniqueID} --zone=us-central1-f --delete-disks=all`
+      );
+    } catch (err) {
+      console.log("wasn't able to delete the instance");
+    }
+    try {
+      cp.execSync(
+        `gcloud compute firewall-rules delete default-allow-http-8080-${uniqueID}`
+      );
+    } catch (err) {
+      console.log("wasn't able to delete the firewall rules");
+    }
   });
 
   it('should get the instance', async () => {
@@ -64,6 +68,5 @@ describe('spin up gce instance', function() {
     const response = await fetch(`http://${externalIP}:8080/`);
     const body = await response.text();
     expect(body).to.include('Hello, world!');
-    console.log(body);
   });
 });

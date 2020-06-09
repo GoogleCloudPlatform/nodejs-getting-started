@@ -10,33 +10,46 @@ const app = `https://testservice-dot-${projectId}.${regionId}.r.appspot.com`;
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
 
-//in kokoro, need to set project id, auth, and region ID
-//use gcloud and firebase cli
-//how to get cleanup to wait
 describe('behavior of cloud function', function() {
   this.timeout(240000);
   const uniqueID = uuidv4().split('-')[0];
   before(() => {
     cp.execSync(`gcloud config set project ${projectId}`);
     cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
-    cp.execSync(
-      `gcloud functions deploy translate-${uniqueID} --allow-unauthenticated --set-env-vars=unique_id=${uniqueID} --runtime nodejs8 --trigger-topic translate`,
-      {cwd: path.join(__dirname, '../', 'function')}
-    );
-    cp.execSync(`gcloud app deploy`, {
-      cwd: path.join(__dirname, '../', 'server'),
-    });
+    try {
+      cp.execSync(
+        `gcloud functions deploy translate-${uniqueID} --allow-unauthenticated --set-env-vars=unique_id=${uniqueID} --runtime nodejs8 --trigger-topic translate`,
+        {cwd: path.join(__dirname, '../', 'function')}
+      );
+    } catch (err) {
+      console.log("wasn't able to deploy google cloud function");
+    }
+    try {
+      cp.execSync(`gcloud app deploy`, {
+        cwd: path.join(__dirname, '../', 'server'),
+      });
+    } catch (err) {
+      console.log("Wasn't able to deploy app to AppEngine");
+    }
   });
 
   after(() => {
     try {
       cp.execSync(`gcloud app services delete testservice`);
+    } catch (err) {
+      console.log('Was not able to delete appengine service');
+    }
+    try {
       cp.execSync(`gcloud functions delete translate-${uniqueID}`);
+    } catch (err) {
+      console.log("wasn't able to delete GCF");
+    }
+    try {
       cp.execSync(
         `firebase firestore:delete --project ${projectId} -r translations`
       );
     } catch (err) {
-      console.log('Was not able to delete resources.');
+      console.log("wasn't able to delete firestore project");
     }
   });
 
