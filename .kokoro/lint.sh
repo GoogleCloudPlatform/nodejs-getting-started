@@ -16,7 +16,8 @@
 
 set -eo pipefail
 
-export NPM_CONFIG_PREFIX=/home/node/.npm-global
+export GCLOUD_PROJECT=firestore-nodejs-getting-start
+export NODE_ENV=development
 
 cd github/nodejs-getting-started
 

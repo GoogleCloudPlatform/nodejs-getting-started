@@ -17,42 +17,20 @@
 
 // [START getting_started_auth_all]
 const express = require('express');
-const got = require('got');
-const jwt = require('jsonwebtoken');
+const metadata = require('gcp-metadata');
+const {OAuth2Client} = require('google-auth-library');
 
 const app = express();
+const oAuth2Client = new OAuth2Client();
 
 // Cache externally fetched information for future invocations
-let certs;
 let aud;
-
-// [START getting_started_auth_certs]
-async function certificates() {
-  if (!certs) {
-    let response = await got('https://www.gstatic.com/iap/verify/public_key');
-    certs = JSON.parse(response.body);
-  }
-
-  return certs;
-}
-// [END getting_started_auth_certs]
-
-async function getMetadata(itemName) {
-  const endpoint = 'http://metadata.google.internal';
-  const path = '/computeMetadata/v1/project/';
-  const url = endpoint + path + itemName;
-
-  let response = await got(url, {
-    headers: {'Metadata-Flavor': 'Google'},
-  });
-  return response.body;
-}
 
 // [START getting_started_auth_metadata]
 async function audience() {
-  if (!aud) {
-    let project_number = await getMetadata('numeric-project-id');
-    let project_id = await getMetadata('project-id');
+  if (!aud && (await metadata.isAvailable())) {
+    let project_number = await metadata.project('numeric-project-id');
+    let project_id = await metadata.project('project-id');
 
     aud = '/projects/' + project_number + '/apps/' + project_id;
   }
@@ -66,21 +44,21 @@ async function validateAssertion(assertion) {
   if (!assertion) {
     return {};
   }
-  // Decode the header to determine which certificate signed the assertion
-  const encodedHeader = assertion.split('.')[0];
-  const decodedHeader = Buffer.from(encodedHeader, 'base64').toString('utf8');
-  const header = JSON.parse(decodedHeader);
-  const keyId = header.kid;
-
-  // Fetch the current certificates and verify the signature on the assertion
-  const certs = await certificates();
-  const payload = jwt.verify(assertion, certs[keyId]);
 
   // Check that the assertion's audience matches ours
   const aud = await audience();
-  if (payload.aud !== aud) {
-    throw new Error('Audience mismatch. {$payload.aud} should be {$aud}.');
-  }
+
+  // Fetch the current certificates and verify the signature on the assertion
+  // [START getting_started_auth_certs]
+  const response = await oAuth2Client.getIapPublicKeys();
+  // [END getting_started_auth_certs]
+  const ticket = await oAuth2Client.verifySignedJwtWithCertsAsync(
+    assertion,
+    response.pubkeys,
+    aud,
+    ['https://cloud.google.com/iap']
+  );
+  const payload = ticket.getPayload();
 
   // Return the two relevant pieces of information
   return {
