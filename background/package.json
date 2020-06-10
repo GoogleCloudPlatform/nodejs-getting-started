@@ -20,7 +20,7 @@
     "body-parser": "^1.18.3"
   },
   "devDependencies": {
-    "mocha": "^7.0.0",
+    "mocha": "^8.0.0",
     "supertest": "^4.0.2",
     "chai": "^4.2.0",
     "child_process": "^1.0.2",
