@@ -21,7 +21,7 @@ describe('behavior of cloud function', function() {
         {cwd: path.join(__dirname, '../', 'function')}
       );
     } catch (err) {
-      console.log("wasn't able to deploy google cloud function");
+      console.log("Wasn't able to deploy Google Cloud Function");
     }
     try {
       cp.execSync(`gcloud app deploy`, {
@@ -36,19 +36,19 @@ describe('behavior of cloud function', function() {
     try {
       cp.execSync(`gcloud app services delete testservice`);
     } catch (err) {
-      console.log('Was not able to delete appengine service');
+      console.log('Was not able to delete AppEngine Service');
     }
     try {
       cp.execSync(`gcloud functions delete translate-${uniqueID}`);
     } catch (err) {
-      console.log("wasn't able to delete GCF");
+      console.log("Wasn't able to delete Google Cloud Functions");
     }
     try {
       cp.execSync(
         `firebase firestore:delete --project ${projectId} -r translations`
       );
     } catch (err) {
-      console.log("wasn't able to delete firestore project");
+      console.log("Wasn't able to delete firestore project");
     }
   });
 
