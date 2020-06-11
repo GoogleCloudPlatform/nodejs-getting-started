@@ -63,7 +63,7 @@ describe('spin up gce instance', function() {
       .toString('utf8')
       .trim();
 
-    async function pingVM(ip) {
+    async function pingVM(externalIP) {
       let exit = false;
       while (!exit) {
         await new Promise(r => setTimeout(r, 2000));
