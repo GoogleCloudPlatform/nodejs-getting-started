@@ -14,19 +14,21 @@
     "test": "mocha --exit **/*.test.js --timeout=50000"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^3.0.0",
+    "@google-cloud/firestore": "^3.8.5",
     "@google-cloud/pubsub": "1.7.3",
     "@google-cloud/storage": "^4.0.0",
-    "body-parser": "^1.18.3"
+    "body-parser": "^1.18.3",
+    "firestore": "^1.1.6",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "mocha": "^7.0.0",
-    "supertest": "^4.0.2",
     "chai": "^4.2.0",
     "child_process": "^1.0.2",
     "express": "^4.16.4",
+    "mocha": "^7.0.0",
     "superagent": "^5.2.2",
     "superagent-retry": "^0.6.0",
+    "supertest": "^4.0.2",
     "uuid": "^8.1.0"
   }
 }
