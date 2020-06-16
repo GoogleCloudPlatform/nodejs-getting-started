@@ -43,25 +43,19 @@ describe('behavior of cloud function', function() {
     } catch (err) {
       console.log("Wasn't able to delete Google Cloud Functions");
     }
-    console.log('before deletion');
     const db = new Firestore({
       project: projectId,
     });
-    await db
-      .collection('/translations')
-      .get()
-      .then(res => {
-        res.forEach(element => {
-          element.ref.delete();
-        });
-      });
-    console.log('after deletion');
+    const res = await db.collection('/translations').get();
+    res.forEach(element => {
+      element.ref.delete();
+    });
+    console.log('Firebase translation collection deleted');
   });
 
   it('should get the correct website', async () => {
     const body = await fetch(`${app}/`);
     const res = await body.status;
-    console.log(res);
     expect(res).to.equal(200);
   });
 
@@ -80,11 +74,10 @@ describe('behavior of cloud function', function() {
   });
 
   it("should now contain 'how are you'", async () => {
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 4000));
 
     const body = await fetch(`${app}/`);
     const res = await body.text();
     expect(res).to.include('how are you');
-    console.log(res);
   });
 });

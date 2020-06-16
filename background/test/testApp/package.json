@@ -5,9 +5,6 @@
     "main": "translate.js",
     "author": "Google LLC",
     "license": "Apache-2.0",
-    "scripts": {
-      "test": "mocha --exit test/*.test.js"
-    },
     "dependencies": {
       "@google-cloud/firestore": "^3.0.0",
       "@google-cloud/translate": "^6.0.0"
