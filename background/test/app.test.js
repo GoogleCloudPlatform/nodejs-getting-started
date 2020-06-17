@@ -57,7 +57,7 @@ describe('behavior of cloud function', function() {
   it('should get the correct website', async () => {
     const body = await fetch(`${app}/`);
     const res = await body.status;
-    assert.equal(res, 200);
+    assert.strictEqual(res, 200);
   });
 
   it('should get the correct response', async () => {
@@ -71,7 +71,7 @@ describe('behavior of cloud function', function() {
     });
     console.log(await body.text());
     const res = await body.status;
-    assert.equal(res, 200);
+    assert.strictEqual(res, 200);
   });
 
   it("should now contain 'how are you'", async () => {
