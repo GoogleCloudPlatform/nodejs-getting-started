@@ -11,6 +11,7 @@ const {URLSearchParams} = require('url');
 
 describe('behavior of cloud function', function() {
   this.timeout(360000);
+  this.retries(2);
   const uniqueID = uuidv4().split('-')[0];
 
   before(() => {
