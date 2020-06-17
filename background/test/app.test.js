@@ -3,7 +3,7 @@ const path = require('path');
 const projectId = process.env.GCLOUD_PROJECT;
 const regionId = process.env.REGION_ID;
 const app = `https://testservice-dot-${projectId}.${regionId}.r.appspot.com`;
-const {expect} = require('chai');
+const assert = require('assert');
 const {v4: uuidv4} = require('uuid');
 const {Firestore} = require('@google-cloud/firestore');
 const fetch = require('node-fetch');
@@ -47,8 +47,8 @@ describe('behavior of cloud function', function() {
       project: projectId,
     });
     const res = await db.collection('/translations').get();
-    res.forEach(element => {
-      element.ref.delete();
+    res.forEach(async element => {
+      await element.ref.delete();
     });
     console.log('Firebase translation collection deleted');
   });
@@ -56,7 +56,7 @@ describe('behavior of cloud function', function() {
   it('should get the correct website', async () => {
     const body = await fetch(`${app}/`);
     const res = await body.status;
-    expect(res).to.equal(200);
+    assert.equal(res, 200);
   });
 
   it('should get the correct response', async () => {
@@ -70,7 +70,7 @@ describe('behavior of cloud function', function() {
     });
     console.log(await body.text());
     const res = await body.status;
-    expect(res).to.equal(200);
+    assert.equal(res, 200);
   });
 
   it("should now contain 'how are you'", async () => {
@@ -78,6 +78,6 @@ describe('behavior of cloud function', function() {
 
     const body = await fetch(`${app}/`);
     const res = await body.text();
-    expect(res).to.include('how are you');
+    assert.match(res, /how are you/);
   });
 });
