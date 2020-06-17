@@ -74,10 +74,10 @@ describe('behavior of cloud function', function() {
   });
 
   it("should now contain 'how are you'", async () => {
-    await new Promise(r => setTimeout(r, 4000));
+    await new Promise(r => setTimeout(r, 5000));
 
     const body = await fetch(`${app}/`);
     const res = await body.text();
-    assert.match(res, /how are you/);
+    assert.match(res.toString(), /how are you/);
   });
 });
