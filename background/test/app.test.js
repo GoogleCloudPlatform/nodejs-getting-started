@@ -79,6 +79,6 @@ describe('behavior of cloud function', function() {
 
     const body = await fetch(`${app}/`);
     const res = await body.text();
-    assert.match(res.toString(), /how are you/);
+    assert.ok(res.includes('how are you'));
   });
 });
