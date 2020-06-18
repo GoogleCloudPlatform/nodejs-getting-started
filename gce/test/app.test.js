@@ -6,7 +6,6 @@ const {v4: uuidv4} = require('uuid');
 
 describe('spin up gce instance', function() {
   this.timeout(5000000);
-  this.retries(60);
 
   const uniqueID = uuidv4().split('-')[0];
   before(() => {
@@ -37,6 +36,7 @@ describe('spin up gce instance', function() {
       console.log("wasn't able to create the firewall rule");
     }
   });
+
   after(() => {
     try {
       cp.execSync(
@@ -58,10 +58,28 @@ describe('spin up gce instance', function() {
     const externalIP = cp
       .execSync(
         `gcloud compute instances describe my-app-instance-${uniqueID} \
-      --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-f`
+    --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-f`
       )
       .toString('utf8')
       .trim();
+
+    async function pingVM(externalIP) {
+      let exit = false;
+      while (!exit) {
+        await new Promise(r => setTimeout(r, 2000));
+        try {
+          const res = await fetch(`http://${externalIP}:8080/`);
+          if (res.status !== 200) {
+            throw new Error(res.status);
+          }
+          exit = true;
+        } catch (err) {
+          process.stdout.write('.');
+        }
+      }
+    }
+    await pingVM(externalIP);
+
     console.log(`http://${externalIP}:8080/`);
     const response = await fetch(`http://${externalIP}:8080/`);
     const body = await response.text();

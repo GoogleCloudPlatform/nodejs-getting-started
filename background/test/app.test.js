@@ -1,24 +1,25 @@
-const superagent = require('superagent');
-require('superagent-retry')(superagent);
-
-const request = require('supertest');
 const cp = require('child_process');
 const path = require('path');
 const projectId = process.env.GCLOUD_PROJECT;
 const regionId = process.env.REGION_ID;
 const app = `https://testservice-dot-${projectId}.${regionId}.r.appspot.com`;
-const {expect} = require('chai');
+const assert = require('assert');
 const {v4: uuidv4} = require('uuid');
+const {Firestore} = require('@google-cloud/firestore');
+const fetch = require('node-fetch');
+const {URLSearchParams} = require('url');
 
 describe('behavior of cloud function', function() {
-  this.timeout(240000);
+  this.timeout(360000);
+  this.retries(3);
   const uniqueID = uuidv4().split('-')[0];
+
   before(() => {
     cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
     try {
       cp.execSync(
-        `gcloud functions deploy translate-${uniqueID} --allow-unauthenticated --set-env-vars=unique_id=${uniqueID} --runtime nodejs8 --trigger-topic translate`,
-        {cwd: path.join(__dirname, '../', 'function')}
+        `gcloud functions deploy translate-${uniqueID} --runtime nodejs10 --allow-unauthenticated --set-env-vars=unique_id=${uniqueID} --trigger-topic translate`,
+        {cwd: path.join(__dirname, '/testApp')}
       );
     } catch (err) {
       console.log("Wasn't able to deploy Google Cloud Function");
@@ -32,7 +33,7 @@ describe('behavior of cloud function', function() {
     }
   });
 
-  after(() => {
+  after(async () => {
     try {
       cp.execSync(`gcloud app services delete testservice`);
     } catch (err) {
@@ -43,38 +44,41 @@ describe('behavior of cloud function', function() {
     } catch (err) {
       console.log("Wasn't able to delete Google Cloud Functions");
     }
-    try {
-      cp.execSync(
-        `firebase firestore:delete --project ${projectId} -r translations`
-      );
-    } catch (err) {
-      console.log("Wasn't able to delete firestore project");
-    }
+    const db = new Firestore({
+      project: projectId,
+    });
+    const res = await db.collection('/translations').get();
+    res.forEach(async element => {
+      await element.ref.delete();
+    });
+    console.log('Firebase translation collection deleted');
   });
 
   it('should get the correct website', async () => {
-    return await request(app)
-      .get('/')
-      .retry(5)
-      .expect(200);
+    const body = await fetch(`${app}/`);
+    const res = await body.status;
+    assert.strictEqual(res, 200);
   });
 
-  it('should ask for a translation', async () => {
-    return await request(app)
-      .post('/request-translation')
-      .type('form')
-      .send({lang: 'en', v: 'como estas'})
-      .retry(5)
-      .expect(200);
+  it('should get the correct response', async () => {
+    const params = new URLSearchParams();
+    params.append('lang', 'en');
+    params.append('v', 'como estas');
+
+    const body = await fetch(`${app}/request-translation`, {
+      method: 'POST',
+      body: params,
+    });
+    console.log(await body.text());
+    const res = await body.status;
+    assert.strictEqual(res, 200);
   });
 
-  it("should now contain 'como estas'", async () => {
-    return await request(app)
-      .get('/')
-      .set('Accept-Encoding', 'application/json')
-      .retry(5)
-      .end((err, res) => {
-        expect(res.text.includes('como estas'));
-      });
+  it("should now contain 'how are you'", async () => {
+    await new Promise(r => setTimeout(r, 5000));
+
+    const body = await fetch(`${app}/`);
+    const res = await body.text();
+    assert.ok(res.includes('how are you'));
   });
 });
