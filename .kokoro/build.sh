@@ -35,7 +35,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secret_manager/nodejs-
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project $GCLOUD_PROJECT
 
-if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"release"* ]]; then
+if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"presubmit"* ]]; then
 	export MOCHA_REPORTER_SUITENAME=${PROJECT}
 	cleanup() {
 	chmod +x $KOKORO_GFILE_DIR/linux_amd64/buildcop
