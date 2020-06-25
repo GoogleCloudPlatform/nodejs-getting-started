@@ -14,7 +14,7 @@
     "test": "mocha --exit **/*.test.js --timeout=50000"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^3.8.5",
+    "@google-cloud/firestore": "^4.0.0",
     "@google-cloud/pubsub": "1.7.3",
     "@google-cloud/storage": "^4.0.0",
     "express": "^4.16.4"
