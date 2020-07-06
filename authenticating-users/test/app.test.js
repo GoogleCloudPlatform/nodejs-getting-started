@@ -1,5 +1,5 @@
 const app = require('../app');
-
+const assert = require('assert');
 const request = require('supertest');
 
 describe('GET /', () => {
@@ -13,4 +13,11 @@ describe('GET /', () => {
         .get('/')
         .expect('Hello undefined', done);
     });
+
+  it('should fail to test that buildcop opens an issue', () => {
+    console.log(
+      'Hopefully buildcop opens an issue for this on the nightly release'
+    );
+    assert.strictEqual(true, false);
+  });
 });
