@@ -8,13 +8,16 @@ const {v4: uuidv4} = require('uuid');
 const {Firestore} = require('@google-cloud/firestore');
 const fetch = require('node-fetch');
 const {URLSearchParams} = require('url');
+const uniqueID = uuidv4().split('-')[0];
+const waitOn = require('wait-on');
 
+const opts = {
+  resources: [app],
+};
 describe('behavior of cloud function', function() {
   this.timeout(360000);
-  this.retries(3);
-  const uniqueID = uuidv4().split('-')[0];
 
-  before(() => {
+  before(async () => {
     cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
     try {
       cp.execSync(
@@ -30,6 +33,11 @@ describe('behavior of cloud function', function() {
       });
     } catch (err) {
       console.log("Wasn't able to deploy app to AppEngine");
+    }
+    try {
+      await waitOn(opts);
+    } catch (err) {
+      console.log(err);
     }
   });
 

@@ -11,7 +11,7 @@
   "private": true,
   "scripts": {
     "start": "node server/app.js",
-    "test": "mocha --exit **/*.test.js --timeout=50000"
+    "test": "mocha --exit test/app.test.js --timeout=50000"
   },
   "dependencies": {
     "@google-cloud/firestore": "^4.0.0",
@@ -24,6 +24,7 @@
     "child_process": "^1.0.2",
     "mocha": "^8.0.0",
     "node-fetch": "^2.6.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.1.0",
+    "wait-on": "^5.2.0"
   }
 }
