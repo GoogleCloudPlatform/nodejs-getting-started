@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
 
-describe('spin up gce instance', function() {
+describe('spin up gce instance', function () {
   this.timeout(5000000);
 
   const uniqueID = uuidv4().split('-')[0];
@@ -66,7 +66,7 @@ describe('spin up gce instance', function() {
     async function pingVM(externalIP) {
       let exit = false;
       while (!exit) {
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2000));
         try {
           const res = await fetch(`http://${externalIP}:8080/`);
           if (res.status !== 200) {

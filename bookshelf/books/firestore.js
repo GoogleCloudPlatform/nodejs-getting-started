@@ -37,7 +37,7 @@ async function list(limit, token) {
     };
   }
   const books = [];
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc) => {
     let book = doc.data();
     book.id = doc.id;
     books.push(book);
@@ -71,10 +71,7 @@ async function create(data) {
 
 // [START bookshelf_firestore_client_get_book]
 async function read(id) {
-  const doc = await db
-    .collection(collection)
-    .doc(id)
-    .get();
+  const doc = await db.collection(collection).doc(id).get();
 
   if (!doc.exists) {
     throw new Error('No such document!');
@@ -84,10 +81,7 @@ async function read(id) {
 // [END bookshelf_firestore_client_get_book]
 
 async function _delete(id) {
-  await db
-    .collection(collection)
-    .doc(id)
-    .delete();
+  await db.collection(collection).doc(id).delete();
 }
 
 module.exports = {

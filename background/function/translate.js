@@ -27,7 +27,7 @@ const translate = new Translate();
 // [START getting_started_background_translate]
 // translate translates the given message and stores the result in Firestore.
 // Triggered by Pub/Sub message.
-exports.translate = async pubSubEvent => {
+exports.translate = async (pubSubEvent) => {
   const {language, original} = JSON.parse(
     Buffer.from(pubSubEvent.data, 'base64').toString()
   );
@@ -46,14 +46,11 @@ exports.translate = async pubSubEvent => {
   // [END getting_started_background_translate_string]
 
   // Store translation in firestore.
-  await firestore
-    .collection('translations')
-    .doc()
-    .set({
-      language,
-      original,
-      translated,
-      originalLanguage,
-    });
+  await firestore.collection('translations').doc().set({
+    language,
+    original,
+    translated,
+    originalLanguage,
+  });
 };
 // [END getting_started_background_translate]

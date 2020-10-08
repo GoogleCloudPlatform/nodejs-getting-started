@@ -14,7 +14,7 @@ const waitOn = require('wait-on');
 const opts = {
   resources: [app],
 };
-describe('behavior of cloud function', function() {
+describe('behavior of cloud function', function () {
   this.timeout(360000);
 
   before(async () => {
@@ -56,14 +56,14 @@ describe('behavior of cloud function', function() {
       project: projectId,
     });
     const res = await db.collection('/translations').get();
-    res.forEach(async element => {
+    res.forEach(async (element) => {
       await element.ref.delete();
     });
     console.log('Firebase translation collection deleted');
   });
 
   it('should get the correct website', async () => {
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
 
     const body = await fetch(`${app}/`);
     const res = await body.status;
@@ -71,7 +71,7 @@ describe('behavior of cloud function', function() {
   });
 
   it('should get the correct response', async () => {
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
     const params = new URLSearchParams();
     params.append('lang', 'en');
     params.append('v', 'como estas');
@@ -86,7 +86,7 @@ describe('behavior of cloud function', function() {
   });
 
   it("should now contain 'how are you'", async () => {
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise((r) => setTimeout(r, 5000));
 
     const body = await fetch(`${app}/`);
     const res = await body.text();

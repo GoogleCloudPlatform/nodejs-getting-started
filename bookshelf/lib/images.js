@@ -52,7 +52,7 @@ function sendUploadToGCS(req, res, next) {
     resumable: false,
   });
 
-  stream.on('error', err => {
+  stream.on('error', (err) => {
     req.file.cloudStorageError = err;
     next(err);
   });

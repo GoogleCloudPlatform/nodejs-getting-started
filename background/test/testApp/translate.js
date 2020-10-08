@@ -4,7 +4,7 @@ const {Translate} = require('@google-cloud/translate').v2;
 const firestore = new Firestore();
 const translate = new Translate();
 
-exports[`translate-${process.env.unique_id}`] = async pubSubEvent => {
+exports[`translate-${process.env.unique_id}`] = async (pubSubEvent) => {
   const {language, original} = JSON.parse(
     Buffer.from(pubSubEvent.data, 'base64').toString()
   );
@@ -21,13 +21,10 @@ exports[`translate-${process.env.unique_id}`] = async pubSubEvent => {
   );
 
   // Store translation in firestore.
-  await firestore
-    .collection(`translations`)
-    .doc()
-    .set({
-      language,
-      original,
-      translated,
-      originalLanguage,
-    });
+  await firestore.collection(`translations`).doc().set({
+    language,
+    original,
+    translated,
+    originalLanguage,
+  });
 };
