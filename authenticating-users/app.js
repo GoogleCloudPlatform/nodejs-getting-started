@@ -78,10 +78,7 @@ app.get('/', async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-  res
-    .status(200)
-    .send(`Hello ${email}`)
-    .end();
+  res.status(200).send(`Hello ${email}`).end();
 });
 
 // [END getting_started_auth_front_controller]

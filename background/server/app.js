@@ -54,7 +54,7 @@ app.listen(port, () => console.log(`Listening on port ${port}!`));
 async function index(req, res) {
   const translations = [];
   const querySnapshot = await firestore.collection('translations').get();
-  querySnapshot.forEach(doc => {
+  querySnapshot.forEach((doc) => {
     console.log(doc.id, ' => ', doc.data());
     translations.push(doc.data());
   });
