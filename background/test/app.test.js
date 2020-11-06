@@ -14,7 +14,7 @@ const waitOn = require('wait-on');
 const opts = {
   resources: [app],
 };
-describe('behavior of cloud function', function() {
+describe('behavior of cloud function', function () {
   this.timeout(360000);
 
   before(async () => {
