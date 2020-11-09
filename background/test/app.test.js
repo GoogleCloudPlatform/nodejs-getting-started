@@ -63,15 +63,15 @@ describe('behavior of cloud function', function () {
   });
 
   it('should get the correct website', async () => {
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 4000));
 
-    const body = await fetch(`${app}/`);
+    const body = await fetch(`${app}`);
     const res = await body.status;
     assert.strictEqual(res, 200);
   });
 
   it('should get the correct response', async () => {
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 4000));
     const params = new URLSearchParams();
     params.append('lang', 'en');
     params.append('v', 'como estas');
