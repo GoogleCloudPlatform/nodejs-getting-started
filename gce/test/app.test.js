@@ -45,13 +45,6 @@ describe('spin up gce instance', function () {
     } catch (err) {
       console.log("wasn't able to delete the instance");
     }
-    try {
-      cp.execSync(
-        `gcloud compute firewall-rules delete default-allow-http-8080-${uniqueID}`
-      );
-    } catch (err) {
-      console.log("wasn't able to delete the firewall rules");
-    }
   });
 
   it('should get the instance', async () => {
