@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-      
+
 export GCLOUD_PROJECT='firestore-nodejs-getting-start'
 export REGION_ID='uc'
 
@@ -31,15 +31,15 @@ cd github/nodejs-getting-started/${PROJECT}
 npm install
 
 # Configure gcloud
-export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secret_manager/nodejs-getting-started-tests-firestore_service-account	
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secret_manager/nodejs-getting-started-tests-firestore_service-account
 gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
 gcloud config set project $GCLOUD_PROJECT
 
 if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"release"* ]]; then
 	export MOCHA_REPORTER_SUITENAME=${PROJECT}
 	cleanup() {
-	chmod +x $KOKORO_GFILE_DIR/linux_amd64/buildcop
-	$KOKORO_GFILE_DIR/linux_amd64/buildcop
+	chmod +x $KOKORO_GFILE_DIR/linux_amd64/flakybot
+	$KOKORO_GFILE_DIR/linux_amd64/flakybot
 	}
 	trap cleanup EXIT HUP
 fi
