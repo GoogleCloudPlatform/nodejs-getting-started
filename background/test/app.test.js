@@ -16,7 +16,7 @@ const opts = {
 };
 
 async function pingVMExponentialForResponse(address, count) {
-  await new Promise(r => setTimeout(r, Math.pow(2, count) * 1000));
+  await new Promise((r) => setTimeout(r, Math.pow(2, count) * 1000));
   try {
     const res = await fetch(address);
     const text = await res.text();

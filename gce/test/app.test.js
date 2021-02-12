@@ -5,7 +5,7 @@ const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
 
 async function pingVMExponential(address, count) {
-  await new Promise(r => setTimeout(r, Math.pow(2, count) * 1000));
+  await new Promise((r) => setTimeout(r, Math.pow(2, count) * 1000));
   try {
     const res = await fetch(address);
     if (res.status !== 200) {
@@ -17,7 +17,7 @@ async function pingVMExponential(address, count) {
   }
 }
 
-describe('spin up gce instance', function() {
+describe('spin up gce instance', function () {
   this.timeout(5000000);
 
   const uniqueID = uuidv4().split('-')[0];
