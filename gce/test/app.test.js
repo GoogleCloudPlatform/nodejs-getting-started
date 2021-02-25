@@ -4,6 +4,19 @@ const fetch = require('node-fetch');
 const {expect} = require('chai');
 const {v4: uuidv4} = require('uuid');
 
+async function pingVMExponential(address, count) {
+  await new Promise((r) => setTimeout(r, Math.pow(2, count) * 1000));
+  try {
+    const res = await fetch(address);
+    if (res.status !== 200) {
+      throw new Error(res.status);
+    }
+  } catch (err) {
+    process.stdout.write('.');
+    await pingVMExponential(address, ++count);
+  }
+}
+
 describe('spin up gce instance', function () {
   this.timeout(5000000);
 
@@ -56,22 +69,7 @@ describe('spin up gce instance', function () {
       .toString('utf8')
       .trim();
 
-    async function pingVM(externalIP) {
-      let exit = false;
-      while (!exit) {
-        await new Promise((r) => setTimeout(r, 2000));
-        try {
-          const res = await fetch(`http://${externalIP}:8080/`);
-          if (res.status !== 200) {
-            throw new Error(res.status);
-          }
-          exit = true;
-        } catch (err) {
-          process.stdout.write('.');
-        }
-      }
-    }
-    await pingVM(externalIP);
+    await pingVMExponential(`http://${externalIP}:8080/`, 1);
 
     console.log(`http://${externalIP}:8080/`);
     const response = await fetch(`http://${externalIP}:8080/`);
