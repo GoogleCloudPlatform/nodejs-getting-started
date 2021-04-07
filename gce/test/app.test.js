@@ -33,10 +33,13 @@ async function getIP(uniqueID) {
 }
 
 describe('spin up gce instance', async function () {
+  console.time('beforeHook');
+  console.time('test');
+  console.time('afterHook');
   this.timeout(200000);
   uniqueID = uuidv4().split('-')[0];
   before(async function () {
-    this.timeout(100000);
+    this.timeout(150000);
     cp.execSync(
       `gcloud compute instances create my-app-instance-${uniqueID} \
       --image-family=debian-9 \
@@ -63,6 +66,7 @@ describe('spin up gce instance', async function () {
     } catch (err) {
       testFlag = false;
     }
+    console.timeEnd('beforeHook');
   });
 
   after(function () {
@@ -73,6 +77,7 @@ describe('spin up gce instance', async function () {
     } catch (err) {
       console.log("wasn't able to delete the instance");
     }
+    console.timeEnd('afterHook');
   });
 
   it('should get the instance', async () => {
@@ -82,5 +87,6 @@ describe('spin up gce instance', async function () {
       const body = await response.text();
       expect(body).to.include('Hello, world!');
     }
+    console.timeEnd('test');
   });
 });
