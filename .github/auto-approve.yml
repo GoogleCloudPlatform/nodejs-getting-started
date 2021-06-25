@@ -3,4 +3,4 @@ rules:
   title: "^(fix\\(deps\\)|chore\\(deps\\)):"
   changedFiles: 
   - "/package\\.json$"
-  maxFiles: 3
+  maxFiles: 2
