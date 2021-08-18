@@ -14,6 +14,21 @@ const waitOn = require('wait-on');
 const opts = {
   resources: [app],
 };
+
+async function pingVMExponentialForResponse(address, count) {
+  await new Promise((r) => setTimeout(r, Math.pow(2, count) * 1000));
+  try {
+    const res = await fetch(address);
+    const text = await res.text();
+    if (!text.includes('how are you')) {
+      throw new Error(res.body);
+    }
+  } catch (err) {
+    process.stdout.write('.');
+    await pingVMExponentialForResponse(address, ++count);
+  }
+}
+
 describe('behavior of cloud function', function () {
   this.timeout(360000);
 
@@ -28,7 +43,7 @@ describe('behavior of cloud function', function () {
       console.log("Wasn't able to deploy Google Cloud Function");
     }
     try {
-      cp.execSync(`gcloud app deploy`, {
+      cp.execSync(`gcloud app deploy app.yaml`, {
         cwd: path.join(__dirname, '../', 'server'),
       });
     } catch (err) {
@@ -76,20 +91,18 @@ describe('behavior of cloud function', function () {
     params.append('lang', 'en');
     params.append('v', 'como estas');
 
-    const body = await fetch(`${app}/request-translation`, {
+    let body = await fetch(`${app}/request-translation`, {
       method: 'POST',
       body: params,
     });
+
     console.log(await body.text());
-    const res = await body.status;
+    let res = await body.status;
     assert.strictEqual(res, 200);
-  });
+    await pingVMExponentialForResponse(`${app}/`, 1);
 
-  it("should now contain 'how are you'", async () => {
-    await new Promise((r) => setTimeout(r, 5000));
-
-    const body = await fetch(`${app}/`);
-    const res = await body.text();
+    body = await fetch(`${app}/`);
+    res = await body.text();
     assert.ok(res.includes('how are you'));
   });
 });
