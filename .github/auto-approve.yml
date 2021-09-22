@@ -1,6 +1,6 @@
 rules:
 - author: "renovate-bot"
-  title: "^(fix\\(deps\\)|chore\\(deps\\)):"
+  title: "^(fix|chore)\\(deps\\):"
   changedFiles: 
-  - "/package\\.json$"
+  - "package\\.json$"
   maxFiles: 2
