@@ -5,3 +5,5 @@ steps:
 - name: node:14
   entrypoint: npm
   args: ['run', 'test']
+options:
+  logging: CLOUD_LOGGING_ONLY
