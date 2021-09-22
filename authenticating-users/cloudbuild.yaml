@@ -1,13 +1,9 @@
 steps:
-  - name: 'node:14'
-    args:
-      - install
-      - '--unsafe-perm'
-    entrypoint: npm
-  - name: 'node:14'
-    args:
-      - run
-      - test
-    entrypoint: npm
+- name: 'node:14'
+  args: ['install', '--unsafe-perm']
+  entrypoint: npm
+- name: 'node:14'
+  args: ['run', 'test']
+  entrypoint: npm
 options:
   logging: CLOUD_LOGGING_ONLY
