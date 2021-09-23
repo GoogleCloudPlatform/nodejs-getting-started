@@ -1,0 +1,11 @@
+steps:
+- name: node:14
+  dir: bookshelf
+  entrypoint: npm
+  args: ['install', '--unsafe-perm']
+- name: node:14
+  dir: bookshelf
+  entrypoint: npm
+  args: ['run', 'test']
+options:
+  logging: CLOUD_LOGGING_ONLY
