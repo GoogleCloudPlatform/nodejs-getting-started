@@ -15,10 +15,12 @@ The code for each tutorial is in an individual folder in this repository.
 
 * Make sure you're authenticated with the `gcloud` SDK and your GCP project
 has enabled all the APIs used by these tutorials.
-* Make sure you've got the required environment variables set. 
+* Make sure you've got the required environment variables set.
+* Replace <package-name> below with the directory you want to perform tests in. 
 ```
 git clone git@github.com:GoogleCloudPlatform/nodejs-getting-started.git
 cd nodejs-getting-started
+cd <package-name>
 npm install
 npm test
 ```
