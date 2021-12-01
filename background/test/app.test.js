@@ -27,7 +27,7 @@ const delay = async (test, addMs) => {
   });
 };
 
-let uniqueID;
+
 async function deployService() {
   uniqueID = uuidv4().split('-')[0];
   cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
@@ -51,30 +51,41 @@ async function deployService() {
   } catch (err) {
     console.log(err);
   }
+
+  return uniqueID;
+}
+
+async function deleteService(uniqueID) {
+  try {
+    cp.execSync(`gcloud app services delete testservice`, {cwd: path.join(__dirname, '/testApp')});
+  } catch (err) {
+    console.log('Was not able to delete AppEngine Service');
+  }
+  try {
+    cp.execSync(`gcloud functions delete translate-${uniqueID}`, {cwd: path.join(__dirname, '/testApp')});
+  } catch (err) {
+    console.log("Wasn't able to delete Google Cloud Functions");
+  }
+  const db = new Firestore({
+    project: projectId,
+  });
+  const res = await db.collection('/translations').get();
+  res.forEach(async (element) => {
+    await element.ref.delete();
+  });
+  console.log('Firebase translation collection deleted');
 }
 
 describe('behavior of cloud function', function () {
   this.timeout(360000);
 
+  let uniqueID;
+  beforeEach(async () => {
+    uniqueID = await deployService();
+  })
+
   afterEach(async () => {
-    try {
-      cp.execSync(`gcloud app services delete testservice`);
-    } catch (err) {
-      console.log('Was not able to delete AppEngine Service');
-    }
-    try {
-      cp.execSync(`gcloud functions delete translate-${uniqueID}`);
-    } catch (err) {
-      console.log("Wasn't able to delete Google Cloud Functions");
-    }
-    const db = new Firestore({
-      project: projectId,
-    });
-    const res = await db.collection('/translations').get();
-    res.forEach(async (element) => {
-      await element.ref.delete();
-    });
-    console.log('Firebase translation collection deleted');
+    await deleteService(uniqueID);
   });
 
   it('should get the correct website', async function () {
@@ -89,6 +100,7 @@ describe('behavior of cloud function', function () {
 
   it('should get the correct response', async function () {
     this.retries(4);
+    this.timeout(360000);
     await deployService();
     await delay(this.test, 4000);
     const params = new URLSearchParams();
