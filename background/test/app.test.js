@@ -27,9 +27,8 @@ const delay = async (test, addMs) => {
   });
 };
 
-
 async function deployService() {
-  uniqueID = uuidv4().split('-')[0];
+  let uniqueID = uuidv4().split('-')[0];
   cp.execSync(`npm install`, {cwd: path.join(__dirname, '../', 'function')});
   try {
     cp.execSync(
@@ -57,12 +56,16 @@ async function deployService() {
 
 async function deleteService(uniqueID) {
   try {
-    cp.execSync(`gcloud app services delete testservice`, {cwd: path.join(__dirname, '/testApp')});
+    cp.execSync(`gcloud app services delete testservice`, {
+      cwd: path.join(__dirname, '/testApp'),
+    });
   } catch (err) {
     console.log('Was not able to delete AppEngine Service');
   }
   try {
-    cp.execSync(`gcloud functions delete translate-${uniqueID}`, {cwd: path.join(__dirname, '/testApp')});
+    cp.execSync(`gcloud functions delete translate-${uniqueID}`, {
+      cwd: path.join(__dirname, '/testApp'),
+    });
   } catch (err) {
     console.log("Wasn't able to delete Google Cloud Functions");
   }
@@ -82,7 +85,7 @@ describe('behavior of cloud function', function () {
   let uniqueID;
   beforeEach(async () => {
     uniqueID = await deployService();
-  })
+  });
 
   afterEach(async () => {
     await deleteService(uniqueID);
