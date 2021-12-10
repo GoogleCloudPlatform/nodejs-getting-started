@@ -1,0 +1,11 @@
+steps:
+- name: node:14
+  dir: authenticating-users
+  entrypoint: npm
+  args: ['install', '--unsafe-perm']
+- name: node:14
+  dir: authenticating-users
+  entrypoint: npm
+  args: ['run', 'test']
+options:
+  logging: CLOUD_LOGGING_ONLY

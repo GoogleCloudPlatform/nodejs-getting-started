@@ -1,0 +1,11 @@
+steps:
+- name: gcr.io/firestore-nodejs-getting-start/node:latest
+  dir: gce
+  entrypoint: npm
+  args: ['install', '--unsafe-perm']
+- name: gcr.io/firestore-nodejs-getting-start/node:latest
+  dir: gce
+  entrypoint: npm
+  args: ['run', 'test']
+options:
+  logging: CLOUD_LOGGING_ONLY
