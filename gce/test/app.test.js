@@ -36,10 +36,10 @@ describe('spin up gce instance', async function () {
   console.time('beforeHook');
   console.time('test');
   console.time('afterHook');
-  this.timeout(200000);
+  this.timeout(250000);
   uniqueID = uuidv4().split('-')[0];
   before(async function () {
-    this.timeout(150000);
+    this.timeout(200000);
     cp.execSync(
       `gcloud compute instances create my-app-instance-${uniqueID} \
       --image-family=debian-9 \
