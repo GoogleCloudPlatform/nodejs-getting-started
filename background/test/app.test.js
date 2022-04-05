@@ -102,9 +102,8 @@ describe('behavior of cloud function', function () {
   });
 
   it('should get the correct response', async function () {
-    this.retries(4);
+    this.retries(6);
     this.timeout(360000);
-    await deployService();
     await delay(this.test, 4000);
     const params = new URLSearchParams();
     params.append('lang', 'en');
