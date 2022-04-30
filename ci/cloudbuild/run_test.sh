@@ -23,10 +23,6 @@ set -eo pipefail
 # In cloudbuild, the current directory is the project root.
 export PROJECT_ROOT=$(pwd)
 
-# Fetch flakybot and add executable.
-curl https://github.com/googleapis/repo-automation-bots/releases/download/flakybot-1.1.0/flakybot -o flakybot -s -L
-chmod +x ./flakybot
-
 # A script file for running the test in a sub project.
 test_script="${PROJECT_ROOT}/ci/cloudbuild/run_single_test.sh"
 
@@ -39,18 +35,39 @@ if [ ${BUILD_TYPE} == "presubmit" ]; then
     # Then fetch enough history for finding the common commit.
     git fetch origin main --deepen=200
 
-elif [ ${BUILD_TYPE} == "continuous" ]; then
-    # For continuous build, we want to know the difference in the last
-    # commit. This assumes we use squash commit when merging PRs.
-    GIT_DIFF_ARG="HEAD~.."
-
-    # Then fetch one last commit for getting the diff.
-    git fetch origin main --deepen=1
-
 else
-    # Run everything.
+    # Fetch flakybot and add executable.
+    curl https://github.com/googleapis/repo-automation-bots/releases/download/flakybot-1.1.0/flakybot \
+	 -o flakybot -s -L
+    chmod +x ./flakybot
+
+    if [ ${BUILD_TYPE} == "continuous" ]; then
+	# For continuous build, we want to know the difference in the last
+	# commit. This assumes we use squash commit when merging PRs.
+	GIT_DIFF_ARG="HEAD~.."
+
+	# Then fetch one last commit for getting the diff.
+	git fetch origin main --deepen=1
+
+    else
+	# Run everything.
+	GIT_DIFF_ARG=""
+    fi
+fi
+
+# Then detect changes in the test scripts and Dockerfile.
+
+set +e
+git diff --quiet ${GIT_DIFF_ARG} ci/cloudbuild
+changed=$?
+set -e
+if [[ "${changed}" -eq 0 ]]; then
+    echo "no change detected in ci/cloudbuild"
+else
+    echo "change detected in ci/cloudbuild, we should test everything"
     GIT_DIFF_ARG=""
 fi
+
 
 # Now we have a fixed list, but we can change it to autodetect if
 # necessary.
@@ -67,7 +84,7 @@ RETVAL=0
 
 for d in ${subdirs[@]}; do
     should_test=false
-    if [ -n ${GIT_DIFF_ARG} ]; then
+    if [ -n "${GIT_DIFF_ARG}" ]; then
 	echo "checking changes with 'git diff --quiet ${GIT_DIFF_ARG} ${d}'"
 	set +e
 	git diff --quiet ${GIT_DIFF_ARG} ${d}

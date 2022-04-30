@@ -21,6 +21,7 @@ substitutions:
   _TRIGGER_SOURCE: '${_PR_NUMBER:-main}'
 
 logsBucket: 'gs://${_LOGS_BUCKET}/logs/nodejs-getting-started/${_TRIGGER_SOURCE}/${COMMIT_SHA}/${TRIGGER_NAME}'
+timeout: 7200s
 
 steps:
   - name: 'gcr.io/kaniko-project/executor:v1.8.1'
@@ -37,6 +38,7 @@ steps:
 
   - name: gcr.io/${PROJECT_ID}/nodejs-getting-started-test-node${_NODE_VERSION}
     id: "test-driver"
+    timeout: 7200s
     entrypoint: "bash"
     env:
     - 'BUILD_TYPE=${_BUILD_TYPE}'
@@ -45,5 +47,5 @@ steps:
     - 'COMMIT_SHA=${COMMIT_SHA}'
     - 'BUILD_ID=${BUILD_ID}'
     args: [
-      "ci/cloudbuild/run-test.sh",
+      "ci/cloudbuild/run_test.sh",
     ]
