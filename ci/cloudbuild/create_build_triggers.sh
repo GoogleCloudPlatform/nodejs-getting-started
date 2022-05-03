@@ -26,7 +26,6 @@ REPO_NAME="nodejs-getting-started"
 
 NODE_VERSIONS=(
     "14"
-    "16"
 )
 
 for NODE_VERSION in ${NODE_VERSIONS[@]}; do
