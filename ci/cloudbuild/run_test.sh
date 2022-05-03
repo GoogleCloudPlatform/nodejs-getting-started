@@ -37,12 +37,12 @@ if [ ${BUILD_TYPE} == "presubmit" ]; then
 
 else
     # Fetch flakybot and add executable.
-    echo "Downloading flakybot binary into ${PROJECT_ROOT}/flakybot"
+    echo "Downloading flakybot binary into /flakybot"
     curl https://github.com/googleapis/repo-automation-bots/releases/download/flakybot-1.1.0/flakybot \
-	 -o "${PROJECT_ROOT}/flakybot" -s -L
-    chmod +x "${PROJECT_ROOT}/flakybot"
+	 -o /flakybot -s -L
+    chmod +x /flakybot
     echo "Downloaded flakybot"
-    ls -al "${PROJECT_ROOT}/flakybot"
+    ls -al /flakybot
 
     if [ ${BUILD_TYPE} == "continuous" ]; then
 	# For continuous build, we want to know the difference in the last
