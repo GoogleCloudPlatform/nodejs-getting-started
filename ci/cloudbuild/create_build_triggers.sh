@@ -21,16 +21,19 @@
 # with a non-zero
 set -eo pipefail
 
+REPO_OWNER="GoogleCloudPlatform"
+REPO_NAME="nodejs-getting-started"
+
 # Creating presubmit build
 gcloud beta builds triggers create github \
        --name=gcb-presubmit-node14 \
        --service-account="projects/firestore-nodejs-getting-start/serviceAccounts/firestore-nodejs-getting-start@firestore-nodejs-getting-start.iam.gserviceaccount.com" \
        --description="Presubmit build with node 14" \
-       --repo-name=nodejs-getting-started \
-       --repo-owner=GoogleCloudPlatform \
+       --repo-name="${REPO_NAME}" \
+       --repo-owner="${REPO_OWNER}" \
        --pull-request-pattern="^main$" \
        --build-config="ci/cloudbuild/cloudbuild.yaml" \
-       --substitutions="_BUILD_TYPE=presubmit,_LOGS_BUCKET=nodejs-samples-publiclogs,_NODE_VERSION=14" \
+       --substitutions="_BUILD_TYPE=presubmit,_LOGS_BUCKET=nodejs-samples-publiclogs,_NODE_VERSION=14,_IMAGE_PREFIX=nodejs-getting-started-test-node,_REPO_OWNER=GoogleCloudPlatform" \
        --comment-control="COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
 
 # Creating continuous build
@@ -38,8 +41,8 @@ gcloud beta builds triggers create github \
        --name=gcb-continuous-node14 \
        --service-account="projects/firestore-nodejs-getting-start/serviceAccounts/firestore-nodejs-getting-start@firestore-nodejs-getting-start.iam.gserviceaccount.com" \
        --description="Continuous build with node 14" \
-       --repo-name=nodejs-getting-started \
-       --repo-owner=GoogleCloudPlatform \
+       --repo-name="${REPO_NAME}" \
+       --repo-owner="${REPO_OWNER}" \
        --branch-pattern="^main$" \
        --build-config="ci/cloudbuild/cloudbuild.yaml" \
-       --substitutions="_BUILD_TYPE=continuous,_LOGS_BUCKET=nodejs-samples-publiclogs,_NODE_VERSION=14"
+       --substitutions="_BUILD_TYPE=continuous,_LOGS_BUCKET=nodejs-samples-publiclogs,_NODE_VERSION=14,_IMAGE_PREFIX=nodejs-getting-started-test-node,_REPO_OWNER=GoogleCloudPlatform"

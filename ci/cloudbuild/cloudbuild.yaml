@@ -31,12 +31,12 @@ steps:
       '--build-arg=NODE_VERSION=${_NODE_VERSION}',
       '--dockerfile=ci/cloudbuild/Dockerfile',
       '--cache=true',
-      '--destination=gcr.io/${PROJECT_ID}/nodejs-getting-started-test-node${_NODE_VERSION}',
+      '--destination=gcr.io/${PROJECT_ID}/${_IMAGE_PREFIX}${_NODE_VERSION}',
       '--push-retry=3',
       '--image-fs-extract-retry=3'
     ]
 
-  - name: gcr.io/${PROJECT_ID}/nodejs-getting-started-test-node${_NODE_VERSION}
+  - name: gcr.io/${PROJECT_ID}/${_IMAGE_PREFIX}${_NODE_VERSION}
     id: "test-driver"
     timeout: 7200s
     entrypoint: "bash"
@@ -46,6 +46,8 @@ steps:
     - 'PROJECT_ID=${PROJECT_ID}'
     - 'COMMIT_SHA=${COMMIT_SHA}'
     - 'BUILD_ID=${BUILD_ID}'
+    - 'REPO_OWNER=${_REPO_OWNER}'
+    - 'REPO_NAME=${REPO_NAME}'
     args: [
       "ci/cloudbuild/run_test.sh",
     ]

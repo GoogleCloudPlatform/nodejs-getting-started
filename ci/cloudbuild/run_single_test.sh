@@ -37,7 +37,7 @@ set -e
 if [ ${BUILD_TYPE} != "presubmit" ]; then
     export MOCHA_REPORTER_SUITENAME=${PROJECT}
     ${PROJECT_ROOT}/flakybot \
-		   --repo GoogleCloudPlatform/nodejs-getting-started \
+		   --repo ${REPO_OWNER}/${REPO_NAME} \
 		   --commit_hash ${COMMIT_SHA} \
 		   --build_url \
 		   https://console.cloud.google.com/cloud-build/builds;region=global/${BUILD_ID}?project=${PROJECT_ID}
