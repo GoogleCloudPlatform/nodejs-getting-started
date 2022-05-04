@@ -23,7 +23,9 @@ PROJECT=$(basename ${d})
 
 # Activate mocha config
 export MOCHA_REPORTER_OUTPUT=${PROJECT}_sponge_log.xml
+export MOCHA_REPORTER_SUITENAME=${PROJECT}
 export MOCHA_REPORTER=xunit
+cp ${PROJECT_ROOT}/.kokoro/.mocharc.js .
 
 # Install dependencies
 npm install
@@ -33,9 +35,12 @@ npm test
 retval=$?
 set -e
 
+echo "Contents in ${PROJECT}_sponge_log.xml:"
+cat ${PROJECT}_sponge_log.xml
+
 # Run flakybot for non-presubmit builds
 if [ ${BUILD_TYPE} != "presubmit" ]; then
-    export MOCHA_REPORTER_SUITENAME="${PROJECT}"
+    echo "Calling flakybot --repo ${REPO_OWNER}/${REPO_NAME} --commit_hash ${COMMIT_SHA} --build_url https://console.cloud.google.com/cloud-build/builds;region=global/${BUILD_ID}?project=${PROJECT_ID}"
     flakybot \
 	--repo "${REPO_OWNER}/${REPO_NAME}" \
 	--commit_hash "${COMMIT_SHA}" \
