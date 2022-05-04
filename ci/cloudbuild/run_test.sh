@@ -61,6 +61,9 @@ else
     GIT_DIFF_ARG=""
 fi
 
+# First run lint and exit early upon failure
+npm install
+npm run lint
 
 # Now we have a fixed list, but we can change it to autodetect if
 # necessary.
