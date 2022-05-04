@@ -35,27 +35,17 @@ if [ ${BUILD_TYPE} == "presubmit" ]; then
     # Then fetch enough history for finding the common commit.
     git fetch origin main --deepen=200
 
+elif [ ${BUILD_TYPE} == "continuous" ]; then
+    # For continuous build, we want to know the difference in the last
+    # commit. This assumes we use squash commit when merging PRs.
+    GIT_DIFF_ARG="HEAD~.."
+
+    # Then fetch one last commit for getting the diff.
+    git fetch origin main --deepen=1
+
 else
-    # Fetch flakybot and add executable.
-    echo "Downloading flakybot binary into /flakybot"
-    curl https://github.com/googleapis/repo-automation-bots/releases/download/flakybot-1.1.0/flakybot \
-	 -o /flakybot -s -L
-    chmod +x /flakybot
-    echo "Downloaded flakybot"
-    ls -al /flakybot
-
-    if [ ${BUILD_TYPE} == "continuous" ]; then
-	# For continuous build, we want to know the difference in the last
-	# commit. This assumes we use squash commit when merging PRs.
-	GIT_DIFF_ARG="HEAD~.."
-
-	# Then fetch one last commit for getting the diff.
-	git fetch origin main --deepen=1
-
-    else
-	# Run everything.
-	GIT_DIFF_ARG=""
-    fi
+    # Run everything.
+    GIT_DIFF_ARG=""
 fi
 
 # Then detect changes in the test scripts and Dockerfile.

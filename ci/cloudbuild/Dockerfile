@@ -13,9 +13,16 @@
 # limitations under the License.
 
 ARG NODE_VERSION=14
-FROM node:${NODE_VERSION}-alpine
 
-RUN apk add --no-cache git bash curl tar python3
+FROM golang:1.18-alpine as build
+
+RUN apk add --no-cache git curl tar python3
+
+RUN git clone https://github.com/googleapis/repo-automation-bots.git && \
+    cd repo-automation-bots/packages/flakybot && \
+    go build && \
+    cp flakybot /bin/flakybot && \
+    chmod +x /bin/flakybot
 
 # Install gcloud
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
@@ -23,5 +30,11 @@ RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tm
 RUN mkdir -p /usr/local/gcloud \
   && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
   && /usr/local/gcloud/google-cloud-sdk/install.sh
+
+FROM node:${NODE_VERSION}-alpine
+
+COPY --from=build /bin/flakybot /bin/flakybot
+COPY --from=build /usr/local/gcloud /usr/local/gcloud
+RUN apk add --no-cache git bash python3
 
 ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin

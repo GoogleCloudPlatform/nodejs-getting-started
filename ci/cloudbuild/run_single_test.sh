@@ -36,7 +36,8 @@ set -e
 # Run flakybot for non-presubmit builds
 if [ ${BUILD_TYPE} != "presubmit" ]; then
     export MOCHA_REPORTER_SUITENAME="${PROJECT}"
-    /flakybot --repo "${REPO_OWNER}/${REPO_NAME}" \
+    flakybot \
+	--repo "${REPO_OWNER}/${REPO_NAME}" \
 	--commit_hash "${COMMIT_SHA}" \
 	--build_url \
 	"https://console.cloud.google.com/cloud-build/builds;region=global/${BUILD_ID}?project=${PROJECT_ID}"
