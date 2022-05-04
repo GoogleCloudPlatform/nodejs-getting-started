@@ -1,3 +1,3 @@
-// [START hello]
+// [START getting_started_hello]
 console.log('hello');
-// [END hello]
+// [END getting_started_hello]
