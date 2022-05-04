@@ -80,7 +80,7 @@ async function deleteService(uniqueID) {
 }
 
 describe('behavior of cloud function', function () {
-  this.timeout(360000);
+  this.timeout(1800000); // 30 mins
 
   let uniqueID;
   beforeEach(async () => {
@@ -103,7 +103,7 @@ describe('behavior of cloud function', function () {
 
   it('should get the correct response', async function () {
     this.retries(6);
-    this.timeout(360000);
+    this.timeout(1800000);
     await delay(this.test, 4000);
     const params = new URLSearchParams();
     params.append('lang', 'en');
