@@ -7,7 +7,6 @@ branchProtectionRules:
   requiredStatusCheckContexts:
     - gcb-presubmit-node14 (firestore-nodejs-getting-start)
     - cla/google
-    - Auto-approve.yml check
     - snippet-bot check
   requiredApprovingReviewCount: 1
   requiresCodeOwnerReviews: true
