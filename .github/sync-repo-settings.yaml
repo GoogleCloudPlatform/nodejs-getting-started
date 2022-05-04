@@ -1,0 +1,21 @@
+rebaseMergeAllowed: true
+squashMergeAllowed: true
+mergeCommitAllowed: false
+branchProtectionRules:
+- pattern: main
+  isAdminEnforced: true
+  requiredStatusCheckContexts:
+    - gcb-presubmit-node14 (firestore-nodejs-getting-start)
+    - cla/google
+    - Auto-approve.yml check
+    - snippet-bot check
+  requiredApprovingReviewCount: 1
+  requiresCodeOwnerReviews: true
+  requiresStrictStatusChecks: true
+permissionRules:
+  - team: Googlers
+    permission: pull
+  - team: nodejs-samples-reviewers
+    permission: push
+  - team: nodejs-docs-samples-owners
+    permission: admin
