@@ -14,15 +14,9 @@
 
 ARG NODE_VERSION=14
 
-FROM golang:1.18-alpine as build
+FROM node:${NODE_VERSION}-alpine as build
 
-RUN apk add --no-cache git curl tar python3
-
-RUN git clone https://github.com/googleapis/repo-automation-bots.git && \
-    cd repo-automation-bots/packages/flakybot && \
-    go build && \
-    cp flakybot /bin/flakybot && \
-    chmod +x /bin/flakybot
+RUN apk add --no-cache curl tar python3
 
 # Install gcloud
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
@@ -31,9 +25,18 @@ RUN mkdir -p /usr/local/gcloud \
   && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
   && /usr/local/gcloud/google-cloud-sdk/install.sh
 
+# Download flakybot release
+RUN curl https://github.com/googleapis/repo-automation-bots/releases/download/flakybot-1.1.0/flakybot \
+    -o /bin/flakybot -s -L \
+    && chmod +x /bin/flakybot
+
 FROM node:${NODE_VERSION}-alpine
 
 COPY --from=build /bin/flakybot /bin/flakybot
+
+# Hack for not found error with flakybot
+RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+
 COPY --from=build /usr/local/gcloud /usr/local/gcloud
 RUN apk add --no-cache git bash python3
 
