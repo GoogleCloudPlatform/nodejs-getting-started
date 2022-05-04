@@ -28,6 +28,10 @@ test_script="${PROJECT_ROOT}/ci/cloudbuild/run_single_test.sh"
 
 if [ ${BUILD_TYPE} == "presubmit" ]; then
 
+    # First run lint and exit early upon failure
+    npm install
+    npm run lint
+
     # For presubmit build, we want to know the difference from the
     # common commit in origin/main.
     GIT_DIFF_ARG="origin/main..."
@@ -60,7 +64,6 @@ else
     echo "change detected in ci/cloudbuild, we should test everything"
     GIT_DIFF_ARG=""
 fi
-
 
 # Now we have a fixed list, but we can change it to autodetect if
 # necessary.
