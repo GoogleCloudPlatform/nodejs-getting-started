@@ -10,6 +10,9 @@ const fetch = require('node-fetch');
 const {URLSearchParams} = require('url');
 const waitOn = require('wait-on');
 
+// eslint-disable-next-line node/no-extraneous-require
+const {CloudFunctionsServiceClient} = require('@google-cloud/functions');
+
 const opts = {
   resources: [app],
 };
@@ -79,15 +82,36 @@ async function deleteService(uniqueID) {
   console.log('Firebase translation collection deleted');
 }
 
+async function cleanupServices() {
+  const client = new CloudFunctionsServiceClient();
+  const [functions] = await client.listFunctions({
+    parent: `projects/${projectId}/locations/-`,
+  });
+  // We'll delete functions older than 24 hours.
+  const cutoff = Math.round(new Date().getTime() / 1000) - 24 * 3600;
+  console.info(`about to delete services using cutoff second at ${cutoff}`);
+  for (const fn of functions) {
+    const updateSecond = parseInt(fn.updateTime.seconds, 10);
+    console.info(`${fn.name} was updated at ${updateSecond}`);
+    if (updateSecond < cutoff) {
+      console.info(`it is too old, so deleting ${fn.name}`);
+      const [operation] = await client.deleteFunction({name: fn.name});
+      const [response] = await operation.promise();
+      console.log(response);
+    }
+  }
+}
+
 describe('behavior of cloud function', function () {
   this.timeout(1800000); // 30 mins
 
   let uniqueID;
-  beforeEach(async () => {
+  before(async () => {
+    cleanupServices();
     uniqueID = await deployService();
   });
 
-  afterEach(async () => {
+  after(async () => {
     await deleteService(uniqueID);
   });
 
