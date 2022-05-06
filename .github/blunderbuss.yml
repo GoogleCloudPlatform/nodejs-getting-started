@@ -1,9 +1,13 @@
 # See https://github.com/googleapis/repo-automation-bots/tree/main/packages/blunderbuss
 
 assign_issues:
-  - tmatsuo
+  - alexander-fenster
+  - bcoe
   - sofisl
+  - summer-ji-eng
 
 assign_prs:
-  - tmatsuo
+  - alexander-fenster
+  - bcoe
   - sofisl
+  - summer-ji-eng
