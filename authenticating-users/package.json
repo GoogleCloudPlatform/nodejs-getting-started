@@ -9,7 +9,7 @@
     "url": "https://github.com/GoogleCloudPlatform/getting-started-nodejs.git"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "scripts": {
     "start": "node app.js",
@@ -18,7 +18,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "gcp-metadata": "^5.0.0",
-    "google-auth-library": "^7.0.0"
+    "google-auth-library": "^8.0.0"
   },
   "devDependencies": {
     "mocha": "^9.0.0",
