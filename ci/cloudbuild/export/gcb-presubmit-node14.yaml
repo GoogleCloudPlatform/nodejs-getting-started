@@ -1,0 +1,19 @@
+createTime: '2022-05-04T03:55:50.388159673Z'
+description: Presubmit build with node 14
+filename: ci/cloudbuild/cloudbuild.yaml
+github:
+  name: nodejs-getting-started
+  owner: GoogleCloudPlatform
+  pullRequest:
+    branch: ^main$
+    commentControl: COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY
+id: f2ead741-9858-460c-8f5c-23cc77714c03
+includeBuildLogs: INCLUDE_BUILD_LOGS_WITH_STATUS
+name: gcb-presubmit-node14
+serviceAccount: projects/firestore-nodejs-getting-start/serviceAccounts/firestore-nodejs-getting-start@firestore-nodejs-getting-start.iam.gserviceaccount.com
+substitutions:
+  _BUILD_TYPE: presubmit
+  _IMAGE_PREFIX: nodejs-getting-started-test-node
+  _LOGS_BUCKET: nodejs-samples-publiclogs
+  _NODE_VERSION: '14'
+  _REPO_OWNER: GoogleCloudPlatform

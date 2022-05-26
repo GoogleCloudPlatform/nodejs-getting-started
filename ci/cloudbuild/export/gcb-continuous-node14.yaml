@@ -1,0 +1,17 @@
+createTime: '2022-05-04T03:55:52.095944708Z'
+description: Continuous build with node 14
+filename: ci/cloudbuild/cloudbuild.yaml
+github:
+  name: nodejs-getting-started
+  owner: GoogleCloudPlatform
+  push:
+    branch: ^main$
+id: d6a69575-6f93-434c-9b0b-6c5ab9751e81
+name: gcb-continuous-node14
+serviceAccount: projects/firestore-nodejs-getting-start/serviceAccounts/firestore-nodejs-getting-start@firestore-nodejs-getting-start.iam.gserviceaccount.com
+substitutions:
+  _BUILD_TYPE: continuous
+  _IMAGE_PREFIX: nodejs-getting-started-test-node
+  _LOGS_BUCKET: nodejs-samples-publiclogs
+  _NODE_VERSION: '14'
+  _REPO_OWNER: GoogleCloudPlatform
