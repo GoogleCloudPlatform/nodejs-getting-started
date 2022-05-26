@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# A script for exporting Cloud Build build triggers.
+# A script for importing Cloud Build build triggers.
 
 # `-e` enables the script to automatically fail when a command fails
 # `-o pipefail` sets the exit code to the rightmost comment to exit
@@ -33,13 +33,13 @@ echo "change directory to the project root"
 cd ${PROGRAM_DIR}/../..
 pwd
 
-echo "exporting Cloud Build triggers"
+echo "importing Cloud Build triggers"
 
 for NODE_VERSION in ${NODE_VERSIONS[@]}; do
-    echo "exporting presubmit build for node${NODE_VERSION}"
-    gcloud beta builds triggers export "gcb-presubmit-node${NODE_VERSION}" --destination "ci/cloudbuild/export/gcb-presubmit-node${NODE_VERSION}.yaml"
-    echo "exporting continuous build for node${NODE_VERSION}"
-    gcloud beta builds triggers export "gcb-continuous-node${NODE_VERSION}" --destination "ci/cloudbuild/export/gcb-continuous-node${NODE_VERSION}.yaml"
-    echo "exporting nightly build for node${NODE_VERSION}"
-    gcloud beta builds triggers export "gcb-nightly-node${NODE_VERSION}" --destination "ci/cloudbuild/export/gcb-nightly-node${NODE_VERSION}.yaml"
+    echo "importing presubmit build for node${NODE_VERSION}"
+    gcloud beta builds triggers import --source "ci/cloudbuild/export/gcb-presubmit-node${NODE_VERSION}.yaml"
+    echo "importing continuous build for node${NODE_VERSION}"
+    gcloud beta builds triggers import --source "ci/cloudbuild/export/gcb-continuous-node${NODE_VERSION}.yaml"
+    echo "importing nightly build for node${NODE_VERSION}"
+    gcloud beta builds triggers import --source "ci/cloudbuild/export/gcb-nightly-node${NODE_VERSION}.yaml"
 done
