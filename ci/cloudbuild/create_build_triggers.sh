@@ -39,7 +39,9 @@ for NODE_VERSION in ${NODE_VERSIONS[@]}; do
 	   --pull-request-pattern="^main$" \
 	   --build-config="ci/cloudbuild/cloudbuild.yaml" \
 	   --substitutions="_BUILD_TYPE=presubmit,_LOGS_BUCKET=nodejs-samples-publiclogs,_NODE_VERSION=${NODE_VERSION},_IMAGE_PREFIX=nodejs-getting-started-test-node,_REPO_OWNER=GoogleCloudPlatform" \
-	   --comment-control="COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+	   --comment-control="COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY" \
+	   --include-logs-with-status
+
 
     # Creating continuous build
     gcloud beta builds triggers create github \

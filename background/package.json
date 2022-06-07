@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.0",
-    "@google-cloud/pubsub": "2.19.4",
-    "@google-cloud/storage": "^5.0.0",
+    "@google-cloud/pubsub": "3.0.1",
+    "@google-cloud/storage": "^6.0.0",
     "express": "^4.16.4"
   },
   "devDependencies": {

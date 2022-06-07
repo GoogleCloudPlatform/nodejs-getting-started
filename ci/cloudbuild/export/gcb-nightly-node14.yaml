@@ -1,0 +1,20 @@
+createTime: '2022-05-04T03:57:46.290349757Z'
+description: Nightly build with node 14
+gitFileSource:
+  path: ci/cloudbuild/cloudbuild.yaml
+  repoType: GITHUB
+  revision: refs/heads/main
+  uri: https://github.com/GoogleCloudPlatform/nodejs-getting-started
+id: aaa1f78a-1227-48d8-b09e-7dc9083ba638
+name: gcb-nightly-node14
+serviceAccount: projects/firestore-nodejs-getting-start/serviceAccounts/firestore-nodejs-getting-start@firestore-nodejs-getting-start.iam.gserviceaccount.com
+sourceToBuild:
+  ref: refs/heads/main
+  repoType: GITHUB
+  uri: https://github.com/GoogleCloudPlatform/nodejs-getting-started
+substitutions:
+  _BUILD_TYPE: nightly
+  _IMAGE_PREFIX: nodejs-getting-started-test-node
+  _LOGS_BUCKET: nodejs-samples-publiclogs
+  _NODE_VERSION: '14'
+  _REPO_OWNER: GoogleCloudPlatform
