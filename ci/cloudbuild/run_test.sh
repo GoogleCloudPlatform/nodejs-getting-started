@@ -82,7 +82,6 @@ subdirs=(
 dirs_to_test=()
 
 for d in ${subdirs[@]}; do
-    should_test=false
     if [ -n "${GIT_DIFF_ARG}" ]; then
 	echo "checking changes with 'git diff --quiet ${GIT_DIFF_ARG} ${d}'"
 	set +e
@@ -101,4 +100,4 @@ for d in ${subdirs[@]}; do
     fi
 done
 
-btlr_bin run ${dirs_to_test[@]} -- ${test_script}
+${btlr_bin} run ${dirs_to_test[@]} -- ${test_script}
