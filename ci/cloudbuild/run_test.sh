@@ -26,6 +26,9 @@ export PROJECT_ROOT=$(pwd)
 # A script file for running the test in a sub project.
 test_script="${PROJECT_ROOT}/ci/cloudbuild/run_single_test.sh"
 
+# btlr binary
+btlr_bin="${PROJECT_ROOT}/ci/btlr"
+
 if [ ${BUILD_TYPE} == "presubmit" ]; then
 
     # First run lint and exit early upon failure
@@ -76,7 +79,7 @@ subdirs=(
     sessions
 )
 
-RETVAL=0
+dirs_to_test=()
 
 for d in ${subdirs[@]}; do
     should_test=false
@@ -90,25 +93,12 @@ for d in ${subdirs[@]}; do
 	    echo "no change detected in ${d}, skipping"
 	else
 	    echo "change detected in ${d}"
-	    should_test=true
+	    dirs_to_test+=(${d})
 	fi
     else
 	# If GIT_DIFF_ARG is empty, run all the tests.
-	should_test=true
-    fi
-    if [ "${should_test}" = true ]; then
-	echo "running test in ${d}"
-	pushd ${d}
-	# Temporarily allow failure.
-	set +e
-	${test_script}
-	ret=$?
-	set -e
-	if [ ${ret} -ne 0 ]; then
-	    RETVAL=${ret}
-	fi
-	popd
+	dirs_to_test+=(${d})
     fi
 done
 
-exit ${RETVAL}
+btlr_bin run ${dirs_to_test[@]} -- ${test_script}
