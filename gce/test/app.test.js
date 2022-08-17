@@ -42,7 +42,7 @@ describe('spin up gce instance', async function () {
     this.timeout(200000);
     cp.execSync(
       `gcloud compute instances create my-app-instance-${uniqueID} \
-      --image-family=debian-9 \
+      --image-family=debian-10 \
       --image-project=debian-cloud \
       --machine-type=g1-small \
       --scopes userinfo-email,cloud-platform \
