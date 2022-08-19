@@ -24,7 +24,7 @@ logsBucket: 'gs://${_LOGS_BUCKET}/logs/nodejs-getting-started/${_TRIGGER_SOURCE}
 timeout: 7200s
 
 steps:
-  - name: 'gcr.io/kaniko-project/executor:v1.8.1'
+  - name: 'gcr.io/kaniko-project/executor:v1.9.0'
     args: [
       '--log-format=text',
       '--context=dir:///workspace/testing',
