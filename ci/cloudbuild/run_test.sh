@@ -100,4 +100,8 @@ for d in ${subdirs[@]}; do
     fi
 done
 
-${btlr_bin} run ${dirs_to_test[@]} -- ${test_script}
+if [ ${#dirs_to_test[@]} -gt 0 ]; then
+    ${btlr_bin} run ${dirs_to_test[@]} -- ${test_script}
+else
+    echo "Nothing changed in the samples"
+fi
