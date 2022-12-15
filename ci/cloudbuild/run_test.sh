@@ -27,7 +27,7 @@ export PROJECT_ROOT=$(pwd)
 test_script="${PROJECT_ROOT}/ci/cloudbuild/run_single_test.sh"
 
 # btlr binary
-btlr_bin="${PROJECT_ROOT}/ci/btlr"
+btlr_bin="/bin/btlr"
 
 if [ ${BUILD_TYPE} == "presubmit" ]; then
 
