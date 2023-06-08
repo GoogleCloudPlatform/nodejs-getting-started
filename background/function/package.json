@@ -9,7 +9,7 @@
     "test": "mocha --exit test/*.test.js"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^5.0.0",
+    "@google-cloud/firestore": "^6.0.0",
     "@google-cloud/translate": "^7.0.0"
   },
   "devDependencies": {}
