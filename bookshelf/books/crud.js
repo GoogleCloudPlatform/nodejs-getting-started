@@ -59,7 +59,6 @@ router.get('/add', (req, res) => {
  *
  * Create a book.
  */
-// [START add]
 router.post(
   '/add',
   images.multer.single('image'),
@@ -78,7 +77,6 @@ router.post(
     res.redirect(`${req.baseUrl}/${savedData.id}`);
   }
 );
-// [END add]
 
 /**
  * GET /books/:id/edit
