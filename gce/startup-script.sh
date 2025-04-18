@@ -43,8 +43,6 @@ curl https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.xz | tar xvfJ 
 ln -s /opt/nodejs/bin/node /usr/bin/node
 ln -s /opt/nodejs/bin/npm /usr/bin/npm
 
-export HOME=/root
-
 # Install app dependencies
 cd /opt/app/gce
 npm install
