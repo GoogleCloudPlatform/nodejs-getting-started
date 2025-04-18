@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # [START startup]
-set -v
+set -ve
 
 
 # Talk to the metadata server to get the project id
@@ -32,7 +32,7 @@ service google-fluentd restart &
 apt-get update
 apt-get install -yq ca-certificates git build-essential supervisor
 
-
+# git requires $HOME and it's not set during the startup script.
 # Fetch source code
 export HOME=/root
 git clone https://github.com/GoogleCloudPlatform/nodejs-getting-started.git /opt/app
