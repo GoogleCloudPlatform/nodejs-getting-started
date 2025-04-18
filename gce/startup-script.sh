@@ -21,7 +21,6 @@ PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/
 # [END startup]
 echo ${PROJECTID}
 # [START startup]
-REPOSITORY="new-repo"
 
 # Install logging monitor. The monitor will automatically pick up logs sent to
 # syslog.
