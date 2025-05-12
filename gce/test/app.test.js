@@ -15,11 +15,11 @@ const STARTUP_SCRIPT_PATH = 'gce/startup-script.sh'; // Relative to project root
 const MAX_PING_ATTEMPTS = 10;
 const INITIAL_PING_DELAY_SECONDS = 2;
 
-async function pingVMExponential(address, count) {
+async function pingVMExponential(address, attempt = 1 ) {
   if (attempt > MAX_PING_ATTEMPTS) {
     throw new Error(`Failed to connect to ${address} after ${MAX_PING_ATTEMPTS} attempts.`);
   }
-  const delaySeconds = Math.pow(INITIAL_PING_DELAY_SECONDS, attempt -1); // Start with 1s, then 2s, 4s, 8s etc.
+  const delaySeconds = Math.pow(INITIAL_PING_DELAY_SECONDS, attempt -1); 
   console.log(`Ping attempt ${attempt}/${MAX_PING_ATTEMPTS}: Waiting ${delaySeconds}s before pinging ${address}...`);
   await new Promise((r) => setTimeout(r, delaySeconds * 1000));
 
