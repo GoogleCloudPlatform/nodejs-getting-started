@@ -1,4 +1,3 @@
-
 const cp = require('child_process');
 const path = require('path');
 const fetch = require('node-fetch');
@@ -15,27 +14,35 @@ const STARTUP_SCRIPT_PATH = 'gce/startup-script.sh'; // Relative to project root
 const MAX_PING_ATTEMPTS = 10;
 const INITIAL_PING_DELAY_SECONDS = 2;
 
-async function pingVMExponential(address, attempt = 1 ) {
+async function pingVMExponential(address, attempt = 1) {
   if (attempt > MAX_PING_ATTEMPTS) {
-    throw new Error(`Failed to connect to ${address} after ${MAX_PING_ATTEMPTS} attempts.`);
+    throw new Error(
+      `Failed to connect to ${address} after ${MAX_PING_ATTEMPTS} attempts.`
+    );
   }
-  const delaySeconds = Math.pow(INITIAL_PING_DELAY_SECONDS, attempt -1); 
-  console.log(`Ping attempt ${attempt}/${MAX_PING_ATTEMPTS}: Waiting ${delaySeconds}s before pinging ${address}...`);
+  const delaySeconds = Math.pow(INITIAL_PING_DELAY_SECONDS, attempt - 1);
+  console.log(
+    `Ping attempt ${attempt}/${MAX_PING_ATTEMPTS}: Waiting ${delaySeconds}s before pinging ${address}...`
+  );
   await new Promise((r) => setTimeout(r, delaySeconds * 1000));
 
   try {
-    const res = await fetch(address, { timeout: 15000 }); // Add a timeout to fetch itself
+    const res = await fetch(address, {timeout: 15000}); // Add a timeout to fetch itself
     if (res.status !== 200) {
-      console.warn(`Ping attempt ${attempt} to ${address} failed with status: ${res.status}`);
+      console.warn(
+        `Ping attempt ${attempt} to ${address} failed with status: ${res.status}`
+      );
       throw new Error(`Status: ${res.status}`);
     }
     console.log(`Successfully connected to ${address} on attempt ${attempt}.`);
-    return true; 
+    return true;
   } catch (err) {
     process.stdout.write('.');
     if (attempt >= MAX_PING_ATTEMPTS) {
-        console.error(`\nFinal ping attempt to ${address} failed: ${err.message}`);
-        throw err; // Re-throw the error if max attempts reached
+      console.error(
+        `\nFinal ping attempt to ${address} failed: ${err.message}`
+      );
+      throw err; // Re-throw the error if max attempts reached
     }
     // Log the error for the current attempt but continue to retry
     // console.warn(`Ping attempt ${attempt} to ${address} caught error: ${err.message}. Retrying...`);
@@ -47,19 +54,28 @@ async function getExternalIP(instanceName, zone) {
   try {
     // Retry a few times as IP address might take a moment to appear after instance is "RUNNING"
     for (let i = 0; i < 5; i++) {
-        const ip = cp
+      const ip = cp
         .execSync(
-            `gcloud compute instances describe ${instanceName} --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${zone}`
+          `gcloud compute instances describe ${instanceName} --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${zone}`
         )
         .toString('utf8')
         .trim();
-        if (ip) return ip;
-        console.log(`Attempt ${i+1} to get IP for ${instanceName}: IP not found yet. Waiting 5s...`);
-        await new Promise(resolve => setTimeout(resolve, 5000));
+      if (ip) return ip;
+      console.log(
+        `Attempt ${
+          i + 1
+        } to get IP for ${instanceName}: IP not found yet. Waiting 5s...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
-    throw new Error(`Could not retrieve external IP for ${instanceName} after multiple attempts.`);
+    throw new Error(
+      `Could not retrieve external IP for ${instanceName} after multiple attempts.`
+    );
   } catch (error) {
-    console.error(`Error getting external IP for ${instanceName}:`, error.message);
+    console.error(
+      `Error getting external IP for ${instanceName}:`,
+      error.message
+    );
     throw error; // Re-throw to fail the calling function (e.g., before hook)
   }
 }
@@ -94,7 +110,7 @@ describe('spin up gce instance', function () {
           --metadata-from-file startup-script=${STARTUP_SCRIPT_PATH} \
           --zone ${GCP_ZONE} \
           --tags http-server`, // Keep a generic tag if startup script handles specific app setup
-        { cwd: path.join(__dirname, '../../'), stdio: 'inherit' } // Show gcloud output
+        {cwd: path.join(__dirname, '../../'), stdio: 'inherit'} // Show gcloud output
       );
       console.log(`Instance ${instanceName} created.`);
 
@@ -105,7 +121,7 @@ describe('spin up gce instance', function () {
           --source-ranges 0.0.0.0/0 \
           --target-tags http-server \
           --description "Allow port ${APP_PORT} access for ${instanceName}"`,
-        { stdio: 'inherit' }
+        {stdio: 'inherit'}
       );
       console.log(`Firewall rule ${firewallRuleName} created.`);
 
@@ -132,56 +148,66 @@ describe('spin up gce instance', function () {
     console.time('afterHookDuration');
     console.log('Starting cleanup...');
 
-    await cleanupResources(instanceName, firewallRuleName, GCP_ZONE, this.externalIP);
+    await cleanupResources(
+      instanceName,
+      firewallRuleName,
+      GCP_ZONE,
+      this.externalIP
+    );
 
     console.timeEnd('afterHookDuration');
   });
 
-  // Helper for cleanup to be used in 'after' and potentially in 'before' catch block
-  async function cleanupResources(instName, fwRuleName, zone, ip) {
+  async function cleanupResources(instName, fwRuleName, zone) {
     if (instName) {
       try {
         console.log(`Deleting GCE instance: ${instName}`);
         cp.execSync(
           `gcloud compute instances delete ${instName} --zone=${zone} --delete-disks=all --quiet`,
-          { stdio: 'inherit' }
+          {stdio: 'inherit'}
         );
         console.log(`Instance ${instName} deleted.`);
       } catch (err) {
-        console.warn(`Warning: Wasn't able to delete instance ${instName}. Error: ${err.message}`);
-        console.warn("You may need to delete it manually.");
+        console.warn(
+          `Warning: Wasn't able to delete instance ${instName}. Error: ${err.message}`
+        );
+        console.warn('You may need to delete it manually.');
       }
     }
 
     if (fwRuleName) {
       try {
         console.log(`Deleting firewall rule: ${fwRuleName}`);
-        cp.execSync(`gcloud compute firewall-rules delete ${fwRuleName} --quiet`, { stdio: 'inherit' });
+        cp.execSync(
+          `gcloud compute firewall-rules delete ${fwRuleName} --quiet`,
+          {stdio: 'inherit'}
+        );
         console.log(`Firewall rule ${fwRuleName} deleted.`);
       } catch (err) {
-        console.warn(`Warning: Wasn't able to delete firewall rule ${fwRuleName}. Error: ${err.message}`);
-        console.warn("You may need to delete it manually.");
+        console.warn(
+          `Warning: Wasn't able to delete firewall rule ${fwRuleName}. Error: ${err.message}`
+        );
+        console.warn('You may need to delete it manually.');
       }
     }
     // Optional: Release static IP if you were using one
     // if (ip && IS_STATIC_IP) { /* gcloud compute addresses delete ... */ }
   }
 
-  it('should get the instance and verify content', async function() {
+  it('should get the instance and verify content', async function () {
     this.timeout(30000); // Timeout for this specific test
     console.time('testExecutionTime');
-    expect(this.externalIP, "External IP should be available").to.exist;
+    expect(this.externalIP, 'External IP should be available').to.exist;
 
     const appUrl = `http://${this.externalIP}:${APP_PORT}/`;
     console.log(`Testing application at: ${appUrl}`);
 
     const response = await fetch(appUrl);
-    expect(response.status, "Response status should be 200").to.equal(200);
+    expect(response.status, 'Response status should be 200').to.equal(200);
 
     const body = await response.text();
     expect(body).to.include('Hello, world!');
     console.log('Test verification successful.');
     console.timeEnd('testExecutionTime');
   });
-
 });
