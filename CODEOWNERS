@@ -2,5 +2,9 @@
 # for more info about CODEOWNERS file
 
 # Repo owner
-* @sofisl
-* @fhinkel
+## Default ownership
+* @GoogleCloudPlatform/nodejs-samples-reviewers @GoogleCloudPlatform/cloud-samples-reviewers
+
+## Repository Infrastructure
+/* @GoogleCloudPlatform/nodejs-samples-reviewers @GoogleCloudPlatform/cloud-samples-infra # root files
+.github/* @GoogleCloudPlatform/nodejs-samples-reviewers @GoogleCloudPlatform/cloud-samples-infra # common tooling configurations
