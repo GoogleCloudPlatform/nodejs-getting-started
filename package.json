@@ -2,10 +2,9 @@
   "name": "nodejs-getting-started",
   "private": true,
   "description": "End to end samples for running Node.js applications on Google Cloud Platform",
-  "dependencies": {},
   "devDependencies": {
     "eslint": "^8.0.0",
-    "eslint-config-prettier": "^8.0.0",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.0.0"
